@@ -1,0 +1,264 @@
+"""Behavior checks for the community proposal; standard library only."""
+from __future__ import annotations
+
+import hashlib
+from html.parser import HTMLParser
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import tempfile
+import unittest
+from urllib.parse import urlsplit
+
+ROOT = Path(__file__).resolve().parents[1]
+spec = importlib.util.spec_from_file_location("proposal_build", ROOT / "build.py")
+builder = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(builder)
+release_spec = importlib.util.spec_from_file_location("proposal_release", ROOT / "release_check.py")
+release = importlib.util.module_from_spec(release_spec)
+release_spec.loader.exec_module(release)
+
+
+def external_reference(href):
+    target = urlsplit(href)
+    if target.scheme == "mailto":
+        return release.mail_route(href)
+    return target.scheme == "https" and bool(target.hostname) and target.username is None and target.password is None
+
+
+class Document(HTMLParser):
+    def __init__(self, source):
+        super().__init__(convert_charrefs=True)
+        self.tags = []
+        self.ids = []
+        self.links = []
+        self.resources = []
+        self.headings = []
+        self.feed(source)
+
+    def handle_starttag(self, tag, attributes):
+        attrs = dict(attributes)
+        self.tags.append((tag, attrs))
+        if "id" in attrs:
+            self.ids.append(attrs["id"])
+        if tag == "a":
+            self.links.append(attrs.get("href", ""))
+        if tag == "link" or "src" in attrs:
+            self.resources.append(attrs.get("href", attrs.get("src", "")))
+        if re.fullmatch("h[1-6]", tag):
+            self.headings.append(int(tag[1]))
+
+
+class SiteTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="education-site-test-")
+        self.addCleanup(self.temp.cleanup)
+        self.output = Path(self.temp.name) / "site"
+
+    def build(self, base="/"):
+        builder.build(self.output, base)
+        return {p.name: Document(p.read_text(encoding="utf-8")) for p in self.output.glob("*.html")}
+
+    def test_build_is_deterministic_and_manifest_matches_bytes(self):
+        self.build()
+        first = {p.name:p.read_bytes() for p in self.output.iterdir()}
+        self.build()
+        self.assertEqual(first, {p.name:p.read_bytes() for p in self.output.iterdir()})
+        manifest = json.loads(first["manifest.json"])
+        for name, digest in manifest["files"].items():
+            self.assertEqual(digest, hashlib.sha256(first[name]).hexdigest())
+        self.assertEqual(len([n for n in first if n.endswith(".html")]), 6)
+
+    def test_every_internal_link_and_fragment_works_at_root_and_project_path(self):
+        for base in ("/", "/open-education-proposal/"):
+            documents = self.build(base)
+            assets = {p.name for p in self.output.iterdir() if p.is_file()}
+            for name, doc in documents.items():
+                for href in doc.links:
+                    target = urlsplit(href)
+                    if target.scheme:
+                        self.assertTrue(external_reference(href), (name, href))
+                        continue
+                    self.assertFalse(target.netloc, (name, href))
+                    if not target.path:
+                        dest = doc
+                    else:
+                        self.assertTrue(target.path.startswith(base), (name, href))
+                        destination = target.path[len(base):]
+                        self.assertTrue((self.output / destination).resolve().is_relative_to(self.output.resolve()), (name, href))
+                        self.assertIn(destination, assets, (name, href))
+                        dest = documents.get(destination)
+                    if target.fragment:
+                        self.assertIsNotNone(dest, (name, href, "Only HTML documents have checked fragments"))
+                        self.assertIn(target.fragment, dest.ids, (name, href))
+                self.assertEqual(doc.resources, [base + "styles.css"])
+
+    def test_generated_license_assets_are_exact_source_bytes(self):
+        self.build("/open-education-proposal/")
+        manifest = json.loads((self.output / "manifest.json").read_text(encoding="utf-8"))
+        for destination, source in {
+            "code-license.txt": "LICENSE",
+            "content-license.txt": "LICENSE-CONTENT",
+            "attribution.txt": "LICENSES.md",
+        }.items():
+            expected = (ROOT / source).read_bytes()
+            self.assertEqual((self.output / destination).read_bytes(), expected)
+            self.assertEqual(manifest["files"][destination], hashlib.sha256(expected).hexdigest())
+        for document in self.build("/open-education-proposal/").values():
+            self.assertIn("/open-education-proposal/open-source.html#licenses", document.links)
+
+    def make_legacy_output(self):
+        self.output.mkdir()
+        names = {"index.html", "standard.html", "open-source.html", "contribute.html", "governance.html", "404.html", "styles.css", "robots.txt"}
+        hashes = {}
+        for name in names:
+            data = f"Legacy generated output: {name}\n".encode("utf-8")
+            (self.output / name).write_bytes(data)
+            hashes[name] = hashlib.sha256(data).hexdigest()
+        (self.output / "manifest.json").write_text(json.dumps({"version": "0.1.0-candidate", "base": "/", "files": hashes}) + "\n", encoding="utf-8")
+        return names
+
+    def test_legacy_manifest_upgrades_to_complete_license_output(self):
+        names = self.make_legacy_output()
+        self.build()
+        expected = names | {"code-license.txt", "content-license.txt", "attribution.txt", "manifest.json"}
+        self.assertEqual({p.name for p in self.output.iterdir()}, expected)
+        first = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        self.build()
+        self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
+
+    def test_modified_legacy_output_is_preserved(self):
+        self.make_legacy_output()
+        (self.output / "index.html").write_bytes(b"local change to preserve")
+        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        with self.assertRaises(ValueError):
+            builder.build(self.output)
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+
+    def test_legacy_output_with_unmanifested_license_asset_is_preserved(self):
+        self.make_legacy_output()
+        (self.output / "code-license.txt").write_bytes(b"unrelated file")
+        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        with self.assertRaises(ValueError):
+            builder.build(self.output)
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+
+    def test_partial_license_manifest_is_not_an_owned_build(self):
+        self.make_legacy_output()
+        data = b"partial upgrade"
+        (self.output / "code-license.txt").write_bytes(data)
+        manifest_path = self.output / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["files"]["code-license.txt"] = hashlib.sha256(data).hexdigest()
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        with self.assertRaises(ValueError):
+            builder.build(self.output)
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+
+    def test_semantic_structure_and_navigation(self):
+        for name, doc in self.build().items():
+            self.assertEqual(len(doc.ids), len(set(doc.ids)), name)
+            self.assertEqual(doc.headings.count(1), 1, name)
+            self.assertEqual(sum(tag == "main" for tag, _ in doc.tags), 1, name)
+            self.assertTrue(any(tag == "html" and attrs.get("lang") == "en" for tag, attrs in doc.tags))
+            self.assertIn("#main", doc.links)
+            for before, after in zip(doc.headings, doc.headings[1:]):
+                self.assertLessEqual(after, before + 1, name)
+            active = [a for tag, a in doc.tags if tag == "a" and a.get("aria-current") == "page"]
+            self.assertEqual(len(active), 0 if name == "404.html" else 1)
+
+    def test_no_scripts_collection_or_external_resources(self):
+        for name, doc in self.build().items():
+            self.assertFalse({tag for tag, _ in doc.tags} & {"script", "iframe", "form", "input", "object", "embed", "video", "audio"}, name)
+            for tag, attrs in doc.tags:
+                self.assertFalse(any(k.startswith("on") for k in attrs), (name, tag))
+            policies = [a["content"] for t, a in doc.tags if t == "meta" and a.get("http-equiv") == "Content-Security-Policy"]
+            self.assertEqual(len(policies), 1)
+            self.assertIn("default-src 'none'", policies[0])
+        css = (self.output / "styles.css").read_text(encoding="utf-8")
+        self.assertNotRegex(css, r"(?i)@import|url\s*\(")
+
+    def test_payload_budget_and_private_data_markers(self):
+        self.build()
+        status = json.loads((ROOT / "release.json").read_text(encoding="utf-8"))["status"]
+        self.assertIn(status, {"candidate", "ready"})
+        css_size = (self.output / "styles.css").stat().st_size
+        for path in self.output.glob("*.html"):
+            self.assertLess(path.stat().st_size + css_size, 250_000)
+            content = path.read_text(encoding="utf-8")
+            self.assertNotRegex(content, r"(?i)C:\\Users|/Users/|/home/|\.codex|baseline-0\.|W4-HUMAN|api[_-]?key\s*[=:]|BEGIN.*PRIVATE KEY")
+            self.assertNotIn("{{", content)
+            if status == "candidate":
+                self.assertIn("Not yet released", content)
+            else:
+                self.assertNotIn("Not yet released", content)
+
+    def test_unsafe_base_paths_are_rejected_before_writing(self):
+        for base in ("//evil.test/", "https://evil.test/", "/../", "/x/../", "/x?y/", "/x#z/", "/x%2fy/", '/x\"/','/x\\y/', "/x"):
+            with self.assertRaises(ValueError, msg=base):
+                builder.build(self.output, base)
+        self.assertFalse(self.output.exists())
+
+    def test_source_and_unrelated_output_are_protected(self):
+        for target in (ROOT, ROOT.parent, ROOT / "content", ROOT / "docs" / "new"):
+            with self.assertRaises(ValueError):
+                builder.build(target)
+        self.output.mkdir()
+        keep = self.output / "notes.txt"
+        keep.write_text("retain me", encoding="utf-8")
+        with self.assertRaises(ValueError):
+            builder.build(self.output)
+        self.assertEqual(keep.read_text(encoding="utf-8"), "retain me")
+
+    def test_unowned_html_is_not_overwritten(self):
+        self.output.mkdir()
+        page = self.output / "index.html"
+        page.write_text("my unrelated page", encoding="utf-8")
+        with self.assertRaises(ValueError):
+            builder.build(self.output)
+        self.assertEqual(page.read_text(encoding="utf-8"), "my unrelated page")
+
+    def test_modified_generated_file_is_preserved(self):
+        self.build()
+        page = self.output / "index.html"
+        page.write_text("an edit to preserve", encoding="utf-8")
+        with self.assertRaises(ValueError):
+            builder.build(self.output)
+        self.assertEqual(page.read_text(encoding="utf-8"), "an edit to preserve")
+
+    def test_hardlinked_output_does_not_overwrite_external_file(self):
+        self.build()
+        external = Path(self.temp.name) / "outside.html"
+        page = self.output / "index.html"
+        external.write_bytes(page.read_bytes())
+        page.unlink()
+        os.link(external, page)
+        before = external.read_bytes()
+        with self.assertRaises(ValueError):
+            builder.build(self.output)
+        self.assertEqual(external.read_bytes(), before)
+
+    def test_candidate_documents_do_not_link_private_history(self):
+        for path in ROOT.rglob("*.md"):
+            for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", path.read_text(encoding="utf-8")):
+                if target.startswith("#"):
+                    continue
+                if urlsplit(target).scheme:
+                    self.assertTrue(external_reference(target), (path.name, target))
+                    continue
+                resolved = (path.parent / target.split("#")[0]).resolve()
+                self.assertTrue(resolved.is_relative_to(ROOT), (path.name, target))
+                self.assertTrue(resolved.is_file(), (path.name, target))
+
+    def test_public_contact_link_forms(self):
+        for href in ("https://github.com/test-owner/test-proposal", "mailto:conduct@example.org"):
+            self.assertTrue(external_reference(href), href)
+        for href in ("javascript:alert(1)", "data:text/html,private", "http://example.org", "https:no-host", "https://user:password@example.org/", "mailto:x@example.org?body=private", "mailto:x@example.org\ncc:y@example.org"):
+            self.assertFalse(external_reference(href), href)
+
+
+if __name__ == "__main__":
+    unittest.main()
