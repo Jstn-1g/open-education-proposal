@@ -26,6 +26,34 @@ LICENSE_ASSETS = {
     "attribution.txt": "LICENSES.md",
 }
 OUTPUT_NAMES = LEGACY_OUTPUT_NAMES | set(LICENSE_ASSETS)
+VERSION = "0.1.0"
+RELEASE_FIELDS = {"status", "repository", "maintainer", "conduct_contact", "security_contact"}
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"Duplicate release field: {key}")
+        result[key] = value
+    return result
+
+
+def release_status() -> str:
+    """Read presentation state only; this does not authorize publication."""
+    try:
+        data = json.loads((ROOT / "release.json").read_text(encoding="utf-8"), object_pairs_hook=unique_object)
+    except (OSError, ValueError) as error:
+        raise ValueError("release.json must be readable JSON with unique fields.") from error
+    if (not isinstance(data, dict) or set(data) != RELEASE_FIELDS
+            or not all(isinstance(value, str) for value in data.values())
+            or data["status"] not in ("candidate", "ready")):
+        raise ValueError("release.json must have the documented string fields and candidate or ready status.")
+    return data["status"]
+
+
+def output_version(status: str) -> str:
+    return VERSION if status == "ready" else VERSION + "-candidate"
 
 
 def base_path(value: str) -> str:
@@ -47,7 +75,12 @@ def ordinary_path(path: Path) -> None:
             raise ValueError(f"Refusing multiply linked output file: {part.name}")
 
 
-def render(slug: str, fragment: str, base: str) -> str:
+def render(slug: str, fragment: str, base: str, *, status: str | None = None) -> str:
+    status = release_status() if status is None else status
+    if status not in ("candidate", "ready"):
+        raise ValueError("Unknown release presentation state.")
+    banner = f"Community proposal · v{VERSION}" if status == "ready" else 'Community edition <span>Local review candidate · Not yet released</span>'
+    robots = "noindex, nofollow, noarchive" if status == "candidate" else ("noindex, follow" if slug == "404" else "index, follow")
     title, _ = PAGES[slug]
     nav = "\n".join(
         f'<a href="{base}{name}.html"' + (' aria-current="page"' if name == slug else '') + f'>{label}</a>'
@@ -60,7 +93,7 @@ def render(slug: str, fragment: str, base: str) -> str:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="{html.escape(DESCRIPTION, quote=True)}">
-  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="robots" content="{robots}">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
   <title>{html.escape(title)} · Open Education proposal</title>
@@ -68,7 +101,7 @@ def render(slug: str, fragment: str, base: str) -> str:
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class="status-bar"><div class="frame">Community edition <span>Local review candidate · Not yet released</span></div></div>
+  <div class="status-bar"><div class="frame">{banner}</div></div>
   <header class="site-header frame">
     <a class="wordmark" href="{base}index.html" aria-label="Open Education proposal home">Open<br>Education<span class="wordmark-note">An open education proposal.</span></a>
     <nav aria-label="Main navigation">{nav}</nav>
@@ -76,7 +109,7 @@ def render(slug: str, fragment: str, base: str) -> str:
   <main id="main" class="frame" tabindex="-1">{fragment}</main>
   <footer class="site-footer frame">
     <div><span class="footer-line">More understanding.<br>More human possibility.</span><p>Education is the mission. Technology is a choice.</p></div>
-    <div class="footer-meta"><p>Proposal v0.1 · Adult collaboration</p><p>Open Education is a working description.<br>Not an adopted education standard.</p><a href="{base}governance.html#release">Release status &amp; responsibilities</a><p><a href="{base}open-source.html#licenses">Licenses &amp; attribution</a></p></div>
+    <div class="footer-meta"><p>Proposal v{VERSION} · Adult collaboration</p><p>Open Education is a working description.<br>Not an adopted education standard.</p><a href="{base}governance.html#release">Release status &amp; responsibilities</a><p><a href="{base}open-source.html#licenses">Licenses &amp; attribution</a></p></div>
   </footer>
 </body>
 </html>
@@ -85,6 +118,7 @@ def render(slug: str, fragment: str, base: str) -> str:
 
 def build(output: Path, base: str = "/") -> dict[str, str]:
     base = base_path(base)
+    status = release_status()  # One snapshot for all pages, robots, and the manifest.
     output = output.absolute()
     ordinary_path(output)
     # An output directory may never be a source directory or one of its ancestors.
@@ -101,11 +135,19 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
         if any(output.iterdir()):
             try:
                 previous = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
-                if not isinstance(previous, dict) or set(previous) != {"version", "base", "files"}:
+                if not isinstance(previous, dict):
                     raise ValueError("Unrecognized build manifest.")
-                files = previous["files"]
-                if (previous["version"] != "0.1.0-candidate" or not isinstance(files, dict)
-                        or set(files) not in (LEGACY_OUTPUT_NAMES - {"manifest.json"}, OUTPUT_NAMES - {"manifest.json"})):
+                files = previous.get("files")
+                if not isinstance(files, dict):
+                    raise ValueError("Unrecognized build manifest.")
+                legacy = (set(previous) == {"version", "base", "files"}
+                          and previous["version"] == "0.1.0-candidate"
+                          and set(files) in (LEGACY_OUTPUT_NAMES - {"manifest.json"}, OUTPUT_NAMES - {"manifest.json"}))
+                current = (set(previous) == {"version", "status", "base", "files"}
+                           and previous["status"] in ("candidate", "ready")
+                           and previous["version"] == output_version(previous["status"])
+                           and set(files) == OUTPUT_NAMES - {"manifest.json"})
+                if not (legacy or current):
                     raise ValueError("Unrecognized build manifest.")
                 base_path(previous["base"])
                 if {p.name for p in output.iterdir()} != set(files) | {"manifest.json"}:
@@ -116,12 +158,12 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
                         raise ValueError("Generated output was modified; preserve it and choose a new empty directory.")
             except (OSError, json.JSONDecodeError, AttributeError, TypeError) as error:
                 raise ValueError("Nonempty output must contain this builder's manifest.") from error
-    payload = {f"{slug}.html": render(slug, (ROOT / "content" / f"{slug}.html").read_text(encoding="utf-8"), base).encode("utf-8") for slug in PAGES}
+    payload = {f"{slug}.html": render(slug, (ROOT / "content" / f"{slug}.html").read_text(encoding="utf-8"), base, status=status).encode("utf-8") for slug in PAGES}
     payload["styles.css"] = (ROOT / "styles.css").read_bytes()
-    payload["robots.txt"] = b"User-agent: *\nDisallow: /\n"
+    payload["robots.txt"] = b"User-agent: *\nAllow: /\n" if status == "ready" else b"User-agent: *\nDisallow: /\n"
     payload.update({destination: (ROOT / source).read_bytes() for destination, source in LICENSE_ASSETS.items()})
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in sorted(payload.items())}
-    payload["manifest.json"] = (json.dumps({"version": "0.1.0-candidate", "base": base, "files": manifest}, indent=2) + "\n").encode("utf-8")
+    payload["manifest.json"] = (json.dumps({"version": output_version(status), "status": status, "base": base, "files": manifest}, indent=2) + "\n").encode("utf-8")
     output.mkdir(parents=True, exist_ok=True)
     for name, data in payload.items():
         (output / name).write_bytes(data)
@@ -137,7 +179,7 @@ def main() -> None:
         manifest = build(args.output, args.base)
     except (ValueError, OSError) as error:
         parser.exit(1, f"Build failed: {error}\n")
-    print(f"Built {len(PAGES)} pages; {len(manifest)} hashed public assets. Local review candidate only.")
+    print(f"Built {len(PAGES)} pages; {len(manifest)} hashed public assets. Local files only; nothing was published.")
 
 
 if __name__ == "__main__":

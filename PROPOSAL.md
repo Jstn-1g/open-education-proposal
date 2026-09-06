@@ -2,7 +2,7 @@
 
 Technology should help people learn, create, question, and work together. It should also make it easier to see what a tool contributed and what a learner understands.
 
-We propose an evidence-reporting practice for learning resources and educational technology. This is a draft for criticism, not an adopted standard or a proven intervention.
+We propose an evidence-reporting practice for learning resources and educational technology. Version 0.1.0 is a draft for criticism, not an adopted standard or a proven intervention.
 
 ## The change we want
 

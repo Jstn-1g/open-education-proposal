@@ -24,7 +24,7 @@ For a project website, specify the actual project path at build time:
 python -I -B build.py --base /open-education-proposal/
 ```
 
-Serve that output at the matching path. This example does not select a repository name or publish anything. Navigation and the 404 page use the same base.
+Serve that output at the matching path. Building does not publish anything. Navigation and the 404 page use the same base.
 
 ## Browser review
 
@@ -40,6 +40,6 @@ The browser check covers six pages at three widths with site JavaScript disabled
 
 ## Release limits
 
-The builder deliberately renders the candidate state. It has no switch that enables publishing, contributions, or license grants. Finalize those facts in the source and review the resulting files before public release. `noindex` is a search-engine request, not access control; local-only hosting keeps this candidate private.
+The builder reads the release state from `release.json`. Candidate builds use an unreleased banner and request no indexing. Ready builds identify v0.1.0 and allow indexing of normal pages; the 404 page remains non-indexable. Neither state enables hosting, contributions, or license grants. `noindex` is a search-engine request, not access control; bind previews to loopback.
 
-`python -I -B release_check.py` reports the missing publication prerequisites and exits with status 1 on the current candidate. This is expected, not a failing development build. See [publishing instructions](docs/PUBLISHING.md) for the release configuration and separate manual Pages workflow.
+`python -I -B release_check.py` checks publication consistency. A candidate or incomplete release must exit with status 1; do not bypass that guard. A passing check does not prove live hosting or inbox delivery. See [publishing instructions](docs/PUBLISHING.md) for configuration and the separate manual Pages workflow.

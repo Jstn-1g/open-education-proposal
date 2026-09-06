@@ -1,6 +1,6 @@
 # Selected licensing
 
-Jstn-1g has approved **Apache License 2.0 for software** and **Creative Commons Attribution 4.0 International for educational and community content** for the intended `Jstn-1g/open-education-proposal` repository. Public repository creation, publication, and community intake are still separate steps.
+Jstn-1g has approved **Apache License 2.0 for software** and **Creative Commons Attribution 4.0 International for educational and community content** for v0.1.0 of [Jstn-1g/open-education-proposal](https://github.com/Jstn-1g/open-education-proposal).
 
 The complete `LICENSE` and `LICENSE-CONTENT` texts and the coverage record in `LICENSES.md` govern the included material. This plan explains the selection; it does not replace those terms or grant rights in material the project does not own or have permission to share.
 
@@ -20,11 +20,11 @@ This pair favors broad reuse, including commercial reuse. It does **not** requir
 
 Safeguarding commitments describe this project's own activities. They are not additional field-of-use restrictions attached to the open licenses. A person can reuse licensed material without implying our endorsement.
 
-## Before the release
+## Maintain accurate license coverage
 
 1. Verify that the included work can be distributed under the selected terms and that its attribution and any third-party notices are accurate.
 2. Verify the complete license texts and file coverage, including both software and content notices for the generated site.
-3. Keep licensing statements consistent in the repository and generated pages as publication status changes.
-4. Publish the contribution terms before opening submissions. Contributors keep ownership of their work and submit under its applicable project license; no separate contributor license agreement or ownership transfer is required. This does not accept a submission before intake opens.
+3. Keep licensing statements consistent in the repository and generated pages as material changes.
+4. Follow the [contribution terms](CONTRIBUTING.md). Contributors keep ownership of their work and submit under its applicable project license; no separate contributor license agreement or ownership transfer is required.
 
-The candidate contains AI-assisted original drafting and code. Human review of provenance and rights is still required; AI assistance is not proof of ownership or originality. Linked research papers are references, not bundled licensed content. There are no bundled third-party fonts, photographs, research PDFs, or library packages. Optional CI and hosting workflows reference official GitHub Actions by commit; those actions retain their own licenses and are not included in the website sent to readers. Project names and marks do not receive a separate trademark grant.
+This edition contains AI-assisted drafting and code. Review provenance and rights when adding or changing material; AI assistance is not proof of ownership or originality. Linked research papers are references, not bundled licensed content. There are no bundled third-party fonts, photographs, research PDFs, or library packages. Optional CI and hosting workflows reference official GitHub Actions by commit; those actions retain their own licenses and are not included in the website sent to readers. Project names and marks do not receive a separate trademark grant.

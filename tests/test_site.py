@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import tempfile
 import unittest
+from unittest.mock import patch
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,6 +61,71 @@ class SiteTests(unittest.TestCase):
     def build(self, base="/"):
         builder.build(self.output, base)
         return {p.name: Document(p.read_text(encoding="utf-8")) for p in self.output.glob("*.html")}
+
+    def release_source(self):
+        source = Path(self.temp.name) / "source"
+        (source / "content").mkdir(parents=True)
+        for path in (ROOT / "content").glob("*.html"):
+            (source / "content" / path.name).write_bytes(path.read_bytes())
+        for name in ("styles.css", "LICENSE", "LICENSE-CONTENT", "LICENSES.md"):
+            (source / name).write_bytes((ROOT / name).read_bytes())
+        self.release_data = {"status": "candidate", "repository": "https://github.com/test-owner/test-proposal", "maintainer": "test-owner", "conduct_contact": "", "security_contact": ""}
+        (source / "release.json").write_text(json.dumps(self.release_data), encoding="utf-8")
+        return source
+
+    def test_candidate_ready_and_return_transition_are_consistent(self):
+        source = self.release_source()
+        with patch.object(builder, "ROOT", source):
+            for status in ("candidate", "ready", "ready", "candidate"):
+                self.release_data["status"] = status
+                (source / "release.json").write_text(json.dumps(self.release_data), encoding="utf-8")
+                documents = self.build()
+                manifest = json.loads((self.output / "manifest.json").read_text(encoding="utf-8"))
+                self.assertEqual(manifest["status"], status)
+                self.assertEqual(manifest["version"], "0.1.0" if status == "ready" else "0.1.0-candidate")
+                expected_robots = b"User-agent: *\nAllow: /\n" if status == "ready" else b"User-agent: *\nDisallow: /\n"
+                self.assertEqual((self.output / "robots.txt").read_bytes(), expected_robots)
+                for name, document in documents.items():
+                    policies = [attrs["content"] for tag, attrs in document.tags if tag == "meta" and attrs.get("name") == "robots"]
+                    expected = "noindex, nofollow, noarchive" if status == "candidate" else ("noindex, follow" if name == "404.html" else "index, follow")
+                    self.assertEqual(policies, [expected])
+                    page = (self.output / name).read_text(encoding="utf-8")
+                    if status == "ready":
+                        self.assertIn("Community proposal · v0.1.0", page)
+                        self.assertNotIn("Not yet released", page)
+                    else:
+                        self.assertIn("Not yet released", page)
+
+    def test_malformed_release_config_fails_before_writing(self):
+        source = self.release_source()
+        malformed = ["{broken", "[]", "{}", json.dumps({**self.release_data, "status": True}), json.dumps({**self.release_data, "status": "published"}), json.dumps({**self.release_data, "extra": "value"}), json.dumps({**self.release_data, "maintainer": 123}), json.dumps(self.release_data)[:-1] + ', "status": "ready"}']
+        with patch.object(builder, "ROOT", source):
+            for raw in malformed:
+                with self.subTest(raw=raw):
+                    (source / "release.json").write_text(raw, encoding="utf-8")
+                    with self.assertRaises(ValueError):
+                        builder.build(self.output)
+                    self.assertFalse(self.output.exists())
+            (source / "release.json").unlink()
+            with self.assertRaises(ValueError):
+                builder.build(self.output)
+            self.assertFalse(self.output.exists())
+
+    def test_legacy_candidate_upgrades_to_ready_and_invalid_config_preserves_it(self):
+        source = self.release_source()
+        self.make_legacy_output()
+        self.release_data["status"] = "ready"
+        (source / "release.json").write_text(json.dumps(self.release_data), encoding="utf-8")
+        with patch.object(builder, "ROOT", source):
+            self.build()
+            first = {p.name: p.read_bytes() for p in self.output.iterdir()}
+            self.assertEqual(json.loads(first["manifest.json"])["version"], "0.1.0")
+            self.build()
+            self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
+            (source / "release.json").write_text("{broken", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                builder.build(self.output)
+            self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
 
     def test_build_is_deterministic_and_manifest_matches_bytes(self):
         self.build()

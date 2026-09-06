@@ -9,7 +9,7 @@ Accessibility is part of the work, not a certification badge. WCAG 2.2 AA is our
 - No animation, autoplay, forms, tracking widgets, or remote fonts.
 - Print styles that remove navigation and keep the reading content visible.
 
-## Candidate checks
+## Recorded checks
 
 The reproducible checks are in `tests/test_site.py` and `tests/browser.mjs`; see [development instructions](../DEVELOPMENT.md). On 4 September 2026, checks passed in installed Microsoft Edge through Playwright for all six pages at 320, 768, and 1440 CSS pixels, keyboard access to main content, and reflow with enlarged text and spacing overrides in forced-color mode. Root and project-subpath navigation were exercised. Print-media checks passed for visible headings, hidden navigation, and horizontal fit; paginated paper output was not evaluated. Passing these checks demonstrates only the assertions they make.
 
@@ -24,8 +24,8 @@ The initial enlarged-text review found horizontal overflow. Flexible child sizin
 - Screen-reader navigation, reading order, landmark names, and link purpose with a named browser/reader combination.
 - Real browser zoom and operating-system text settings, beyond the automated text-size simulation.
 - Usability with low vision, motor, cognitive, and other access needs; whether the language is understandable.
-- The final hosted site, including repository contribution and reporting routes once selected.
+- The final hosted site, including the GitHub contribution routes and email reporting links.
 
 ## Report a barrier
 
-When contribution intake opens, report the page, task, observed behavior, browser and assistive technology if relevant, and the expected result. Do not include learner records or private health information. A reproducible example is helpful but is not a condition for being heard. No reporting destination is active in this local candidate; it must be named before release.
+Use the [accessibility issue template](https://github.com/Jstn-1g/open-education-proposal/issues/new?template=accessibility-barrier.md) for non-sensitive barriers. Include the page, task, observed behavior, browser and assistive technology if relevant, and the expected result. Do not include learner records or private health information. A reproducible example is helpful but is not a condition for being heard. For sensitive conduct or security concerns, email [jstn0513@gmail.com](mailto:jstn0513@gmail.com); responses are best effort.

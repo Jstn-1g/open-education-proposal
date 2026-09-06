@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Require finalized publication facts
-        # The current candidate must fail here, before metadata access or upload.
+        # Any candidate must fail here, before metadata access or upload.
         run: python -I -B release_check.py
       - name: Run standard-library tests
         run: python -I -B -m unittest discover -s tests -v

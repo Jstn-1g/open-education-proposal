@@ -21,28 +21,32 @@
       "sha256": "b926568cf9b51b33bc35defe22fa2af680dc78b9f032791e1e894fc92e19549d"
     },
     ".github/workflows/pages.yml": {
-      "bytes": 2032,
-      "sha256": "3cf7fbac16855fc29704b52d9413fadbf84966d52cdad6b6ac7b7f64db52ea22"
+      "bytes": 2024,
+      "sha256": "7bae801dde98e2f87010b39a6b958c1d740c8ec590a036091d2bf48d4274674a"
+    },
+    ".github/workflows/security.yml": {
+      "bytes": 1265,
+      "sha256": "81d33abe646ba5095b5653615fcb09c498fc15ad8cdc626c3ba231da380326e4"
     },
     ".gitignore": {
       "bytes": 31,
       "sha256": "64a07db4b2c77ad3b5d462aceae439ee490bcc5268b551fa6fa680b7244a5179"
     },
     "CODE_OF_CONDUCT.md": {
-      "bytes": 1588,
-      "sha256": "1bf45eec51c738118dad44aca33ffa5233c278a47a82e8df217d9afa6282675c"
+      "bytes": 1620,
+      "sha256": "1050c970e899350dfc59c897bcc75f08aeb24c97fa91a801ef4f5b3d39ed0ec2"
     },
     "CONTRIBUTING.md": {
-      "bytes": 3238,
-      "sha256": "1b5be0f3a64116cd25ecfeeb15550f5ce9827c4efe5388f5b5d7e90de7c5b8ae"
+      "bytes": 3128,
+      "sha256": "ce1b147d64c18280cbff82529143646e696b59c4d01fbd28d5f2b7c953755626"
     },
     "DEVELOPMENT.md": {
-      "bytes": 2888,
-      "sha256": "696852e12a5b947a03aabfa96e58e86084793220d52039e21e01d2ffdbe47521"
+      "bytes": 2930,
+      "sha256": "a48f7ae2b496b59756a78b42859d8f90259d14ea8fb536076dbace2c8bd0be2b"
     },
     "GOVERNANCE.md": {
-      "bytes": 3232,
-      "sha256": "a84ecdb22d5d821ad80052eafa974662e77dbcdda9be4e8565493584648c5a87"
+      "bytes": 3090,
+      "sha256": "b45eaa04d4542825d1422c072bf70b0f5d700c1ef091a11ef13f2da44e67e37f"
     },
     "LICENSE": {
       "bytes": 11358,
@@ -53,84 +57,88 @@
       "sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
     },
     "LICENSE-PLAN.md": {
-      "bytes": 3253,
-      "sha256": "c0a531e2276861bf52b6a02db6683136be4041aa11d48eee31fc374ddf195b85"
+      "bytes": 3141,
+      "sha256": "239e0e9ef5b17da41c3eae4c4d0e67942412f2fa160765063217e32cc76381d0"
     },
     "LICENSES.md": {
-      "bytes": 2441,
-      "sha256": "0331999e138d3d39c20706333b55e186d838ba3d07cd0b9913dd1a72bab4eb89"
+      "bytes": 2463,
+      "sha256": "585147cca55b9483860a6ce33431b4596f1f8621fc10c9ef6aeb80689f9c5806"
     },
     "MAINTENANCE.md": {
-      "bytes": 3198,
-      "sha256": "b19836d3e142d76977c87e8d60092139f0cde70e3c420fc4ff6bbbf1760bc9d9"
+      "bytes": 4181,
+      "sha256": "ebf4b93b9da82fb85fac3479b21f368b5d74f307c19b073f192118d2872db69c"
     },
     "PROPOSAL.md": {
-      "bytes": 3350,
-      "sha256": "5cb5210dfbed79b127b5fd4ea2b1400d4414e120d6bc879bcf80320398c7bd86"
+      "bytes": 3359,
+      "sha256": "22fb098bc891b22b77f6f454afd65c3945d2b76cba90f2ce354b645194752729"
     },
     "README.md": {
-      "bytes": 2964,
-      "sha256": "8b7a4efe17df8335e1a8163adaf67db40b7c1a756cdc5d6cecc725e23f034312"
+      "bytes": 3171,
+      "sha256": "467a15a440a12bd268f4db746a2519c9350a33d01905c21ce0d3d000c3413f39"
     },
     "SECURITY.md": {
       "bytes": 1207,
       "sha256": "71935d1672f2cfe6476807f1894f7ae85ac98babb1cd764a0358caff6b6cf372"
     },
     "build.py": {
-      "bytes": 7520,
-      "sha256": "61502686aeb7b15c7873a72724b56da1539b8bdef1d02d34a1ef69af4932d59c"
+      "bytes": 9744,
+      "sha256": "3d40329943fdd1d790820086d77d370d901a0ff6a9d74368c4934fc4768b9259"
     },
     "content/404.html": {
       "bytes": 388,
       "sha256": "0e5801d8ca15cb09ae910d99b3f323228481f65773b90f3c5be58d4f03cf4239"
     },
     "content/contribute.html": {
-      "bytes": 3881,
-      "sha256": "c710644305b83723bbd1b57ec9865045621723d64dcca5843612dd2ecce63bcf"
+      "bytes": 4479,
+      "sha256": "ca7abeb428872921e72881a02af43a7a8f98932b0761b6b9ba43177c2fbf3834"
     },
     "content/governance.html": {
-      "bytes": 4308,
-      "sha256": "846397ce7ad207d4a82abf84e3d8ca989fdf8131047b03b96ca89b554ca4c0a5"
+      "bytes": 5023,
+      "sha256": "331bbd163bcdb53497cd4d0e8660ac74a5105b0bb3377d6c9d494c9dc2940442"
     },
     "content/index.html": {
       "bytes": 3934,
       "sha256": "4d8d8fa8fe497aba20dd8180d98975bc207a0d40a8b52a2d5dd3dd102e05af06"
     },
     "content/open-source.html": {
-      "bytes": 2808,
-      "sha256": "064360012bf2e34f308575e90c6a05b62fc34bb08db34e86fd76a3f2a35c450e"
+      "bytes": 2897,
+      "sha256": "15a8319dc105a5e6e401967c2552675b65957c54ce1feecca25f6622df25b820"
     },
     "content/standard.html": {
       "bytes": 3417,
       "sha256": "2e43c3d55ad7b8212590a947b21f6b8b131eab970c342a8b4ed3b51b11003da6"
     },
     "docs/ACCESSIBILITY.md": {
-      "bytes": 2979,
-      "sha256": "3d34a424097035db5badb0849fe84493d9e73701b089a2a462807260f8e32c7e"
+      "bytes": 3142,
+      "sha256": "809cb17c53351b540e348b48adb544d75bf3da308865895f9f22c7e0711beb1c"
     },
     "docs/FIRST-CONTRIBUTIONS.md": {
-      "bytes": 3241,
-      "sha256": "168e36ea307d2f97b626acd6ebdc2a77f45771f6ce09ba893ba18a088ba011d2"
+      "bytes": 3324,
+      "sha256": "dc49da604ebe14e829a5a7d4e5b6082916d7f88692e7cc58a8af49640111e785"
     },
     "docs/PUBLISHING.md": {
-      "bytes": 7656,
-      "sha256": "74d4ae146cf2eee606937e4248fce703d16e55dd20b04619661e9055d798323e"
+      "bytes": 7970,
+      "sha256": "98ea169cf47c487e42e8a94326c13272f0da4bbef73cfe510989aca26a5236ad"
     },
     "docs/ROADMAP.md": {
-      "bytes": 4190,
-      "sha256": "d6d5c96310a111a61588dcd7b752a0a342531d8eb8dad406aec5feebe9d0bf95"
+      "bytes": 4180,
+      "sha256": "6aca8930ed8e2affcef0ab56f871f8b8feb118bb9a3ee58b34b572a8cab8813b"
+    },
+    "docs/SECURITY-CHECKS.md": {
+      "bytes": 4039,
+      "sha256": "4f0427769ace0ad57d8323cefff788f481daf0d764084b9a5b4ce025c2ea60b7"
     },
     "docs/SOURCES.md": {
       "bytes": 5127,
       "sha256": "1061f044274e513fc9413bcc0d7fab6c7e121cc2cb3405922d645c5f4e5b50e6"
     },
     "release.json": {
-      "bytes": 176,
-      "sha256": "ae0d1c6e08657daaf5b07e1c7cf47f29922fc08b15290039f0ff6707f81f3e70"
+      "bytes": 226,
+      "sha256": "e76ca7cc508626b2d6fdc1f30725d716f9375456e079ee941a06d961ff0bf143"
     },
     "release_check.py": {
-      "bytes": 5364,
-      "sha256": "c05fa8365c3f9834b021a7d4c064753c819924eaa4978493312916bf6eaf3eda"
+      "bytes": 6463,
+      "sha256": "4d2b31fd79db5d687423bdefb61f650ddfc3b8b67d9f20a67fbbccaae6a12f3d"
     },
     "styles.css": {
       "bytes": 8429,
@@ -141,12 +149,12 @@
       "sha256": "9524236715b9b00a5fd6c8971f3ae4543c4c1d8f8769e07ccf94d49e1bef5bf1"
     },
     "tests/test_release_check.py": {
-      "bytes": 5630,
-      "sha256": "7cae81d0c1ac136d392d2fecbd18369ac955e6f24e59860b98dd4fb7db509f3f"
+      "bytes": 7201,
+      "sha256": "683909b4ffc88040bc17c87067ad64258ba745d7a7c5fb52c9118d53216b3846"
     },
     "tests/test_site.py": {
-      "bytes": 13125,
-      "sha256": "416e302883d49974c88629f83cfd00daec1a9bd0a3004f1fd52d0c6e1c1db06f"
+      "bytes": 17450,
+      "sha256": "cd138fb218a8aa36fd4a94444992db282854a8b494e78be79172b7d8ffbde126"
     }
   },
   "status": "local-review-candidate-not-published"

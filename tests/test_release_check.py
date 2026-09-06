@@ -30,9 +30,13 @@ class ReleaseCheckTests(unittest.TestCase):
         # not an assertion that a valid legal grant or real report route exists.
         (self.root / "LICENSE").write_text("Fixture: Apache License", encoding="utf-8")
         (self.root / "LICENSE-CONTENT").write_text("Fixture: Creative Commons Attribution 4.0 International", encoding="utf-8")
+        (self.root / "LICENSES.md").write_text("Synthetic attribution fixture.", encoding="utf-8")
+        (self.root / "styles.css").write_text("body { color: black; }", encoding="utf-8")
         (self.root / "content").mkdir()
-        (self.root / "content" / "index.html").write_text("<h1>Community proposal</h1>", encoding="utf-8")
-        (self.root / "build.py").write_text("PAGES = {'index': ()}\ndef render(slug, fragment, base):\n    return fragment\n", encoding="utf-8")
+        for slug in ("index", "standard", "open-source", "contribute", "governance", "404"):
+            (self.root / "content" / f"{slug}.html").write_text("<h1>Community proposal</h1>", encoding="utf-8")
+        self.builder_source = (ROOT / "build.py").read_text(encoding="utf-8")
+        (self.root / "build.py").write_text(self.builder_source, encoding="utf-8")
 
     def save(self):
         (self.root / "release.json").write_text(json.dumps(self.data), encoding="utf-8")
@@ -49,7 +53,7 @@ class ReleaseCheckTests(unittest.TestCase):
         errors = guard.check(self.root)
         self.assertTrue(any("status must be ready" in error for error in errors))
         self.assertTrue(any("LICENSE" in error for error in errors))
-        self.assertTrue(any("candidate-only" in error for error in errors))
+        self.assertFalse(any("candidate-only" in error for error in errors))
 
     def test_malformed_config_fails_with_actionable_errors(self):
         for value in ([], {}, {**self.data, "status": True}, {**self.data, "extra": "ignored?"}):
@@ -81,10 +85,30 @@ class ReleaseCheckTests(unittest.TestCase):
         self.assertTrue(any("README.md" in error for error in errors))
 
     def test_actual_rendered_frame_and_indexing_policy_are_checked(self):
-        (self.root / "build.py").write_text("PAGES = {'index': ()}\ndef render(slug, fragment, base):\n    return '<meta name=\"robots\" content=\"noindex\">Not yet released' + fragment\n", encoding="utf-8")
+        stale = self.builder_source.replace('f"Community proposal · v{VERSION}"', '"Not yet released"').replace('else "index, follow")', 'else "noindex, follow")')
+        self.assertNotEqual(stale, self.builder_source)
+        (self.root / "build.py").write_text(stale, encoding="utf-8")
         errors = guard.check(self.root)
         self.assertTrue(any("candidate-only wording in index.html" in error for error in errors))
         self.assertTrue(any("noindex" in error for error in errors))
+
+    def test_ready_build_with_blocked_robots_is_rejected(self):
+        blocked = self.builder_source.replace('b"User-agent: *\\nAllow: /\\n"', 'b"User-agent: *\\nDisallow: /\\n"')
+        self.assertNotEqual(blocked, self.builder_source)
+        (self.root / "build.py").write_text(blocked, encoding="utf-8")
+        self.assertTrue(any("robots.txt" in error for error in guard.check(self.root)))
+
+    def test_inconsistent_generated_manifest_is_rejected(self):
+        stale = self.builder_source.replace('"status": status, "base": base', '"status": "candidate", "base": base')
+        self.assertNotEqual(stale, self.builder_source)
+        (self.root / "build.py").write_text(stale, encoding="utf-8")
+        self.assertTrue(any("Generated manifest" in error for error in guard.check(self.root)))
+
+    def test_ready_404_must_remain_noindex(self):
+        stale = self.builder_source.replace('("noindex, follow" if slug == "404"', '("index, follow" if slug == "404"')
+        self.assertNotEqual(stale, self.builder_source)
+        (self.root / "build.py").write_text(stale, encoding="utf-8")
+        self.assertTrue(any("404 page" in error for error in guard.check(self.root)))
 
     def test_configured_contacts_must_be_visible_in_public_policies(self):
         for name in ("GOVERNANCE.md", "CODE_OF_CONDUCT.md", "SECURITY.md"):

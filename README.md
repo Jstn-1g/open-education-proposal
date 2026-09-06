@@ -10,21 +10,23 @@ We want educators, researchers, accessibility specialists, families, designers, 
 
 Choose a [first task](docs/FIRST-CONTRIBUTIONS.md): clarify the difference between instructional help and access support, check an evidence claim, or improve the website's accessibility. Each task has a small deliverable and a clear definition of done.
 
-Read the [proposal](PROPOSAL.md), then the [contribution guide](CONTRIBUTING.md). You do not need to code to help.
+Read the [proposal](PROPOSAL.md), then the [contribution guide](CONTRIBUTING.md). Use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a question, correction, or accessibility report. You do not need to code to help.
 
 ## What we are building
 
-Version 0.1 is an adult collaboration space for a draft proposal, evidence notes, and an accessible informational website. The longer-term ambition is a complete, openly licensed learning path that educators can inspect, adapt, and use without a proprietary model.
+Version 0.1.0 contains a draft proposal, evidence notes, an informational website, and a contributor kit for adults. The longer-term ambition is a complete, openly licensed learning path that educators can inspect, adapt, and use without a proprietary model.
 
 This first release is not a curriculum, a learning app, an adopted education standard, or a service for children. AI is optional. Robot tutors, companions, simulated relationships, child profiling, and child records are outside this project’s scope.
 
-## Where things stand
+## Ownership and licenses
 
-This is a local release candidate. It has not been published, and submissions are not open yet. The confirmed owner and accountable human maintainer is Jstn-1g, using GPT-6 to assist development and review. The selected repository is `Jstn-1g/open-education-proposal`. Before opening, we must finish and verify the contribution and private reporting routes.
+The repository is [Jstn-1g/open-education-proposal](https://github.com/Jstn-1g/open-education-proposal). Jstn-1g is the accountable human owner and initial maintainer, with GPT-6 assisting development and review.
 
-Code is licensed under Apache-2.0 and content under CC BY 4.0, as detailed in [licenses and attribution](LICENSES.md). This is a licensed candidate, not a claim that community intake or public hosting is already operating.
+Code is licensed under Apache-2.0 and content under CC BY 4.0, as detailed in [licenses and attribution](LICENSES.md). Hosting is managed separately; these documents do not claim that a live website has been deployed.
 
-Our [governance](GOVERNANCE.md), [conduct](CODE_OF_CONDUCT.md), [security](SECURITY.md), [licensing plan](LICENSE-PLAN.md), [accessibility review](docs/ACCESSIBILITY.md), and [source notes](docs/SOURCES.md) explain the proposed working rules and their current limits.
+Private conduct and security concerns go to [jstn0513@gmail.com](mailto:jstn0513@gmail.com), handled by Jstn-1g. Do not post sensitive details in public issues. No guaranteed response time or continuous monitoring is offered.
+
+Our [governance](GOVERNANCE.md), [conduct](CODE_OF_CONDUCT.md), [security](SECURITY.md), [licensing record](LICENSE-PLAN.md), [accessibility review](docs/ACCESSIBILITY.md), and [source notes](docs/SOURCES.md) explain the working rules and their limits.
 
 ## Run the website locally
 

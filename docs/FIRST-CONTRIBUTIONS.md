@@ -1,6 +1,6 @@
 # Three ways to help us begin
 
-Pick one small deliverable. These briefs are ready for adult review; actual submission routes will be linked when the community repository opens. No task involves children, real learner records, or a study.
+Pick one small deliverable and use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) to discuss it. These tasks are for adults; none involves children, real learner records, or a study.
 
 ## 1. Make the help-versus-access distinction practical
 
@@ -36,7 +36,7 @@ No systematic-review claim is expected from a one-paper check. A second source i
 
 **Best for:** Accessibility reviewers, designers, writers, and developers.
 
-**Deliverable:** One reproducible accessibility finding on the candidate site or contributor documents, plus a focused change or recommendation.
+**Deliverable:** One documented accessibility finding on the site or contributor documents, plus a focused change or recommendation. Reproduction details help, but are not a condition for reporting a barrier.
 
 **Done when:**
 

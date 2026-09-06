@@ -1,8 +1,8 @@
 # The first 30 days after launch
 
-The first release is an adult proposal and informational website. That is a manageable starting scope. A complete open curriculum is a separate undertaking: it would need educators, coherent subject content, accessibility review, maintenance, and evidence appropriate to its claims. We have not established that capacity or validated a learning product.
+Version 0.1.0 is an adult proposal and informational website. That is a manageable starting scope. A complete open curriculum is a separate undertaking: it would need educators, coherent subject content, accessibility review, maintenance, and evidence appropriate to its claims. We have not established that capacity or validated a learning product.
 
-The dates below are **planning targets, not predictions or promises**. Day 1 begins when the repository actually opens for contributions. This roadmap does not announce a launch or an open submission route.
+The dates below are **planning targets, not predictions or promises**, measured from the repository's opening for contributions. They do not claim that the work or a hosted website has been completed.
 
 ## Days 1–7: make the work easy to understand
 

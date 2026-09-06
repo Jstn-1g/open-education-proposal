@@ -1,6 +1,6 @@
 # Publish the community edition
 
-The workflows are prepared for this directory to become a standalone repository root. They have not run on GitHub, and this document does not claim that a repository or website is public. The current candidate must fail the publication check.
+These instructions apply at the root of the standalone `Jstn-1g/open-education-proposal` repository. GitHub CI passed in private staging on 6 September 2026. That result does not establish a public release or a Pages deployment; inspect the repository settings and deployment run directly.
 
 ## Repository first, hosting separately
 
@@ -14,17 +14,17 @@ Publishing source does not by itself enable a website or open submissions. Keep 
 
 ### Publication configuration
 
-`release.json` holds five explicit facts: `status` (`candidate` or `ready`), the confirmed HTTPS `repository` URL, the accountable `maintainer` GitHub login, a monitored `conduct_contact` mailto address, and a tested `security_contact` (mailto or that repository's enabled private vulnerability-reporting URL). Blank values are intentional until confirmed; changing them is not proof of authority or operation.
+`release.json` holds five explicit facts: `status` (`candidate` or `ready`), the confirmed HTTPS `repository` URL, the accountable `maintainer` GitHub login, a `conduct_contact` mailto address, and a `security_contact` (mailto or that repository's enabled private vulnerability-reporting URL). Jstn-1g has designated `jstn0513@gmail.com` for private conduct and security reports and approved public listing. The owner remains responsible for monitoring it. A configured address is not evidence of inbox delivery or AI access.
 
-Before setting `status` to `ready`, add the approved full `LICENSE` and `LICENSE-CONTENT` texts and notices, publish the actual contacts in the policies, and replace candidate-only wording in the public documents and site frame/fragments. Review the candidate `noindex` meta tag and `robots.txt` policy for the public launch. The guard checks presence, basic consistency, obvious candidate wording, generated noindex tags, and the repository identity in Actions. It does not contact the routes, validate the complete legal texts, or certify the remaining prose. Review those facts directly.
+Before setting `status` to `ready`, include the approved full `LICENSE` and `LICENSE-CONTENT` texts and notices, publish the actual contacts in the policies, and replace stale candidate-only public wording. The builder derives the banner, manifest version, meta indexing policy, and `robots.txt` from that state. The guard checks recorded facts and generated output, including repository identity in Actions. It does not contact the routes, validate the complete legal texts, or certify the prose. Review those facts directly.
 
-GitHub private vulnerability reporting must be enabled separately; adding a link or a `SECURITY.md` file does not enable it. The repository owner must verify the feature and recipient notifications using GitHub's [private reporting configuration](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository). A monitored conduct address remains a separate route.
+Email is the initial private security route. GitHub private vulnerability reporting is optional and must be enabled and verified separately before linking to it; a `SECURITY.md` file does not enable it. See GitHub's [private reporting configuration](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository). Do not hold email-based reporting hostage to a feature that is available only after a repository becomes public.
 
 ### Automated checks and manual hosting
 
 `Website checks` runs on pull requests to `main`, pushes to `main`, or manual dispatch. It runs the standard-library tests and static build on Python 3.11 and 3.13. Its token has read-only repository access, checkout credentials are not retained, and it does not deploy or upload artifacts. There is no custom package-install step. Hosted runners and official Actions still use GitHub's infrastructure; this is not an offline CI claim.
 
-`Publish website manually` runs only when an authorized maintainer dispatches it from `main`. It calls `python -I -B release_check.py` before Pages configuration, build, or artifact upload. A missing guard, a failing guard, or a failed test stops the job. The current incomplete launch facts must produce a nonzero guard result; do not remove the check to make a candidate deploy.
+`Publish website manually` runs only when an authorized maintainer dispatches it from `main`. It calls `python -I -B release_check.py` before Pages configuration, build, or artifact upload. A missing guard, a failing guard, or a failed test stops the job. Incomplete launch facts must produce a nonzero result; do not remove the check to make a candidate deploy.
 
 After the check passes, the workflow reads the already configured Pages destination and derives the build prefix from its `base_path`. It uploads only `.build`, with one-day artifact retention. The separate deployment job can write Pages deployments and request the required identity token; it does not check out or execute site source. These permissions follow GitHub's [custom Pages workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) and [deployment action](https://github.com/actions/deploy-pages) contracts.
 
@@ -36,7 +36,7 @@ After the check passes, the workflow reads the already configured Pages destinat
 4. Dispatch `Publish website manually` from the reviewed `main` commit. Inspect the build result and deployment environment before approving any configured environment review.
 5. Verify the actual published URL, root or project-path navigation, 404 page, licenses, contact routes, and announced contribution state before sharing the launch. Record the published commit and date. Correct or unpublish a faulty site; removing access cannot recall existing copies.
 
-Neither workflow requests repository secrets, uses `pull_request_target`, or deploys pull-request previews. Changes to workflows, the publication guard, and licensing deserve maintainer review before they reach `main`.
+Neither workflow requests repository secrets, uses `pull_request_target`, or deploys pull-request previews. Changes to workflows, the publication guard, and licensing deserve maintainer review before they reach `main`. The separate [security checks](SECURITY-CHECKS.md) describe code scanning and its limits; inspect actual results instead of treating configured scanning as a passed audit.
 
 ## Pinned Actions
 

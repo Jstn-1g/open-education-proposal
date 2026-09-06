@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import tempfile
 
 ROOT = Path(__file__).resolve().parent
 FIELDS = {"status", "repository", "maintainer", "conduct_contact", "security_contact"}
@@ -64,21 +65,34 @@ def check(root: Path = ROOT, *, github_repository: str = "") -> list[str]:
         except OSError:
             errors.append(f"Missing public document: {name}.")
     try:
-        # Render the actual shared frame as well as page fragments; do not search
-        # developer documentation describing how the candidate guard works.
+        # Inspect an actual isolated build, including the shared frame, manifest,
+        # and robots policy. Developer documentation is not publication copy.
         import importlib.util
         spec = importlib.util.spec_from_file_location("release_site_build", root / "build.py")
         builder = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(builder)
-        for slug in builder.PAGES:
-            public_copy[f"{slug}.html"] = builder.render(slug, (root / "content" / f"{slug}.html").read_text(encoding="utf-8"), "/")
-    except (OSError, AttributeError, ImportError, SyntaxError):
+        with tempfile.TemporaryDirectory(prefix="education-release-check-") as temporary:
+            output = Path(temporary) / "site"
+            builder.build(output)
+            for slug in builder.PAGES:
+                public_copy[f"{slug}.html"] = (output / f"{slug}.html").read_text(encoding="utf-8")
+            manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+            expected_version = "0.1.0" if data["status"] == "ready" else "0.1.0-candidate"
+            if manifest.get("status") != data["status"] or manifest.get("version") != expected_version:
+                errors.append("Generated manifest does not match the release status and version.")
+            if data["status"] == "ready" and (output / "robots.txt").read_bytes() != b"User-agent: *\nAllow: /\n":
+                errors.append("Generated robots.txt must allow indexing for the public launch.")
+    except (OSError, AttributeError, ImportError, SyntaxError, TypeError, ValueError):
         errors.append("Could not inspect the generated site; restore build.py and its page sources.")
     for name, copy in public_copy.items():
+        if data["status"] != "ready":
+            continue  # Candidate presentation is expected; status already blocks release.
         if CANDIDATE_COPY.search(copy):
             errors.append(f"Replace stale candidate-only wording in {name} before publication.")
         if name.endswith(".html") and name != "404.html" and re.search(r'<meta\s+[^>]*name=["\']robots["\'][^>]*noindex', copy, re.IGNORECASE):
             errors.append(f"Remove the candidate noindex policy from {name} for the public launch.")
+        if name == "404.html" and not re.search(r'<meta\s+[^>]*name=["\']robots["\'][^>]*noindex', copy, re.IGNORECASE):
+            errors.append("Keep the 404 page excluded from indexing.")
     for name, values in {
         "GOVERNANCE.md": [repository, data["maintainer"]],
         "CODE_OF_CONDUCT.md": [data["conduct_contact"]],

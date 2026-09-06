@@ -1,12 +1,12 @@
 # How this community makes decisions
 
-**Accountable owner and initial maintainer: Jstn-1g.** The repository is [Jstn-1g/open-education-proposal](https://github.com/Jstn-1g/open-education-proposal), created as private staging. Public access and community intake are not open.
+**Accountable owner and initial maintainer: Jstn-1g.** These rules cover community v0.1.0 at [Jstn-1g/open-education-proposal](https://github.com/Jstn-1g/open-education-proposal).
 
-Community submissions are not open yet. A monitored private conduct-reporting address and realistic response capacity still need to be confirmed. Private security reporting must also be configured and tested before publication.
+Use [repository issues](https://github.com/Jstn-1g/open-education-proposal/issues) for ordinary questions and corrections. Send private conduct or security concerns to [jstn0513@gmail.com](mailto:jstn0513@gmail.com). Jstn-1g handles those reports; there is no guaranteed response time or continuous monitoring.
 
 ## Decisions and responsibility
 
-Jstn-1g is responsible for routine documentation and website decisions, review of changes, publication, and credit. Substantive decisions should record their reasons and known limits. Changes will use reviewed pull requests and the repository checks once the repository is operating.
+Jstn-1g is responsible for routine documentation and website decisions, review of changes, publication, and credit. Substantive decisions record their reasons and known limits. Use reviewed pull requests and the repository checks for changes.
 
 The owner may use GPT-6 to draft code, documentation, tests, and triage notes, and to challenge proposed changes. GPT-6 is a development assistant, not a legal co-maintainer or accountable decision maker. A human reviews the work and decides whether to accept it; agreement between AI reviews does not establish correctness or independent approval.
 
@@ -18,8 +18,8 @@ Changes to scope, licenses, participation rules, or maintainer authority need a 
 
 ## Corrections and continuity
 
-Once submissions open, ordinary corrections will use repository issues. Sensitive reports need a verified private route and human handling; they must not be copied into public issues or AI tools. A contributor may request reconsideration with new evidence or reasons. A single maintainer cannot promise an independent appeal. When Jstn-1g has a conflict or a complaint concerns their conduct, seek a willing independent reviewer with the reporter's consent before sharing private details. If a fair review is unavailable, pause the affected decision or participation rather than imply independence.
+Sensitive reports need human handling; they must not be copied into public issues or AI tools. A contributor may request reconsideration with new evidence or reasons. A single maintainer cannot promise an independent appeal. When Jstn-1g has a conflict or a complaint concerns their conduct, seek a willing independent reviewer with the reporter's consent before sharing private details. If a fair review is unavailable, pause the affected decision or participation rather than imply independence.
 
 Jstn-1g can pause contributions, correct or remove harmful material, and suspend publication when necessary. Record the reason without exposing sensitive information. Before a maintainer leaves, assign their responsibilities with the successor's consent or pause the affected work.
 
-The [maintenance routine](MAINTENANCE.md) describes practical checks and follow-through. There is no staffed round-the-clock service or guaranteed response time. Actual contact routes and capacity must be published before intake opens.
+The [maintenance routine](MAINTENANCE.md) describes checks, security review, and follow-through. Listing a contact address does not enable automated inbox access; email handling remains a human responsibility.
