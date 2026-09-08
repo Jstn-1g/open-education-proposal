@@ -325,6 +325,16 @@ class SiteTests(unittest.TestCase):
         for href in ("javascript:alert(1)", "data:text/html,private", "http://example.org", "https:no-host", "https://user:password@example.org/", "mailto:x@example.org?body=private", "mailto:x@example.org\ncc:y@example.org"):
             self.assertFalse(external_reference(href), href)
 
+    def test_review_limits_are_visible_from_the_commitments_page(self):
+        document = self.build()["governance.html"]
+        self.assertIn("accessibility", document.ids)
+        self.assertIn(
+            "https://github.com/Jstn-1g/open-education-proposal/blob/main/README.md#review-limits",
+            document.links,
+        )
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("## Review limits", readme)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -22,6 +22,12 @@ Want to challenge the bigger educational design? Review one question in [Design 
 
 This first release is not a curriculum, a learning app, an adopted education standard, or a service for children. Human teaching, relationships, and judgment remain central. AI is optional. Robot tutors, companions, simulated relationships, child profiling, and child records are outside this project’s scope.
 
+## Review limits
+
+This is an adult-review proposal. Automated site checks and bounded visual/keyboard review have passed, but the requested deep-security review has not completed, and real-browser-zoom and screen-reader testing remain outstanding. We do not claim security certification or WCAG conformance. See the [accessibility review](docs/ACCESSIBILITY.md) and [security-check procedure](docs/SECURITY-CHECKS.md).
+
+Public code-scanning results must be reviewed before community changes are merged. Report barriers through the [contribution guide](CONTRIBUTING.md) and private concerns through the published [security](SECURITY.md) or [conduct](CODE_OF_CONDUCT.md) policies. No child-facing use, learner-data collection, or classroom evaluation is offered.
+
 ## Ownership and licenses
 
 The repository is [Jstn-1g/open-education-proposal](https://github.com/Jstn-1g/open-education-proposal). Jstn-1g is the accountable human owner and initial maintainer, with GPT-6 assisting development and review.
