@@ -65,8 +65,8 @@
       "sha256": "585147cca55b9483860a6ce33431b4596f1f8621fc10c9ef6aeb80689f9c5806"
     },
     "MAINTENANCE.md": {
-      "bytes": 4181,
-      "sha256": "ebf4b93b9da82fb85fac3479b21f368b5d74f307c19b073f192118d2872db69c"
+      "bytes": 4152,
+      "sha256": "195a1eeffa64ecd45faf6296ec219bd1ce9ba6850d1f4187b2ef167f542ce380"
     },
     "PROPOSAL.md": {
       "bytes": 3691,
@@ -129,16 +129,16 @@
       "sha256": "7a8ae42f85843cb6b7782f4b961b1ef98108ea8d21816e499a842410efe74df4"
     },
     "docs/SECURITY-CHECKS.md": {
-      "bytes": 4082,
-      "sha256": "d379e2b4ecd8dbd4d5f373b5d91ec63c560cf7aeba3ca0a196a58f315bd6afd8"
+      "bytes": 4405,
+      "sha256": "6f1c7792a3bdc20b608f60a51e79579d182cea914b3050487460fa2c5e9da727"
     },
     "docs/SOURCES.md": {
       "bytes": 9227,
       "sha256": "3c9c172c963d04b02395dbbbe0a409d8a4d45c4112bd611b00f97aca8eda03c2"
     },
     "release.json": {
-      "bytes": 226,
-      "sha256": "e76ca7cc508626b2d6fdc1f30725d716f9375456e079ee941a06d961ff0bf143"
+      "bytes": 222,
+      "sha256": "f296918b2487625110528642cb962c61e8d250a793f7cd60c82ab4ed669e402d"
     },
     "release_check.py": {
       "bytes": 6624,

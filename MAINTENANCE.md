@@ -16,7 +16,7 @@ Maintain the proposal, source notes, static website, and contribution guidance. 
 
 Review code, dependency, and workflow changes for the risks they introduce before merging. Inspect file reads and writes, output boundaries, external requests, credentials, permissions, and third-party execution as relevant. For Action or dependency updates, verify the exact upstream version, release notes, pin, and applicable advisories. The website currently has no third-party build packages; adding one needs a clear reason and review.
 
-Run focused tests for changed behavior and the existing affected checks. The [CodeQL workflow](docs/SECURITY-CHECKS.md) is prepared to scan public main-branch changes and pull requests; its first public execution is pending. Investigate actionable findings and record the reviewed version, scope, results, and remaining limits. A completed scan is evidence for its stated scope, not certification. A separately attempted deep security scan could not start because its tool required a managed filesystem permission profile; no completed deep-scan result is claimed for this edition.
+Run focused tests for changed behavior and the existing affected checks. The [CodeQL workflow and first public result](docs/SECURITY-CHECKS.md) cover public main-branch changes and pull requests. Investigate actionable findings and record the reviewed version, scope, results, and remaining limits. A completed scan is evidence for its stated scope, not certification. A separately attempted deep security scan could not start because its tool required a managed filesystem permission profile; no completed deep-scan result is claimed for this edition.
 
 ## When expertise is needed
 
