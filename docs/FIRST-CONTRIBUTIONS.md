@@ -19,6 +19,8 @@ You can start with one example, a question about a source, or a barrier you enco
 
 **Starting point:** [The proposal](../PROPOSAL.md) and [source notes](SOURCES.md). Do not create a scoring rule or ready-to-use assessment.
 
+Use the [learning-design questions](LEARNING-DESIGN.md) to challenge one case: could the interpretation withhold access, stigmatize help-seeking, invite unnecessary recording, or add avoidable teacher work? A fictional counterexample belongs within this task, not in an additional required report.
+
 ## 2. Check one evidence claim
 
 **Best for:** Researchers, librarians, educators, and careful readers.

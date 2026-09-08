@@ -46,4 +46,6 @@ Useful signals are a corrected claim, a clearer example, a reader who can explai
 
 The next milestone is a better adult-reviewed proposal. Only then consider a small, openly licensed learning resource with a clear learning purpose, willing qualified reviewers, accessible alternatives, maintenance capacity, and evidence appropriate to its claims. A complete learning path is a longer-term ambition; we have not established the people or evidence needed to deliver it. Technology remains optional and inspectable.
 
+Use the [learning-design brief](LEARNING-DESIGN.md#before-expanding-beyond-the-proposal) to make that later decision concrete: purpose and context, supporting and contrary evidence, named people and costs, recorded disagreements, and pause conditions. Drafting the brief does not authorize a resource or establish its effectiveness.
+
 This month does not include child-facing activities, participant research, learner data, robot tutors, or AI companions. A resource or evaluation beyond this scope requires its own plan and accountable decision; this roadmap does not authorize one.

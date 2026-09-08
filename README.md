@@ -12,6 +12,8 @@ Choose a [first task](docs/FIRST-CONTRIBUTIONS.md): clarify the difference betwe
 
 Read the [proposal](PROPOSAL.md), then the [contribution guide](CONTRIBUTING.md). Use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a question, correction, or accessibility report. You do not need to code or arrive with a finished solution.
 
+Want to challenge the bigger educational design? Review one question in [Design for people, not just performance](docs/LEARNING-DESIGN.md), covering motivation, relationships, development, access, and workload. These are proposed safeguards, not claims of a proven education system.
+
 ## Now, next, and later
 
 - **Now:** Version 0.1.0 offers a draft proposal, evidence notes, an informational website, and a contributor kit for adult review.

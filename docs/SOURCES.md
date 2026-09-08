@@ -1,6 +1,6 @@
 # Sources and the limits of our claims
 
-This is a starting reading list, not a systematic literature review. Source identities and the narrow notes below were checked on **4 September 2026** against publisher pages, primary texts, official guidance, or the original abstract as specified. No source validates this proposal or a product we have not tested.
+This is a starting reading list, not a systematic literature review. The original learning and rights notes were checked on **4 September 2026** against publisher pages, primary texts, official guidance, or the original abstract as specified. The development, motivation, and feasibility additions below were checked on **7 September 2026**. No source validates this proposal or a product we have not tested.
 
 ## Learning and evidence
 
@@ -11,6 +11,17 @@ This is a starting reading list, not a systematic literature review. Source iden
 
 Our separation of instructional help and later evidence is a proposed design and reporting rule. The distinction between access support and help depends on the target skill and needs specialist review.
 
+## Development, motivation, and feasibility
+
+These additions inform the [learning-design questions](LEARNING-DESIGN.md), not a universal education model. The decisions to avoid psychological profiling, coercive rewards, constant testing, and unnecessary recording are project values and proposed safeguards; these sources do not prove their effects in our project.
+
+- **Jang, Reeve, and Deci (2010), [*Engaging Students in Learning Activities: It Is Not Autonomy Support or Structure but Autonomy Support and Structure*](https://doi.org/10.1037/a0019682).** The [author-uploaded paper](https://www.researchgate.net/publication/232481179_Engaging_Students_in_Learning_Activities_It_Is_Not_Autonomy_Support_or_Structure_but_Autonomy_Support_and_Structure) reports observations in 133 Midwestern US high-school classrooms and self-reports from 1,584 students in grades 9–11. Autonomy support and structure were compatible and associated with observed engagement; only autonomy support uniquely predicted self-reported engagement. This was cross-sectional, not randomized, and did not establish learning gains or effects for younger children. Identity, methods, results, and limitations checked. Pairing choice with guidance is our design inference, not a validated interface prescription.
+- **Yeager et al. (2019), [*A national experiment reveals where a growth mindset improves achievement*](https://www.nature.com/articles/s41586-019-1466-y).** This randomized study of US ninth-graders found modest, context-dependent benefits from one specific brief intervention. It does not establish that encouragement alone removes instructional or access barriers, or that a different intervention will help another population. Citation and indexed primary methods, results, and discussion were checked; direct publisher and [NSF manuscript](https://par.nsf.gov/servlets/purl/10163970) retrieval was intermittent, so this pass does not claim a complete full-text review or raw-data reanalysis. Do not turn this note into a mindset score or treatment recommendation.
+- **NAEYC (2020), [*Developmentally Appropriate Practice* position statement](https://www.naeyc.org/resources/position-statements/dap/contents).** This professional guidance addresses birth through age 8, considering development, individual experience, and social/cultural context. We checked the overview, relevant [developmental principles](https://www.naeyc.org/resources/position-statements/dap/principles), and [assessment guidance](https://www.naeyc.org/resources/position-statements/dap/assessing-development). They inform questions about play, relationships, context, and appropriate interpretation of evidence. This is not a product trial, all-age guidance, or an endorsement of our proposal; underlying cited studies were not all reviewed.
+- **OECD (2025), [*Results from TALIS 2024*, “The demands of teaching”](https://www.oecd.org/en/publications/results-from-talis-2024_90df6235-en/full-report/the-demands-of-teaching_0e941e2f.html).** The original survey report describes teachers' reported workload and stress, with substantial variation across education systems. We checked the administrative-work section and its lower-secondary survey context. These self-reports do not establish that our documentation or technology causes or reduces stress. Counting preparation, checking, adaptation, maintenance, and family costs is our proposed feasibility rule; no teacher time saving has been demonstrated here.
+
+The IES recommendation summaries were also rechecked on 7 September: their evidence ratings vary by recommendation. Neither an appealing theory nor a positive result in another setting settles the design of a future resource. Ask what evidence would change our mind and whose needs the existing evidence does not cover.
+
 ## Rights, access, and openness
 
 - [UNICEF, *Guidance on AI and children*, version 3.0 (December 2025)](https://www.unicef.org/innocenti/reports/policy-guidance-ai-children) — The official page confirms recommendations covering child rights, privacy, inclusion, and accountability. Guidance is not a product evaluation, a guarantee of safety, or a substitute for applicable law. Title, version, date, and summary checked; this is not a clause-by-clause review of the guidance.
@@ -20,7 +31,7 @@ Our separation of instructional help and later evidence is a proposed design and
 
 ## Link access
 
-The three DOI identifiers match the cited works. Direct automated DOI retrieval was blocked during this check; that did not establish that the links were broken. Publisher or official archive links above provide alternative access. The official UNICEF, W3C, OSI, Creative Commons, and IES pages resolved.
+The three DOI identifiers in the original learning notes match the cited works. Direct automated DOI retrieval was blocked during that check; this did not establish that the links were broken. Publisher or official archive links above provide alternative access. The official UNICEF, W3C, OSI, Creative Commons, and IES pages resolved in the original check. Access limits for the 7 September additions are recorded with the relevant notes; accessible text is not a substitute for evaluating evidence quality.
 
 ## Improve a source note
 

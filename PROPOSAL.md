@@ -35,6 +35,8 @@ One fresh answer does not establish mastery, retention, transfer, or an effectiv
 
 Make the proposal understandable. Test its distinctions with fictional examples. Correct its sources. Improve access to the public material. Record disagreements and reasons before expanding the scope.
 
+The [learning-design brief](docs/LEARNING-DESIGN.md) asks how motivation, relationships, development, access, privacy, and workload should shape future resources. Its safeguards are proposed choices for review, not proven outcomes. Reporting assistance must not become constant testing, surveillance, or a reason to withhold help.
+
 A future learning resource, child participation, or research programme would need its own design, review, and accountable decision. Joining this proposal does not enroll anyone in those activities.
 
 [Choose a first contribution](docs/FIRST-CONTRIBUTIONS.md).
