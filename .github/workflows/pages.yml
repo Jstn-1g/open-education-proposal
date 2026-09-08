@@ -1,6 +1,6 @@
 name: Publish website manually
 
-# Repository visibility and community intake are separate owner decisions.
+# Public source, merging contributions, and Pages deployment are separate decisions.
 on:
   workflow_dispatch:
 

@@ -1,8 +1,8 @@
 # Open the learning. Protect the learner.
 
-Help shape open educational resources that strengthen understanding, make useful technology inspectable, and keep people in charge.
+Help build learning materials that people can read, adapt, and improve together. The goal is stronger human understanding, with technology that people can inspect and choose whether to use.
 
-Our first proposal is simple: **show what help produced, and separately show what a learner can demonstrate on fresh work.** Keep access support available. A polished answer, a long session, or a vendor's score should not stand in for evidence of learning.
+Our first proposal is simple: **record what help was used, then separately describe what a learner can demonstrate on fresh work.** Getting an answer with help does not, by itself, show independent understanding. Keep access support available; the [proposal explains the difference between teaching help and access support](PROPOSAL.md#the-change-we-want).
 
 We want educators, researchers, accessibility specialists, families, designers, writers, and developers to challenge this proposal and make it practical.
 
@@ -10,13 +10,15 @@ We want educators, researchers, accessibility specialists, families, designers, 
 
 Choose a [first task](docs/FIRST-CONTRIBUTIONS.md): clarify the difference between instructional help and access support, check an evidence claim, or improve the website's accessibility. Each task has a small deliverable and a clear definition of done.
 
-Read the [proposal](PROPOSAL.md), then the [contribution guide](CONTRIBUTING.md). Use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a question, correction, or accessibility report. You do not need to code to help.
+Read the [proposal](PROPOSAL.md), then the [contribution guide](CONTRIBUTING.md). Use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a question, correction, or accessibility report. You do not need to code or arrive with a finished solution.
 
-## What we are building
+## Now, next, and later
 
-Version 0.1.0 contains a draft proposal, evidence notes, an informational website, and a contributor kit for adults. The longer-term ambition is a complete, openly licensed learning path that educators can inspect, adapt, and use without a proprietary model.
+- **Now:** Version 0.1.0 offers a draft proposal, evidence notes, an informational website, and a contributor kit for adult review.
+- **Next:** Aim for three first-month outputs: six fictional help-versus-access examples, one evidence note, and one accessibility report with a maintainer response. These are [planning targets, not promised deadlines](docs/ROADMAP.md).
+- **Later:** Consider a small, openly licensed learning resource only with qualified human review, capacity to maintain it, and evidence appropriate to its claims. A complete learning path without a proprietary model is the longer-term ambition, not something this release delivers.
 
-This first release is not a curriculum, a learning app, an adopted education standard, or a service for children. AI is optional. Robot tutors, companions, simulated relationships, child profiling, and child records are outside this project’s scope.
+This first release is not a curriculum, a learning app, an adopted education standard, or a service for children. Human teaching, relationships, and judgment remain central. AI is optional. Robot tutors, companions, simulated relationships, child profiling, and child records are outside this project’s scope.
 
 ## Ownership and licenses
 

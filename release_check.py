@@ -12,9 +12,11 @@ ROOT = Path(__file__).resolve().parent
 FIELDS = {"status", "repository", "maintainer", "conduct_contact", "security_contact"}
 ACCOUNT = r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?"
 REPOSITORY = re.compile(rf"https://github\.com/({ACCOUNT})/([A-Za-z0-9_.-]+)")
+# Known stale release claims only; this does not validate arbitrary factual prose.
 CANDIDATE_COPY = re.compile(
     r"local (?:release|review) candidate|not yet released|not yet an open-source release|"
-    r"no submission endpoint is active|submissions are not open|no public submission endpoint",
+    r"no submission endpoint is active|submissions are not open|no public submission endpoint|"
+    r"license\s+approval\s+and\s+repository\s+setup\s+are\s+still\s+pending",
     re.IGNORECASE,
 )
 

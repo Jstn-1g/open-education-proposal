@@ -19,6 +19,8 @@ On 6 September 2026, the browser checks passed again at the root path. The brows
 
 The initial enlarged-text review found horizontal overflow. Flexible child sizing and button wrapping were corrected, and the browser checks subsequently passed. A small-screen layout is not, by itself, proof that every zoom or assistive-technology combination works.
 
+On 7 September 2026, the browser checks passed at both root and project subpath after contribution wording and print-layout changes. A separate review of actual headless Edge 152 PDF output covered all six routes on Letter and A4, with half-inch margins and browser-generated headers/footers off. A stranded rule heading and fragmented footer were corrected; all 22 rendered pages were visually inspected, with no blank or footer-only page observed. Body text remains 11 points on paper. This is evidence for those settings, not every printer, margin choice, or PDF reader. The automated browser test checks the intended keep rules and block-footer layout; it does not inspect PDF pagination.
+
 ## Still to evaluate
 
 - Screen-reader navigation, reading order, landmark names, and link purpose with a named browser/reader combination.

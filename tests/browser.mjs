@@ -89,6 +89,22 @@ try {
     assert(await printPage.locator('h1').isVisible(), `${slug}: print heading hidden`);
     assert(!(await printPage.locator('nav').isVisible()), `${slug}: print navigation visible`);
     assert(!(await printPage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)), `${slug}: print overflow`);
+    // Check the intended keep rules and the block footer used to address the
+    // observed flex-fragmentation bug. Actual pagination still needs visual
+    // review of Letter and A4 output; computed CSS alone cannot establish it.
+    const pagination = await printPage.evaluate(() => ({
+      headings: [...document.querySelectorAll('main h1, main h2, main h3, main h4')].map(heading => ({
+        text: heading.textContent.trim(),
+        after: getComputedStyle(heading).breakAfter,
+      })),
+      footerInside: getComputedStyle(document.querySelector('.site-footer')).breakInside,
+      footerDisplay: getComputedStyle(document.querySelector('.site-footer')).display,
+    }));
+    for (const heading of pagination.headings) {
+      assert(['avoid', 'avoid-page'].includes(heading.after), `${slug}: print heading can separate from following content: ${heading.text}`);
+    }
+    assert(['avoid', 'avoid-page'].includes(pagination.footerInside), `${slug}: print footer can fragment across pages`);
+    assert.equal(pagination.footerDisplay, 'block', `${slug}: print footer must retain its reviewed block layout`);
     if (artifacts && slug === 'standard') await printPage.screenshot({ path: path.join(artifacts, 'standard-print.png'), fullPage: true });
   }
   await printContext.close();

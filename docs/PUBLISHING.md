@@ -4,11 +4,13 @@ These instructions apply at the root of the standalone `Jstn-1g/open-education-p
 
 ## Repository first, hosting separately
 
-Repository creation, source visibility, community intake, and website hosting are distinct choices. Review the exact source files and intentional public attribution before uploading them. Include only this community edition's reviewed files; never include local caches, build outputs, credentials, private records, or unrelated Git history.
+Repository creation, source visibility, merging contributions, and website hosting are distinct choices. Review the exact source files and intentional public attribution before uploading them. Include only this community edition's reviewed files; never include local caches, build outputs, credentials, private records, or unrelated Git history.
 
 Before a public release, finalize the actual owner and destination; rights and license grants; contribution terms; maintainer capacity; and reachable correction, conduct, and private security-reporting routes. Update the [license plan](../LICENSE-PLAN.md), [contribution guide](../CONTRIBUTING.md), [governance](../GOVERNANCE.md), [security instructions](../SECURITY.md), and visible website copy consistently. Do not substitute invented accounts or addresses.
 
-Publishing source does not by itself enable a website or open submissions. Keep those settings aligned with the announced state. Public copies may persist even if access is later removed.
+Before changing visibility, review the repository's existing Actions history and logs as well as its Git history, releases, and retained artifacts. GitHub makes Actions history and logs public when a private repository becomes public. Check the actual retained material; reviewing the latest source tree alone is not enough. See [visibility-change consequences](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility).
+
+Publishing source does not deploy the website, but it can immediately invite pull requests: public readers can fork the repository and propose changes even if Issues is disabled. Have private reporting, moderation, and a review plan ready before changing visibility. Keep merging paused until applicable protections and the first public security checks have been reviewed; do not describe disabled Issues as closed contribution intake. See [who can create a pull request](https://docs.github.com/en/pull-requests/how-tos/create-pull-requests/creating-a-pull-request). Public copies may persist even if access is later removed.
 
 ## What the workflows do
 

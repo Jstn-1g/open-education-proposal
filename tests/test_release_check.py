@@ -84,6 +84,39 @@ class ReleaseCheckTests(unittest.TestCase):
         self.assertTrue(any("complete LICENSE" in error for error in errors))
         self.assertTrue(any("README.md" in error for error in errors))
 
+    def test_ready_homepage_rejects_superseded_release_claim(self):
+        for claim in (
+            "License approval and repository setup are still pending.",
+            "LICENSE approval and\nrepository setup are still pending.",
+        ):
+            with self.subTest(claim=claim):
+                (self.root / "content" / "index.html").write_text(f"<p>{claim}</p>", encoding="utf-8")
+                self.assertIn(
+                    "Replace stale candidate-only wording in index.html before publication.",
+                    guard.check(self.root),
+                )
+
+    def test_actual_homepage_does_not_repeat_superseded_release_claim(self):
+        homepage = (ROOT / "content" / "index.html").read_text(encoding="utf-8")
+        self.assertNotIn("License approval and repository setup are still pending.", homepage)
+
+    def test_unrelated_pending_review_is_not_a_stale_release_claim(self):
+        (self.root / "content" / "index.html").write_text(
+            "<p>Specialist review is still pending. This proposal is not a proven intervention.</p>",
+            encoding="utf-8",
+        )
+        self.assertEqual(guard.check(self.root), [])
+
+    def test_superseded_claim_does_not_replace_candidate_status_block(self):
+        self.data["status"] = "candidate"
+        self.save()
+        (self.root / "content" / "index.html").write_text(
+            "<p>License approval and repository setup are still pending.</p>", encoding="utf-8"
+        )
+        self.assertEqual(guard.check(self.root), [
+            "Candidate is not approved for publication: status must be ready after release review."
+        ])
+
     def test_actual_rendered_frame_and_indexing_policy_are_checked(self):
         stale = self.builder_source.replace('f"Community proposal · v{VERSION}"', '"Not yet released"').replace('else "index, follow")', 'else "noindex, follow")')
         self.assertNotEqual(stale, self.builder_source)

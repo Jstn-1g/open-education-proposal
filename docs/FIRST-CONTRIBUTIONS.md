@@ -2,6 +2,8 @@
 
 Pick one small deliverable and use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) to discuss it. These tasks are for adults; none involves children, real learner records, or a study.
 
+You can start with one example, a question about a source, or a barrier you encountered. The criteria below describe a completed piece of work, not a prerequisite for asking for help. Agree a manageable next step with the maintainer; specialist review may require more time or a smaller scope.
+
 ## 1. Make the help-versus-access distinction practical
 
 **Best for:** Educators and accessibility practitioners.
@@ -32,18 +34,21 @@ Pick one small deliverable and use the [issue chooser](https://github.com/Jstn-1
 
 No systematic-review claim is expected from a one-paper check. A second source is useful if it supports a specific correction, not just as another citation.
 
-## 3. Remove one barrier to reading or contributing
+## 3. Report a barrier to reading or contributing
 
 **Best for:** Accessibility reviewers, designers, writers, and developers.
 
-**Deliverable:** One documented accessibility finding on the site or contributor documents, plus a focused change or recommendation. Reproduction details help, but are not a condition for reporting a barrier.
+**Deliverable:** One accessibility report about the site or contributor documents. A proposed remedy is welcome, not required. You do not need a fix, reproducible example, or proof of disability to report a barrier.
 
-**Done when:**
+**A useful report describes:**
 
-- The report identifies the page, setup, steps, expected behavior, and observed barrier.
-- It covers one concrete need, such as heading navigation, keyboard focus, zoom and reflow, contrast, or understandable instructions.
-- The change is checked in the same conditions and the result is recorded.
-- Any automated result is described as a check, not proof that the whole site conforms to WCAG.
+- The page or document and what you were trying to do.
+- What got in the way and what you expected instead.
+- Setup or steps you can share, if helpful. No health details are needed.
+
+**Maintainer follow-through:** Record a proposed response, a question, or a reason to defer. Keep unresolved barriers visible. A report is a contribution even when a fix is not yet available.
+
+**If a fix is implemented:** Recheck the affected task in the same conditions where possible, record the result and remaining limits, and distinguish an individual check from whole-site WCAG conformance. Do not call an untested recommendation a verified fix.
 
 Use [WCAG 2.2](https://www.w3.org/TR/WCAG22/) where relevant. Do not install extra tooling merely to produce a report if a browser or document review is sufficient.
 
