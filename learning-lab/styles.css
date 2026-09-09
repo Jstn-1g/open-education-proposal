@@ -1276,13 +1276,9 @@ button{
   overflow-wrap:anywhere;
   min-width:0
 }
-#check-fraction{
-  width:100%;
-  grid-column:1/-1
-}
 .play-actions{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr))
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,5.5rem),1fr))
 }
 .puzzle-panel .button-row{
   margin-top:0
@@ -1566,8 +1562,8 @@ button{
   white-space:nowrap
 }
 .showcase .lab-results{
-  padding:1rem 0 0;
-  margin-top:1.25rem
+  padding:1.25rem;
+  margin:0
 }
 .showcase .result-pair{
   grid-template-columns:repeat(auto-fit,minmax(min(100%,7rem),1fr));
@@ -1645,6 +1641,252 @@ button{
   .experience-picker button[aria-pressed=true]{
     color:Highlight;
     border-bottom-color:Highlight
+  }
+}
+/* Touch controls: one action row, visible choices, then the result. */
+button,.segmented-options label{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent
+}
+button{
+  min-height:3rem;
+  border-radius:12px
+}
+button:active:not(:disabled){
+  box-shadow:inset 0 0 0 2px currentColor
+}
+.control-icon{
+  width:1.125rem;
+  height:1.125rem;
+  flex:none;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+.edit-pieces{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,7.5rem),1fr));
+  gap:.65rem
+}
+.edit-pieces button,.comparison-actions button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  padding:.75rem .6rem;
+  font-size:1rem
+}
+.edit-pieces .full-only{
+  grid-column:1/-1
+}
+.play-actions{
+  gap:.5rem;
+  padding-top:.25rem;
+  border-top:1px solid var(--line)
+}
+.play-actions button{
+  padding:.5rem .25rem;
+  background:transparent;
+  border-color:transparent
+}
+.play-actions button:not(.primary){
+  font-size:.875rem
+}
+#fraction-status{
+  margin:0
+}
+.lab-grid{
+  grid-template-areas:"scene controls";
+  align-items:start
+}
+.pendulum-stage{
+  grid-area:scene
+}
+.lab-controls{
+  grid-area:controls
+}
+.setting-group{
+  clear:both;
+  margin:0 0 1rem
+}
+.setting-group legend{
+  padding:0;
+  margin-bottom:.65rem;
+  font-size:1rem
+}
+.setting-group legend small{
+  display:block;
+  font-weight:400;
+  font-size:.875rem
+}
+.segmented-options{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,4.75rem),1fr));
+  gap:.5rem
+}
+.segmented-options label{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.35rem;
+  min-height:3.25rem;
+  padding:.6rem .35rem;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#f4f8f7;
+  font-weight:600;
+  cursor:pointer
+}
+.segmented-options input{
+  margin:0;
+  width:1rem;
+  height:1rem;
+  flex:none;
+  accent-color:var(--accent)
+}
+.segmented-options label:has(:checked){
+  background:#e6f2ed;
+  border-color:var(--accent);
+  box-shadow:inset 0 0 0 1px var(--accent)
+}
+.segmented-options label:has(:focus-visible){
+  outline:3px solid #c34e0a;
+  outline-offset:3px
+}
+.segmented-options input:focus-visible{
+  outline:none
+}
+.segmented-options label:has(:disabled){
+  opacity:.5;
+  cursor:not-allowed
+}
+.comparison-actions{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr));
+  gap:.5rem;
+  margin-top:1rem
+}
+#run-model{
+  grid-column:1/-1
+}
+#lab-reset{
+  background:transparent;
+  border-color:transparent
+}
+.motion-controls button{
+  flex:1 1 8rem
+}
+.motion-controls button:hover:not(:disabled),.motion-controls button:active:not(:disabled){
+  background:#234b69;
+  color:#fff
+}
+@media(max-width:60rem){
+  .lab-grid{
+    grid-template-areas:"controls" "scene"
+  }
+  .lab-controls{
+    border-top:0;
+    padding:1rem
+  }
+  .comparison-actions{
+    grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)
+  }
+  #run-model{
+    grid-column:auto
+  }
+  .pendulum-labels{
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr));
+    padding:.65rem;
+    gap:.5rem
+  }
+  .pendulum-labels p{
+    font-size:.875rem
+  }
+  .stage-top{
+    padding:.6rem 1rem;
+    flex-wrap:nowrap
+  }
+  .stage-top .small-label{
+    max-width:16ch
+  }
+  .amount-readout{
+    justify-content:flex-end;
+    gap:.3rem .5rem
+  }
+  .amount-readout>span{
+    font-size:.875rem
+  }
+  .pieces,.fraction-world .pieces,.simple-view .pieces{
+    position:static;
+    display:flex;
+    flex-wrap:wrap;
+    height:auto;
+    padding:.75rem 1rem;
+    gap:.5rem;
+    background:#eaf4f5
+  }
+  .fraction-world .pieces button{
+    min-width:4.25rem;
+    padding:.4rem .6rem;
+    border-radius:10px
+  }
+  .fraction-world .pieces button[aria-pressed=true]{
+    box-shadow:inset 0 0 0 2px #9b6820;
+    outline:0
+  }
+  .fraction-world .pieces button:focus-visible{
+    outline:3px solid #c34e0a;
+    outline-offset:3px
+  }
+  .discovery-panel,.showcase .discovery-panel{
+    gap:.85rem;
+    padding:1rem;
+    justify-content:flex-start
+  }
+  .selected-tools>p{
+    font-size:.875rem;
+    color:var(--muted)
+  }
+}
+@media(min-width:21rem) and (max-width:40rem){
+  .playground-toolbar{
+    flex-wrap:nowrap;
+    align-items:stretch
+  }
+  .experience-picker{
+    flex:1 1 0
+  }
+  .access-bar{
+    flex:0 0 5rem;
+    margin:0
+  }
+  .access-bar button{
+    height:100%;
+    padding:.5rem;
+    font-size:.875rem
+  }
+  .playground-toolbar:has(.graphics-notice){
+    flex-wrap:wrap
+  }
+  .access-bar:has(.graphics-notice){
+    flex-basis:100%
+  }
+}
+@media(forced-colors:active){
+  .fraction-world .pieces button[aria-pressed=true]{
+    outline:3px solid Highlight;
+    outline-offset:-5px
+  }
+  .segmented-options label:has(:checked){
+    outline:2px solid Highlight;
+    outline-offset:-3px
+  }
+  .fraction-world .pieces button:focus-visible,.segmented-options label:has(:focus-visible){
+    outline:3px solid CanvasText;
+    outline-offset:3px
   }
 }
 @media print{

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
-import {pathToFileURL} from 'node:url';
+import {pathToFileURL,fileURLToPath} from 'node:url';
 import path from 'node:path';
 const {chromium}=await import(pathToFileURL(process.env.PLAYWRIGHT_MODULE||process.env.PLAYWRIGHT_MODULE_PATH).href);
 const base=process.argv[2]||'http://127.0.0.1:8773/open-education-proposal/';
@@ -55,7 +55,7 @@ try{
   assert.match(await motionPage.locator('#motion-note').innerText(),/^Motion paused/,'Activity switching must not leave a running-status message');
   await motionPage.locator('#run-model').click();await motionPage.locator('#graphics-toggle').click();
   assert.match(await motionPage.locator('#motion-note').innerText(),/^Motion paused/,'Simple view must describe the paused state');
-  await motionPage.locator('#mass').selectOption('400');
+  await motionPage.locator('input[name=mass][value="400"]').check();
   assert.match(await motionPage.locator('#motion-note').innerText(),/^Run a comparison first/);
   assert.ok(await motionPage.locator('#lab-results').isHidden());
   await motionContext.close();report.checks.push('Motion status agrees with activity/view transitions and new setups');
@@ -76,7 +76,7 @@ try{
     await demo.locator('#fraction-reset').click();await fit(page);
     await demo.locator('#choose-14').click();assert.ok(await demo.locator('#length').isHidden());
     for(const mass of ['100','200','400']){
-      await demo.locator('#mass').selectOption(mass);await demo.locator('#run-model').click();
+      await demo.locator('input[name=mass][value="'+mass+'"]').check();await demo.locator('#run-model').click();
       assert.equal(await demo.locator('#period-b').textContent(),'2.01 s');
       assert.match(await demo.locator('#lab-conclusion').textContent(),/In this model/);
       assert.equal(await demo.locator('#motion-toggle').textContent(),'Play motion');
@@ -95,6 +95,48 @@ try{
     await page.locator('.brand').click();await page.waitForURL(base+'index.html');
     assert.deepEqual(errors,[]);report.checks.push({width,large,pass:true});await ctx.close();
   }
+  for(const viewport of [{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:844,height:390}]){
+    const ctx=await browser.newContext({viewport,hasTouch:true,isMobile:true,reducedMotion:'reduce'});
+    const page=await ctx.newPage();await page.goto(base+'index.html#demo');
+    const demo=page.frameLocator('#learning-demo');await demo.locator('body.world-ready,body.simple-view').waitFor();
+    await fit(page);
+    const distance=await demo.locator('#split-piece').evaluate(e=>e.getBoundingClientRect().top-document.querySelector('#pieces').getBoundingClientRect().bottom);
+    assert.ok(distance<75,'Split is immediately next to the placed pieces on mobile');
+    await demo.locator('#split-piece').tap();assert.equal(await demo.locator('#pieces button').count(),2);
+    await demo.locator('#check-fraction').tap();assert.match(await demo.locator('#fraction-status').textContent(),/ends match/);
+    await demo.locator('#choose-14').tap();
+    assert.ok(await demo.locator('#motion-controls').isHidden(),'Motion tools appear only when a comparison exists');
+    assert.equal(await demo.locator('#comparison-announcement').textContent(),'');
+    assert.ok(await demo.locator('#comparison-announcement').evaluate(e=>!e.closest('[hidden]') && getComputedStyle(e).display!=='none' && getComputedStyle(e).visibility==='visible'),'The empty live region is exposed before Run');
+    await demo.locator('#mass label').last().tap();
+    assert.ok(await demo.locator('input[name=mass][value="400"]').isChecked());
+    await demo.locator('#run-model').scrollIntoViewIfNeeded();const before=await page.evaluate(()=>scrollY);
+    await demo.locator('#run-model').tap();await fit(page);
+    assert.ok(Math.abs(await page.evaluate(()=>scrollY)-before)<4,'Run must not jump away from the controls');
+    const order=await demo.locator('#run-model').evaluate(e=>({run:e.getBoundingClientRect().bottom,scene:document.querySelector('.pendulum-stage').getBoundingClientRect().top}));
+    assert.ok(order.scene>order.run && order.scene-order.run<80,'Scene follows directly after Run on narrow layouts');
+    assert.equal(await demo.locator('#period-b').textContent(),'2.01 s');
+    assert.match(await demo.locator('#comparison-announcement').textContent(),/Comparison ready\. A: 2.01 seconds per cycle\. B: 2.01 seconds per cycle\. In this model/);
+    await demo.locator('#motion-step').tap();assert.match(await demo.locator('#motion-note').textContent(),/Paused at 0.50 seconds/);
+    assert.deepEqual(await demo.locator('button:visible,.segmented-options label:visible').evaluateAll(els=>els.filter(e=>{const r=e.getBoundingClientRect();return r.width<44||r.height<44;}).map(e=>e.id||e.textContent)),[],'Touch targets are at least 44px in both dimensions');
+    await page.screenshot({path:fileURLToPath(new URL('touch-'+viewport.width+'.png',out)),fullPage:true});
+    await ctx.close();report.checks.push({touch:viewport,pass:true});
+  }
+  const radioContext=await browser.newContext({reducedMotion:'reduce'});const rp=await radioContext.newPage();
+  await rp.goto(labBase+'index.html?view=simple#age14');
+  await rp.locator('#loading-note').waitFor({state:'hidden'});
+  await rp.locator('input[name=mass][value="200"]').focus();await rp.keyboard.press('ArrowRight');
+  assert.ok(await rp.locator('input[name=mass][value="400"]').isChecked(),'Native arrow-key choice works');
+  for(const length of ['0.5','1','1.5'])for(const mass of ['100','200','400']){
+    await rp.locator('input[name=length][value="'+length+'"]').check();await rp.locator('input[name=mass][value="'+mass+'"]').check();
+    await rp.locator('#run-model').click();
+    assert.equal(await rp.locator('#period-b').textContent(),({'0.5':'1.42 s','1':'2.01 s','1.5':'2.46 s'})[length]);
+    assert.ok(await rp.locator('#run-model').evaluate(e=>document.activeElement===e),'Keyboard focus is not stolen by the result');
+  }
+  await rp.locator('#lab-reset').click();assert.ok(await rp.locator('input[name=length][value="1"]').isChecked());
+  assert.ok(await rp.locator('input[name=mass][value="200"]').isChecked());assert.ok(await rp.locator('#motion-controls').isHidden());
+  assert.equal(await rp.locator('#comparison-announcement').textContent(),'','Reset clears the previous result announcement');
+  await radioContext.close();report.checks.push('Native radio keyboard control, all nine setups, stable Run focus, and reset');
   const fallback=await browser.newContext({reducedMotion:'reduce'});
   await fallback.route('**/phaser-3.90.0.min.js',r=>r.abort());
   const fp=await fallback.newPage();await fp.goto(base+'index.html');const fd=fp.frameLocator('#learning-demo');

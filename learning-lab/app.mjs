@@ -15,7 +15,6 @@ if(embedded){
 if(showcase){
   document.body.classList.add('showcase');
   $('#pendulum-controls>legend').classList.add('sr-only');
-  $('#pendulum-controls').append($('#lab-results'));
 }
 let blocks = [4], selected = 0, history = [], target = 4, matched = false;
 const targets = [4, 6, 2, 8];
@@ -89,7 +88,7 @@ $('#fraction-undo').addEventListener('click',()=>{
 });
 $('#fraction-reset').addEventListener('click',()=>{
   blocks=[4];selected=0;history=[];target=4;clearMatch();renderFraction();
-  announce('Your half reaches the flag. Try “Split selected piece”.');
+  announce('Your half reaches the flag. Try “Split piece”.');
 });
 $('#puzzle').addEventListener('click',()=>{
   target=targets[(targets.indexOf(target)+1)%targets.length];clearMatch();renderFraction(false);
@@ -129,8 +128,8 @@ function setSimple(value) {
 $('#graphics-toggle').addEventListener('click',()=>setSimple(!simple));
 contrast.addEventListener('change',()=>{if(contrast.matches)setSimple(true);});
 
-const length = () => Number($('#length').value);
-const mass = () => Number($('#mass').value);
+const length = () => Number($('input[name=length]:checked').value);
+const mass = () => Number($('input[name=mass]:checked').value);
 function stopMotion() {
   if (running) $('#motion-note').textContent = 'Motion paused. Play or step through at your own pace.';
   cancelAnimationFrame(frame); frame = 0; running = false; lastFrame = null;
@@ -164,6 +163,8 @@ function playMotion() {
 function updateSetup() {
   stopMotion(); elapsed = 0; hasRun = false;
   $('#lab-results').hidden = true; $('#motion-toggle').disabled = true; $('#motion-step').disabled = true;
+  $('#motion-controls').hidden = true;
+  $('#comparison-announcement').textContent = '';
   $$('input[name=prediction]').forEach(input => { input.checked = false; });
   $('#setup-label').textContent = `${length()} m · ${mass()} g`;
   const y = 45 + 150 * length();
@@ -195,7 +196,9 @@ $('#run-model').addEventListener('click', () => {
   $('#model-explanation').textContent = length() === 1 ? 'The lengths match, so the model calculates the same period even when the masses differ.' : 'The model links a longer pivot-to-bob-centre distance to a longer cycle, and a shorter distance to a shorter cycle. Mass does not change the calculated period.';
   $('#pendulum-scene-title').textContent = `Ideal simulation. A: ${period(1).toFixed(2)} seconds per cycle. B: ${period(length()).toFixed(2)} seconds per cycle.`;
   $('#lab-results').hidden = false; $('#motion-toggle').disabled = false; $('#motion-step').disabled = false;
-  $('#lab-conclusion').focus();
+  $('#motion-controls').hidden = false;
+  // This live region is already exposed before Run, unlike the hidden result panel.
+  $('#comparison-announcement').textContent = `Comparison ready. A: ${period(1).toFixed(2)} seconds per cycle. B: ${period(length()).toFixed(2)} seconds per cycle. ${$('#lab-conclusion').textContent}`;
   drawMotion();
   if (!reduced.matches && !simple) playMotion();
   else $('#motion-note').textContent = 'Motion paused. Play or step through at your own pace.';
@@ -206,7 +209,7 @@ $('#motion-step').addEventListener('click', () => {
   stopMotion(); elapsed+=period(1)/4;drawMotion(elapsed);
   $('#motion-note').textContent='Paused at '+elapsed.toFixed(2)+' seconds. A: '+(elapsed/period(1)).toFixed(2)+' cycles; B: '+(elapsed/period(length())).toFixed(2)+' cycles.';
 });
-$('#lab-reset').addEventListener('click', () => { $('#length').value = '1'; $('#mass').value = '200'; updateSetup(); });
+$('#lab-reset').addEventListener('click', () => { $('input[name=length][value="1"]').checked = true; $('input[name=mass][value="200"]').checked = true; updateSetup(); });
 reduced.addEventListener('change', () => { if (reduced.matches) { stopMotion(); $('#motion-note').textContent = 'Reduced motion: paused. Results remain available.'; } });
 document.addEventListener('visibilitychange', () => { if (document.hidden) {stopMotion();world?.pause();} else syncWorld(); });
 function chooseAge(age, updateHash = true) {
