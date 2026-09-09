@@ -12,7 +12,7 @@ assert(['127.0.0.1', 'localhost'].includes(url.hostname), 'Browser review is loo
 const artifacts = process.argv[3];
 if (artifacts) await mkdir(artifacts, { recursive: true });
 const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {}) });
-const routes = ['index', 'standard', 'open-source', 'contribute', 'governance', '404'];
+const routes = ['discussion', 'standard', 'open-source', 'contribute', 'governance', '404'];
 const reports = [];
 let accessibilityTreeChecks = 0;
 let downloadChecks = 0;
@@ -110,13 +110,9 @@ try {
       assert.equal(metrics.h1, 1);
       assert.equal(metrics.scripts, 0);
       assert.equal(metrics.controls, 0);
-      if (slug === 'index') {
-        assert.equal(await page.locator('#demo').count(), 1, 'Homepage must contain one guided demo');
-        const heroLink = page.locator('.hero a[href="#demo"]');
-        assert.equal(await heroLink.count(), 1, 'Hero must offer the in-page demo');
-        await tabTo(page, heroLink, 'Hero demo link');
-        await page.keyboard.press('Enter');
-        assert.equal(new URL(page.url()).hash, '#demo');
+      if (slug === 'discussion') {
+        assert.equal(await page.locator('#demo').count(), 1, 'Discussion page must retain both guided cases');
+        await page.locator('#demo').scrollIntoViewIfNeeded();
         assert(await page.locator('#demo .demo-status').isVisible(), 'Review status must be visible before disclosure');
         assert((await page.locator('#demo .demo-status').innerText()).includes('Not yet specialist-reviewed.'));
         assert.equal(await page.locator('#demo details .demo-status').count(), 0, 'Review status cannot be hidden in a disclosure');
@@ -130,7 +126,7 @@ try {
             `${cardSelector}: print copy must not duplicate screen content`);
           await verifyDisclosureState(page, session, cardSelector, false);
           const summary = page.locator(`${cardSelector} summary`);
-          await page.keyboard.press('Tab');
+          await tabTo(page, summary, `${cardSelector}: discussion control`);
           await verifyKeyboardFocus(summary, `${cardSelector} at ${width}`);
           await page.keyboard.press(index === 0 ? 'Enter' : 'Space');
           await verifyDisclosureState(page, session, cardSelector, true);
@@ -205,7 +201,7 @@ try {
     await page.addStyleTag({ content: 'html { font-size: 200% !important; } * { line-height: 1.5 !important; letter-spacing: .12em !important; word-spacing: .16em !important; } p { margin-bottom: 2em !important; }' });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
     assert(!overflow, `${slug}: overflow at 200% text and spacing overrides`);
-    if (slug === 'index') {
+    if (slug === 'discussion') {
       for (const cardSelector of demoCards) {
         const summary = page.locator(`${cardSelector} summary`);
         await tabTo(page, summary, `${cardSelector} under forced colors`);
@@ -228,7 +224,7 @@ try {
     assert(await printPage.locator('h1').isVisible(), `${slug}: print heading hidden`);
     assert(!(await printPage.locator('nav').isVisible()), `${slug}: print navigation visible`);
     assert(!(await printPage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)), `${slug}: print overflow`);
-    if (slug === 'index') {
+    if (slug === 'discussion') {
       for (const cardSelector of demoCards) {
         assert(!(await printPage.locator(`${cardSelector} details`).isVisible()),
           `${cardSelector}: interactive disclosure must not duplicate printed reasoning`);

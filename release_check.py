@@ -78,6 +78,7 @@ def check(root: Path = ROOT, *, github_repository: str = "") -> list[str]:
             builder.build(output)
             for slug in builder.PAGES:
                 public_copy[f"{slug}.html"] = (output / f"{slug}.html").read_text(encoding="utf-8")
+            public_copy["learning-lab/index.html"] = (output / "learning-lab/index.html").read_text(encoding="utf-8")
             manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
             expected_version = "0.1.0" if data["status"] == "ready" else "0.1.0-candidate"
             if manifest.get("status") != data["status"] or manifest.get("version") != expected_version:

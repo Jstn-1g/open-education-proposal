@@ -8,7 +8,7 @@ Automated checks help us find problems. A completed run is evidence about a part
 
 The workflow uses full-commit action pins, GitHub-hosted runners, and no project build or dependency-install commands. Its token can read source and upload security findings; it cannot publish the site or modify repository contents. Checkout does not persist credentials. It uses `pull_request`, never `pull_request_target`, so fork contributions do not receive elevated repository access. Do not enable write tokens or secret access for fork pull requests to make a failed scan pass. [GitHub's guidance explains pull-request result uploads](https://docs.github.com/en/code-security/reference/code-scanning/troubleshoot-analysis-errors/resource-not-accessible).
 
-The website remains plain HTML and CSS. CodeQL does not add JavaScript, an AI service, or a dependency to the published site. Scan results are uploaded to GitHub; the workflow disables separate CodeQL database uploads.
+The site is statically hosted. Proposal/discussion pages remain script-free; the interactive demonstrator uses project JavaScript modules and a locally bundled Phaser renderer. CodeQL covers source analysis, not every execution path or third-party dependency vulnerability. No AI service is used by the site. Scan results are uploaded to GitHub; the workflow disables separate CodeQL database uploads.
 
 ## First run and ongoing review
 
