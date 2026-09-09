@@ -106,6 +106,8 @@ try{
     await demo.locator('#check-fraction').tap();assert.match(await demo.locator('#fraction-status').textContent(),/ends match/);
     await demo.locator('#choose-14').tap();
     assert.ok(await demo.locator('#motion-controls').isHidden(),'Motion tools appear only when a comparison exists');
+    assert.equal(await demo.locator('#comparison-announcement').textContent(),'');
+    assert.ok(await demo.locator('#comparison-announcement').evaluate(e=>!e.closest('[hidden]') && getComputedStyle(e).display!=='none' && getComputedStyle(e).visibility==='visible'),'The empty live region is exposed before Run');
     await demo.locator('#mass label').last().tap();
     assert.ok(await demo.locator('input[name=mass][value="400"]').isChecked());
     await demo.locator('#run-model').scrollIntoViewIfNeeded();const before=await page.evaluate(()=>scrollY);
@@ -114,6 +116,7 @@ try{
     const order=await demo.locator('#run-model').evaluate(e=>({run:e.getBoundingClientRect().bottom,scene:document.querySelector('.pendulum-stage').getBoundingClientRect().top}));
     assert.ok(order.scene>order.run && order.scene-order.run<80,'Scene follows directly after Run on narrow layouts');
     assert.equal(await demo.locator('#period-b').textContent(),'2.01 s');
+    assert.match(await demo.locator('#comparison-announcement').textContent(),/Comparison ready\. A: 2.01 seconds per cycle\. B: 2.01 seconds per cycle\. In this model/);
     await demo.locator('#motion-step').tap();assert.match(await demo.locator('#motion-note').textContent(),/Paused at 0.50 seconds/);
     assert.deepEqual(await demo.locator('button:visible,.segmented-options label:visible').evaluateAll(els=>els.filter(e=>{const r=e.getBoundingClientRect();return r.width<44||r.height<44;}).map(e=>e.id||e.textContent)),[],'Touch targets are at least 44px in both dimensions');
     await page.screenshot({path:fileURLToPath(new URL('touch-'+viewport.width+'.png',out)),fullPage:true});
@@ -132,6 +135,7 @@ try{
   }
   await rp.locator('#lab-reset').click();assert.ok(await rp.locator('input[name=length][value="1"]').isChecked());
   assert.ok(await rp.locator('input[name=mass][value="200"]').isChecked());assert.ok(await rp.locator('#motion-controls').isHidden());
+  assert.equal(await rp.locator('#comparison-announcement').textContent(),'','Reset clears the previous result announcement');
   await radioContext.close();report.checks.push('Native radio keyboard control, all nine setups, stable Run focus, and reset');
   const fallback=await browser.newContext({reducedMotion:'reduce'});
   await fallback.route('**/phaser-3.90.0.min.js',r=>r.abort());

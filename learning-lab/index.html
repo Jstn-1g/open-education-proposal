@@ -72,9 +72,10 @@
           <div id="motion-controls" class="motion-controls" hidden><p id="graph-window" hidden>Swing angle: A above, B below · 0–4 seconds</p><button type="button" id="motion-toggle" disabled>Play motion</button><button type="button" id="motion-step" disabled>Step ¼ cycle of A</button><span id="motion-note" role="status">Run a comparison first. Then play or step through.</span></div>
         </div>
       </div>
+      <p id="comparison-announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
       <div id="lab-results" class="lab-results" hidden>
         <div class="result-pair"><div><span>A · time per cycle</span><strong id="period-a">2.01 s</strong></div><div><span>B · time per cycle</span><strong id="period-b">2.01 s</strong></div></div>
-        <p id="lab-conclusion" role="status" tabindex="-1"></p><p id="prediction-readback" class="quiet" hidden></p>
+        <p id="lab-conclusion"></p><p id="prediction-readback" class="quiet" hidden></p>
         <details class="full-only"><summary>How to read the moving lines</summary><p>Each line shows one pendulum’s angle, from −8° to +8°. Both use the same four-second window.</p><p>When the lines match, the rhythms match in this model. This does not mean the balls move at the same speed.</p></details>
         <details class="full-only"><summary>Why does the model do that?</summary><p id="model-explanation"></p><p>It uses T = 2π√(L/g), with g = 9.81 m/s². Mass is absent from this formula. Both start at 8°. We approximate small swings and ignore air resistance, friction, string mass, and stretch.</p><p>A model shows consequences of its assumptions. It cannot, by itself, establish what every real pendulum does.</p></details>
       </div>

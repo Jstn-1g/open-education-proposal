@@ -164,6 +164,7 @@ function updateSetup() {
   stopMotion(); elapsed = 0; hasRun = false;
   $('#lab-results').hidden = true; $('#motion-toggle').disabled = true; $('#motion-step').disabled = true;
   $('#motion-controls').hidden = true;
+  $('#comparison-announcement').textContent = '';
   $$('input[name=prediction]').forEach(input => { input.checked = false; });
   $('#setup-label').textContent = `${length()} m · ${mass()} g`;
   const y = 45 + 150 * length();
@@ -196,7 +197,8 @@ $('#run-model').addEventListener('click', () => {
   $('#pendulum-scene-title').textContent = `Ideal simulation. A: ${period(1).toFixed(2)} seconds per cycle. B: ${period(length()).toFixed(2)} seconds per cycle.`;
   $('#lab-results').hidden = false; $('#motion-toggle').disabled = false; $('#motion-step').disabled = false;
   $('#motion-controls').hidden = false;
-  // The live result announces without pulling the viewport away from the scene.
+  // This live region is already exposed before Run, unlike the hidden result panel.
+  $('#comparison-announcement').textContent = `Comparison ready. A: ${period(1).toFixed(2)} seconds per cycle. B: ${period(length()).toFixed(2)} seconds per cycle. ${$('#lab-conclusion').textContent}`;
   drawMotion();
   if (!reduced.matches && !simple) playMotion();
   else $('#motion-note').textContent = 'Motion paused. Play or step through at your own pace.';

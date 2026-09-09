@@ -153,8 +153,8 @@
       "sha256": "dfb135c0fc89b233ac7c2637d4d27f3a0a7fc7bb96c5fd67f38349ba4bf2427a"
     },
     "learning-lab/app.mjs": {
-      "bytes": 14889,
-      "sha256": "d51958f8deb48f7e7af744b41c99f33ad64f0e048092f3e7194d7d201fb6052d"
+      "bytes": 15145,
+      "sha256": "b2a89aa8fed66d0ff5a75da6a1a6441d518d0fa12027f37414e8cf6082f51672"
     },
     "learning-lab/art/clockwork-room.png": {
       "bytes": 2042437,
@@ -169,8 +169,8 @@
       "sha256": "b7873365e9316cfe83c9477bb6ca6b7c5d244a3b6da5b7b040c125d19e5ca7e8"
     },
     "learning-lab/index.html": {
-      "bytes": 14174,
-      "sha256": "81e9bfdca94f58ee9cc6571e602af65c63e9d83d8b55267ba64660cb2432488c"
+      "bytes": 14257,
+      "sha256": "622d73f06fb7b41dc2e2bc22bf7735b493af09185f6cb0b063e62324697a2f81"
     },
     "learning-lab/model.mjs": {
       "bytes": 1739,
@@ -217,8 +217,8 @@
       "sha256": "f060d9dcb85a68d3861cb902053c9a6832667caf9a2e9b691f601d797dcb4ea3"
     },
     "tests/learning-lab-browser.mjs": {
-      "bytes": 13315,
-      "sha256": "9379e56778b157d596b2bef771d921eb03cfaa460cca1cbda3ea3bf44d8a4585"
+      "bytes": 13927,
+      "sha256": "7da805508c230991305c63fc6a9cd29957d4c8a4251d1d0715688bb89bb25995"
     },
     "tests/model.test.mjs": {
       "bytes": 2086,
