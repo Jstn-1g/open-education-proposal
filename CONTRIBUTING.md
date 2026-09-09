@@ -15,6 +15,8 @@ Join the existing [fictional-case](https://github.com/Jstn-1g/open-education-pro
 3. Submit a pull request for an agreed change, or ask a maintainer to help turn the text proposal into a patch.
 4. A human maintainer reviews the evidence and affected material, then records acceptance, requested revisions, or closure with reasons and credit.
 
+The separate [routine-maintenance delegation](GOVERNANCE.md#routine-maintenance-under-owner-authorization) does not authorize automatic acceptance of outside contributions. Reports and proposed changes receive an actual human decision; response time is best effort.
+
 Maintainer-assisted changes depend on available capacity. There is no guaranteed response time. The maintainer may narrow or defer work with a reason.
 
 ## Include what a reviewer needs

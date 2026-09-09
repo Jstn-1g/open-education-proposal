@@ -26,6 +26,8 @@ This first release is not a curriculum, a learning app, an adopted education sta
 
 ## Review limits
 
+The changes in [PR #5](https://github.com/Jstn-1g/open-education-proposal/pull/5) and [PR #6](https://github.com/Jstn-1g/open-education-proposal/pull/6) were released under owner authorization with AI-assisted review and automated checks. Their records do not establish the per-change human review described by the then-published guidance. The [routine-maintenance rule](GOVERNANCE.md#routine-maintenance-under-owner-authorization) has now been clarified prospectively; it does not retrospectively confer human or specialist review.
+
 This is an adult-review proposal. Automated site checks and bounded visual/keyboard review have passed, but the requested deep-security review has not completed, and real-browser-zoom and screen-reader testing remain outstanding. We do not claim security certification or WCAG conformance. See the [accessibility review](docs/ACCESSIBILITY.md) and [security-check procedure](docs/SECURITY-CHECKS.md).
 
 Public code-scanning results must be reviewed before community changes are merged. Report barriers through the [contribution guide](CONTRIBUTING.md) and private concerns through the published [security](SECURITY.md) or [conduct](CODE_OF_CONDUCT.md) policies. No child-facing use, learner-data collection, or classroom evaluation is offered.

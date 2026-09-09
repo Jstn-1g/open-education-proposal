@@ -37,16 +37,16 @@
       "sha256": "1050c970e899350dfc59c897bcc75f08aeb24c97fa91a801ef4f5b3d39ed0ec2"
     },
     "CONTRIBUTING.md": {
-      "bytes": 3467,
-      "sha256": "7b5867c079347e2c37c0390bd625e618258ba3bbda3c4151aa46955db637f5bb"
+      "bytes": 3734,
+      "sha256": "26deba0cb8be56bdfc13e0f13c1b329c1cbd7dc16525f3e5bdf880800327195f"
     },
     "DEVELOPMENT.md": {
       "bytes": 3631,
       "sha256": "6883b11668720fca38c11a8a3e7b163aa32c15e1a55e27fae1b9eaca59f32602"
     },
     "GOVERNANCE.md": {
-      "bytes": 3090,
-      "sha256": "b45eaa04d4542825d1422c072bf70b0f5d700c1ef091a11ef13f2da44e67e37f"
+      "bytes": 5180,
+      "sha256": "430168add00bfc6d6f4dd7ee953a5f07b3cdeeea6c30b41658acc40f25ec0a89"
     },
     "LICENSE": {
       "bytes": 11358,
@@ -65,16 +65,16 @@
       "sha256": "585147cca55b9483860a6ce33431b4596f1f8621fc10c9ef6aeb80689f9c5806"
     },
     "MAINTENANCE.md": {
-      "bytes": 4152,
-      "sha256": "195a1eeffa64ecd45faf6296ec219bd1ce9ba6850d1f4187b2ef167f542ce380"
+      "bytes": 4405,
+      "sha256": "c015ef17e0e374805d8b595877d8e20d5b4f091b23707cd49c8cf45c47c3e325"
     },
     "PROPOSAL.md": {
       "bytes": 3990,
       "sha256": "e2226b06c3fad817b4056ebaa828a7ef7ae0a592e2c90030830a3ba9170d6ab4"
     },
     "README.md": {
-      "bytes": 5787,
-      "sha256": "8b5b81a59cb541b7c09186c33130d8ec089cc9a7bda07a237fc4911e312aef34"
+      "bytes": 6321,
+      "sha256": "41d839f3656ff0aa4c91c6170732b05055267c07824c6588a0b1ce657ddd331a"
     },
     "SECURITY.md": {
       "bytes": 1838,
@@ -93,8 +93,8 @@
       "sha256": "218aa37c50b3a428ea5907e16ef247e65ec918852a9b9d005b5d69d3a54a3c44"
     },
     "content/governance.html": {
-      "bytes": 5101,
-      "sha256": "37b72d952c27975725ab0532d255943e90f5f99757f0f69031c97eb8ecdfb88f"
+      "bytes": 5456,
+      "sha256": "c05dbb962bc820681ddfb2f7beee438a62cfe15eaa64a5391523414e693eb54c"
     },
     "content/index.html": {
       "bytes": 4517,

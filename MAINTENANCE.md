@@ -9,7 +9,7 @@ Maintain the proposal, source notes, static website, and contribution guidance. 
 1. Identify one concrete problem and a small useful change. Keep the scope understandable in a short issue or pull-request description.
 2. Draft the change, using GPT-6 if helpful. Check cited sources and any copied material directly. Disclose material AI assistance in the change description.
 3. Run the standard-library checks in [DEVELOPMENT.md](DEVELOPMENT.md). Inspect affected pages and links; test keyboard access and narrow screens for layout changes. A wording correction needs an appropriate review, not a new test suite.
-4. Have Jstn-1g or a delegated human maintainer review the diff, results, limitations, and rights before merging. Use pull requests and passing CI. A sole maintainer's review is not independent review; disclose that limitation where it matters.
+4. Use reviewed pull requests and passing required checks. Outside the narrowly delegated routine-correction lane in [GOVERNANCE.md](GOVERNANCE.md#routine-maintenance-under-owner-authorization), Jstn-1g or a delegated human maintainer reviews the diff, results, limitations, and rights and decides before merging. In the delegated lane, record AI-assisted review and the applicable owner authorization; do not label it per-change human review. A sole maintainer's review is not independent review.
 5. Record reasons for substantive changes and credit the contributors. Publishing the website remains a deliberate release action after the publication check passes.
 
 ## Security review follows the change
