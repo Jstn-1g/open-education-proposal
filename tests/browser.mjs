@@ -20,6 +20,10 @@ let demoCaseChecks = 0;
 let demoPrintChecks = 0;
 let demoKeyboardFocusChecks = 0;
 const demoCards = ['#demo-c1', '#demo-c2'];
+const demoSummaryNames = {
+  '#demo-c1': 'What can this response show? Compare two fractions.',
+  '#demo-c2': 'What can this response show? Decode a printed word.',
+};
 const normalizeText = text => text.replace(/\s+/g, ' ').trim();
 
 async function verifyDraftDownload(page, context, link, keyboard = false) {
@@ -63,11 +67,15 @@ async function verifyKeyboardFocus(target, label) {
 async function verifyDisclosureState(page, session, cardSelector, expanded) {
   assert.equal(await page.locator(`${cardSelector} details`).evaluate(details => details.open), expanded);
   assert.equal(await page.locator(`${cardSelector} .demo-reasoning`).isVisible(), expanded);
+  assert.equal(normalizeText(await page.locator(`${cardSelector} summary`).innerText()), 'What can this response show?',
+    `${cardSelector}: visible disclosure question must remain concise`);
   const { root } = await session.send('DOM.getDocument');
   const { nodeId } = await session.send('DOM.querySelector', { nodeId: root.nodeId, selector: `${cardSelector} summary` });
   const { nodes } = await session.send('Accessibility.getPartialAXTree', { nodeId, fetchRelatives: false });
-  const summary = nodes.find(node => !node.ignored && node.name?.value === 'What can this response show?');
-  assert(summary, `${cardSelector}: disclosure has no accessible name`);
+  const summary = nodes.find(node => !node.ignored && node.properties?.some(property => property.name === 'expanded'));
+  assert(summary, `${cardSelector}: native disclosure is missing from the accessibility tree`);
+  assert.equal(summary.name?.value, demoSummaryNames[cardSelector],
+    `${cardSelector}: accessible name must include the visible question and case context`);
   assert.equal(summary.properties?.find(property => property.name === 'expanded')?.value.value, expanded,
     `${cardSelector}: expanded state is not exposed correctly in the accessibility tree`);
 }
@@ -127,6 +135,10 @@ try {
           await page.keyboard.press(index === 0 ? 'Enter' : 'Space');
           await verifyDisclosureState(page, session, cardSelector, true);
           await page.keyboard.press(index === 0 ? 'Space' : 'Enter');
+          await verifyDisclosureState(page, session, cardSelector, false);
+          await summary.click();
+          await verifyDisclosureState(page, session, cardSelector, true);
+          await summary.click();
           await verifyDisclosureState(page, session, cardSelector, false);
           await summary.click();
           await verifyDisclosureState(page, session, cardSelector, true);

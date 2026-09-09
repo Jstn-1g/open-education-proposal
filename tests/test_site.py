@@ -418,6 +418,17 @@ class SiteTests(unittest.TestCase):
                        "not a lesson, assessment, or accommodation rule", "CC BY 4.0"):
             self.assertIn(phrase, visible)
 
+    def test_demo_controls_include_visible_case_context(self):
+        for base in ("/", "/open-education-proposal/"):
+            home = self.build(base)["index.html"]
+            summaries = [attrs for tag, attrs in home.tags if tag == "summary"]
+            self.assertEqual(len(summaries), 2)
+            for case, attrs in zip(("c1", "c2"), summaries):
+                expected = [f"demo-{case}-question", f"demo-{case}-title"]
+                self.assertEqual(attrs.get("aria-labelledby", "").split(), expected)
+                for identifier in expected:
+                    self.assertIn(identifier, home.ids)
+
     def make_pre_download_output(self, status):
         self.build()
         download = self.output / "help-and-access-draft.md"
