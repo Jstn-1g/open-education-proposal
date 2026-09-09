@@ -153,8 +153,8 @@
       "sha256": "dfb135c0fc89b233ac7c2637d4d27f3a0a7fc7bb96c5fd67f38349ba4bf2427a"
     },
     "learning-lab/app.mjs": {
-      "bytes": 14735,
-      "sha256": "d6c33b59c10b5319e844c068b583a486ee4bd2fc08cf5053d6c1399ff0f1662c"
+      "bytes": 14889,
+      "sha256": "d51958f8deb48f7e7af744b41c99f33ad64f0e048092f3e7194d7d201fb6052d"
     },
     "learning-lab/art/clockwork-room.png": {
       "bytes": 2042437,
@@ -169,8 +169,8 @@
       "sha256": "b7873365e9316cfe83c9477bb6ca6b7c5d244a3b6da5b7b040c125d19e5ca7e8"
     },
     "learning-lab/index.html": {
-      "bytes": 13431,
-      "sha256": "07e4244f3288eb8942d776846a4fd495923615f25054071230f2091575822735"
+      "bytes": 14174,
+      "sha256": "81e9bfdca94f58ee9cc6571e602af65c63e9d83d8b55267ba64660cb2432488c"
     },
     "learning-lab/model.mjs": {
       "bytes": 1739,
@@ -185,8 +185,8 @@
       "sha256": "14a87a75612ee82d830b88db3ded0db4b2f3345d8b3e436f7d301d9f3b917eff"
     },
     "learning-lab/styles.css": {
-      "bytes": 28382,
-      "sha256": "14bb0ca7634741c64924bdff223d0f39eea24f28fadcdbcfa1ceeb056183f530"
+      "bytes": 33303,
+      "sha256": "ca9bc7af87de1bd19d5f613c4942e8197af4ddbd28a44bbf497a6fbcd6f5b34b"
     },
     "learning-lab/vendor/PHASER-LICENSE.txt": {
       "bytes": 1100,
@@ -217,8 +217,8 @@
       "sha256": "f060d9dcb85a68d3861cb902053c9a6832667caf9a2e9b691f601d797dcb4ea3"
     },
     "tests/learning-lab-browser.mjs": {
-      "bytes": 9477,
-      "sha256": "12f1df395d07216e3a492ed2c742e8e2bd4274623dbd33272cce9c7645cbfd76"
+      "bytes": 13315,
+      "sha256": "9379e56778b157d596b2bef771d921eb03cfaa460cca1cbda3ea3bf44d8a4585"
     },
     "tests/model.test.mjs": {
       "bytes": 2086,

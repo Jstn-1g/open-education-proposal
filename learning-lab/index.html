@@ -43,11 +43,11 @@
           </div>
         </div>
         <div class="discovery-panel">
-          <p id="fraction-status" role="status" aria-live="polite" aria-atomic="true">Your half reaches the flag. Try “Split selected piece”.</p>
-          <div class="selected-tools"><p id="split-note">Piece 1 selected · 1/2</p><div class="button-row edit-pieces"><button type="button" id="split-piece" class="primary">Split selected piece</button><button type="button" id="remove-piece" class="full-only">Remove</button></div></div>
+          <div class="selected-tools"><p id="split-note">Piece 1 selected · 1/2</p><div class="button-row edit-pieces"><button type="button" id="split-piece" class="primary"><svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v18M8 7H3v10h5M16 7h5v10h-5"/></svg>Split piece</button><button type="button" id="check-fraction"><svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12 4 4L19 6"/></svg>Check bridge</button><button type="button" id="remove-piece" class="full-only">Remove</button></div></div>
+          <p id="fraction-status" role="status" aria-live="polite" aria-atomic="true">Your half reaches the flag. Try “Split piece”.</p>
           <div class="fraction-toolbar full-only"><span id="split-label">Add a piece</span><div class="button-row piece-palette" role="group" aria-labelledby="split-label"><button type="button" data-add="4"><span class="palette-bar half" aria-hidden="true"></span><strong>+ 1/2</strong></button><button type="button" data-add="2"><span class="palette-bar quarter" aria-hidden="true"></span><strong>+ 1/4</strong></button><button type="button" data-add="1"><span class="palette-bar eighth" aria-hidden="true"></span><strong>+ 1/8</strong></button></div></div>
-        <div class="play-actions"><button type="button" id="check-fraction">Check my bridge</button><button type="button" id="fraction-undo" disabled>Undo</button><button type="button" id="fraction-reset">Start again</button></div>
-        <div id="puzzle-panel" class="puzzle-panel"><div class="button-row"><button type="button" id="puzzle-help">Show one way</button><button type="button" id="puzzle" class="full-only">Next flag</button></div></div>
+        <div class="play-actions"><button type="button" id="fraction-undo" disabled>Undo</button><button type="button" id="fraction-reset">Start again</button><button type="button" id="puzzle-help">Show one way</button></div>
+        <div id="puzzle-panel" class="puzzle-panel full-only"><div class="button-row"><button type="button" id="puzzle">Next flag</button></div></div>
         </div></div>
       </fieldset>
       <details class="connection"><summary>See it on a number line</summary><p>The filled amount has a place between 0 and 1.</p><svg viewBox="0 0 600 110" role="img" aria-labelledby="line-title"><title id="line-title">One half on a number line from zero to one</title><line x1="30" y1="40" x2="570" y2="40" class="number-axis"/><path d="M30 30v20 M300 32v16 M570 30v20" class="number-axis"/><line id="amount-line" x1="30" y1="40" x2="300" y2="40" class="amount-line"/><circle id="amount-dot" cx="300" cy="40" r="9"/><text x="30" y="85">0</text><text x="300" y="85">1/2</text><text x="570" y="85">1 whole</text></svg></details>
@@ -57,20 +57,20 @@
       <p class="model-note">A simplified model for small swings—not a real experiment. One cycle is a full back-and-forth.</p>
       <noscript><p class="notice">Static example: with length 1 m, both a 100 g bob and a 200 g bob have a calculated period of about 2.01 seconds in this ideal model. Enable JavaScript to compare setups.</p></noscript>
       <div class="lab-grid">
+        <fieldset id="pendulum-controls" class="lab-controls" disabled>
+          <legend>Set up B</legend>
+          <fieldset id="length" class="setting-group full-only"><legend>Length <small>From the hanging point to the ball’s centre</small></legend><div class="segmented-options"><label><input type="radio" name="length" value="0.5"><span>0.5 m</span></label><label><input type="radio" name="length" value="1" checked><span>1 m</span></label><label><input type="radio" name="length" value="1.5"><span>1.5 m</span></label></div></fieldset>
+          <fieldset id="mass" class="setting-group"><legend>Mass of B’s ball <small>The hanging ball is called a bob.</small></legend><div class="segmented-options"><label><input type="radio" name="mass" value="100"><span>100 g</span></label><label><input type="radio" name="mass" value="200" checked><span>200 g</span></label><label><input type="radio" name="mass" value="400"><span>400 g</span></label></div></fieldset>
+          <p id="test-design" class="test-design">Only mass changes. Both lengths stay the same.</p>
+          <details class="prediction-choice full-only"><summary>Make a prediction (optional)</summary><fieldset class="prediction"><legend>B will complete each cycle…</legend><label><input type="radio" name="prediction" value="faster"> In less time</label><label><input type="radio" name="prediction" value="same"> In the same time</label><label><input type="radio" name="prediction" value="slower"> In more time</label></fieldset></details>
+          <div class="comparison-actions"><button type="button" id="run-model" class="primary"><svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 4 12 8-12 8Z"/></svg>Run comparison</button><button type="button" id="lab-reset">Reset setup</button></div>
+        </fieldset>
         <div class="pendulum-stage">
           <div class="pendulum-labels"><p><strong>A</strong> Reference<span>1 m · 100 g</span></p><p><strong>B</strong> Your setup<span id="setup-label">1 m · 200 g</span></p></div>
           <div id="clockwork-scene" class="scene-surface" aria-hidden="true"></div>
           <svg id="pendulum-scene" viewBox="0 0 640 320" role="img" aria-labelledby="pendulum-scene-title"><title id="pendulum-scene-title">Two pendulums ready to compare</title><path d="M45 35H595" class="support-line"/><path d="M160 45V285 M480 45V285" class="reference-line"/><g id="swing-a"><line x1="160" y1="45" x2="160" y2="195" class="string"/><circle cx="160" cy="195" r="18" class="bob-a"/><text x="160" y="201" class="bob-letter">A</text></g><g id="swing-b"><line id="string-b" x1="480" y1="45" x2="480" y2="195" class="string"/><circle id="bob-b" cx="480" cy="195" r="22" class="bob-b"/><text id="bob-b-letter" x="480" y="201" class="bob-letter">B</text></g><circle cx="160" cy="45" r="5" class="pivot"/><circle cx="480" cy="45" r="5" class="pivot"/></svg>
-          <div class="motion-controls"><p id="graph-window" hidden>Swing angle: A above, B below · 0–4 seconds</p><button type="button" id="motion-toggle" disabled>Play motion</button><button type="button" id="motion-step" disabled>Step ¼ cycle of A</button><span id="motion-note" role="status">Run a comparison first. Then play or step through.</span></div>
+          <div id="motion-controls" class="motion-controls" hidden><p id="graph-window" hidden>Swing angle: A above, B below · 0–4 seconds</p><button type="button" id="motion-toggle" disabled>Play motion</button><button type="button" id="motion-step" disabled>Step ¼ cycle of A</button><span id="motion-note" role="status">Run a comparison first. Then play or step through.</span></div>
         </div>
-        <fieldset id="pendulum-controls" class="lab-controls" disabled>
-          <legend>Set up B</legend>
-          <label for="length" class="full-only">Length <small>From the hanging point to the ball’s centre</small></label><select id="length" class="full-only"><option value="0.5">0.5 m</option><option value="1" selected>1 m</option><option value="1.5">1.5 m</option></select>
-          <label for="mass">Mass of B’s ball <small>The hanging ball is called a bob.</small></label><select id="mass"><option value="100">100 g</option><option value="200" selected>200 g</option><option value="400">400 g</option></select>
-          <p id="test-design" class="test-design">Only mass changes. Both lengths stay the same.</p>
-          <details class="prediction-choice full-only"><summary>Make a prediction (optional)</summary><fieldset class="prediction"><legend>B will complete each cycle…</legend><label><input type="radio" name="prediction" value="faster"> In less time</label><label><input type="radio" name="prediction" value="same"> In the same time</label><label><input type="radio" name="prediction" value="slower"> In more time</label></fieldset></details>
-          <button type="button" id="run-model" class="primary">Run comparison</button><button type="button" id="lab-reset">Reset setup</button>
-        </fieldset>
       </div>
       <div id="lab-results" class="lab-results" hidden>
         <div class="result-pair"><div><span>A · time per cycle</span><strong id="period-a">2.01 s</strong></div><div><span>B · time per cycle</span><strong id="period-b">2.01 s</strong></div></div>
