@@ -23,6 +23,42 @@ async function fit(page){
   }
 }
 try{
+  for(const width of [390,1365]){
+    const ctx=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+    await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
+    const page=await ctx.newPage();
+    for(const fragment of ['', '#demo']){
+      await page.goto(base+'index.html'+fragment);
+      const demo=page.frameLocator('#learning-demo');
+      await demo.locator('body.world-ready,body.simple-view').waitFor();
+      await fit(page);
+      const position=await page.evaluate(()=>({scroll:scrollY,boundary:document.querySelector('#demo').getBoundingClientRect().top}));
+      if(!fragment)assert.equal(position.scroll,0,'A first visit must not skip the introduction or review limits');
+      else assert.ok(Math.abs(position.boundary)<2,'The demo link must land at its review boundary, not inside the activity');
+    }
+    const skipPage=await ctx.newPage();await skipPage.goto(base+'index.html');
+    await skipPage.frameLocator('#learning-demo').locator('#loading-note').waitFor({state:'hidden'});
+    await skipPage.keyboard.press('Tab');
+    assert.equal(await skipPage.evaluate(()=>document.activeElement.className),'skip');
+    await skipPage.keyboard.press('Enter');
+    assert.equal(await skipPage.evaluate(()=>document.activeElement.id),'demo','Skip link reaches the promised playable section');
+    assert.equal(await skipPage.locator('.header-links a').last().getAttribute('href'),new URL(base).pathname+'contribute.html');
+    assert.match(await skipPage.frameLocator('#learning-demo').locator('#full-playground').innerText(),/Starts a fresh activity/);
+    await ctx.close();report.checks.push({width,firstVisitAndHandoffs:true});
+  }
+  const motionContext=await browser.newContext({reducedMotion:'no-preference'});
+  await motionContext.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
+  const motionPage=await motionContext.newPage();await motionPage.goto(labBase+'index.html');
+  await motionPage.locator('body.world-ready').waitFor();await motionPage.locator('#choose-14').click();
+  await motionPage.locator('#run-model').click();assert.equal(await motionPage.locator('#motion-toggle').innerText(),'Pause motion');
+  await motionPage.locator('#choose-8').click();await motionPage.locator('#choose-14').click();
+  assert.match(await motionPage.locator('#motion-note').innerText(),/^Motion paused/,'Activity switching must not leave a running-status message');
+  await motionPage.locator('#run-model').click();await motionPage.locator('#graphics-toggle').click();
+  assert.match(await motionPage.locator('#motion-note').innerText(),/^Motion paused/,'Simple view must describe the paused state');
+  await motionPage.locator('#mass').selectOption('400');
+  assert.match(await motionPage.locator('#motion-note').innerText(),/^Run a comparison first/);
+  assert.ok(await motionPage.locator('#lab-results').isHidden());
+  await motionContext.close();report.checks.push('Motion status agrees with activity/view transitions and new setups');
   for(const width of [320,390,1365])for(const large of [false,true]){
     const ctx=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
     await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());

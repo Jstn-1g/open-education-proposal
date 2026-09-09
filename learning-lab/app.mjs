@@ -132,6 +132,7 @@ contrast.addEventListener('change',()=>{if(contrast.matches)setSimple(true);});
 const length = () => Number($('#length').value);
 const mass = () => Number($('#mass').value);
 function stopMotion() {
+  if (running) $('#motion-note').textContent = 'Motion paused. Play or step through at your own pace.';
   cancelAnimationFrame(frame); frame = 0; running = false; lastFrame = null;
   $('#motion-toggle').textContent = 'Play motion';
 }

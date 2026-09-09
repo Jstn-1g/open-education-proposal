@@ -258,7 +258,10 @@ class SiteTests(unittest.TestCase):
             self.assertEqual(doc.headings.count(1), 1, name)
             self.assertEqual(sum(tag == "main" for tag, _ in doc.tags), 1, name)
             self.assertTrue(any(tag == "html" and attrs.get("lang") == "en" for tag, attrs in doc.tags))
-            self.assertIn("#main", doc.links)
+            skip_target = "demo" if name == "index.html" else "main"
+            self.assertIn("#" + skip_target, doc.links)
+            self.assertTrue(any(attrs.get("id") == skip_target and attrs.get("tabindex") == "-1"
+                                for _, attrs in doc.tags))
             for before, after in zip(doc.headings, doc.headings[1:]):
                 self.assertLessEqual(after, before + 1, name)
             active = [a for tag, a in doc.tags if tag == "a" and a.get("aria-current") == "page"]
@@ -423,7 +426,7 @@ class SiteTests(unittest.TestCase):
             home, lab = docs["index.html"], docs["learning-lab/index.html"]
             frames = [attrs for tag, attrs in home.tags if tag == "iframe"]
             self.assertEqual(len(frames), 1)
-            self.assertEqual(frames[0]["src"], base + "learning-lab/index.html?embed=1&focus=1#age8")
+            self.assertEqual(frames[0]["src"], base + "learning-lab/index.html?embed=1&focus=1")
             self.assertTrue(frames[0].get("title"))
             for name, document in docs.items():
                 scripts = [attrs for tag, attrs in document.tags if tag == "script"]
