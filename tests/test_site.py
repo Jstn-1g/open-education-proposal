@@ -384,6 +384,40 @@ class SiteTests(unittest.TestCase):
             self.assertIn(base + "help-and-access-draft.md", documents["open-source.html"].links)
             self.assertIn(base + "open-source.html#review-draft", documents["contribute.html"].links)
 
+    def test_guided_demo_has_independent_disclosures_and_reuse_routes(self):
+        for base in ("/", "/open-education-proposal/"):
+            documents = self.build(base)
+            home = documents["index.html"]
+            for identifier in ("demo", "demo-c1", "demo-c2", "demo-title"):
+                self.assertIn(identifier, home.ids)
+            disclosures = [attrs for tag, attrs in home.tags if tag == "details"]
+            self.assertEqual(len(disclosures), 2)
+            for attrs in disclosures:
+                self.assertTrue({"name", "open", "hidden"}.isdisjoint(attrs))
+            self.assertEqual(sum(tag == "summary" for tag, _ in home.tags), 2)
+            for href in ("#demo", base + "help-and-access-draft.md",
+                         base + "open-source.html#review-draft",
+                         "https://github.com/Jstn-1g/open-education-proposal/issues/1"):
+                self.assertIn(href, home.links)
+            self.assertIn(base + "index.html#demo", documents["contribute.html"].links)
+
+    def test_demo_preserves_source_reasoning_and_visible_limits(self):
+        self.build()
+        home = (self.output / "index.html").read_text(encoding="utf-8")
+        source = (ROOT / "docs/REVIEW-CASES.md").read_text(encoding="utf-8")
+        # A screen disclosure and its print fallback must retain the same
+        # provisional interpretation and uncertainty as the source cases.
+        for case in ("C1", "C2"):
+            row = re.search(rf"^\| {case} \| (.+) \|$", source, re.M).group(1).split(" | ")
+            card = re.search(rf'<article[^>]+id="demo-{case.lower()}"[^>]*>(.*?)</article>', home, re.S)
+            self.assertIsNotNone(card, case)
+            for text in row[2:]:
+                self.assertEqual(card.group(1).count(text), 2, (case, text))
+        visible = re.sub(r"<details\b.*?</details>", "", home, flags=re.S)
+        for phrase in ("Not yet specialist-reviewed", "fictional", "Keep necessary support available",
+                       "not a lesson, assessment, or accommodation rule", "CC BY 4.0"):
+            self.assertIn(phrase, visible)
+
     def make_pre_download_output(self, status):
         self.build()
         download = self.output / "help-and-access-draft.md"

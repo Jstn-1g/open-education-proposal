@@ -16,6 +16,61 @@ const routes = ['index', 'standard', 'open-source', 'contribute', 'governance', 
 const reports = [];
 let accessibilityTreeChecks = 0;
 let downloadChecks = 0;
+let demoCaseChecks = 0;
+let demoPrintChecks = 0;
+let demoKeyboardFocusChecks = 0;
+const demoCards = ['#demo-c1', '#demo-c2'];
+const normalizeText = text => text.replace(/\s+/g, ' ').trim();
+
+async function verifyDraftDownload(page, context, link, keyboard = false) {
+  const downloadURL = new URL('help-and-access-draft.md', origin).href;
+  assert.equal(new URL(await link.getAttribute('href'), origin).href, downloadURL);
+  const [download] = await Promise.all([page.waitForEvent('download'), keyboard ? page.keyboard.press('Enter') : link.click()]);
+  assert.equal(download.suggestedFilename(), 'help-and-access-draft.md');
+  assert.equal(await download.failure(), null);
+  const bytes = await readFile(await download.path());
+  const manifestResponse = await context.request.get(new URL('manifest.json', origin).href, { maxRedirects: 0 });
+  assert.equal(manifestResponse.status(), 200);
+  const manifest = await manifestResponse.json();
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), manifest.files['help-and-access-draft.md']);
+  assert(bytes.toString('utf8').includes('Not yet specialist-reviewed.'));
+  downloadChecks++;
+}
+
+async function tabTo(page, target, label) {
+  // A bounded real Tab walk catches unreachable controls without clicking any
+  // off-site links. Programmatic focus would bypass this part of the journey.
+  const limit = await page.locator('a[href], summary').count() + 1;
+  for (let step = 0; step < limit; step++) {
+    await page.keyboard.press('Tab');
+    if (await target.evaluate(element => element === document.activeElement)) return;
+  }
+  assert.fail(`${label}: not reachable by Tab`);
+}
+
+async function verifyKeyboardFocus(target, label) {
+  const focus = await target.evaluate(element => ({
+    active: element === document.activeElement,
+    visible: element.matches(':focus-visible'),
+    width: parseFloat(getComputedStyle(element).outlineWidth),
+    style: getComputedStyle(element).outlineStyle,
+  }));
+  assert(focus.active && focus.visible && focus.width >= 2 && focus.style !== 'none',
+    `${label}: keyboard focus is missing or has no visible outline`);
+  demoKeyboardFocusChecks++;
+}
+
+async function verifyDisclosureState(page, session, cardSelector, expanded) {
+  assert.equal(await page.locator(`${cardSelector} details`).evaluate(details => details.open), expanded);
+  assert.equal(await page.locator(`${cardSelector} .demo-reasoning`).isVisible(), expanded);
+  const { root } = await session.send('DOM.getDocument');
+  const { nodeId } = await session.send('DOM.querySelector', { nodeId: root.nodeId, selector: `${cardSelector} summary` });
+  const { nodes } = await session.send('Accessibility.getPartialAXTree', { nodeId, fetchRelatives: false });
+  const summary = nodes.find(node => !node.ignored && node.name?.value === 'What can this response show?');
+  assert(summary, `${cardSelector}: disclosure has no accessible name`);
+  assert.equal(summary.properties?.find(property => property.name === 'expanded')?.value.value, expanded,
+    `${cardSelector}: expanded state is not exposed correctly in the accessibility tree`);
+}
 try {
   // Block any accidental off-origin request, so a regression cannot transmit data.
   for (const width of [1440, 768, 320]) {
@@ -47,20 +102,61 @@ try {
       assert.equal(metrics.h1, 1);
       assert.equal(metrics.scripts, 0);
       assert.equal(metrics.controls, 0);
+      if (slug === 'index') {
+        assert.equal(await page.locator('#demo').count(), 1, 'Homepage must contain one guided demo');
+        const heroLink = page.locator('.hero a[href="#demo"]');
+        assert.equal(await heroLink.count(), 1, 'Hero must offer the in-page demo');
+        await tabTo(page, heroLink, 'Hero demo link');
+        await page.keyboard.press('Enter');
+        assert.equal(new URL(page.url()).hash, '#demo');
+        assert(await page.locator('#demo .demo-status').isVisible(), 'Review status must be visible before disclosure');
+        assert((await page.locator('#demo .demo-status').innerText()).includes('Not yet specialist-reviewed.'));
+        assert.equal(await page.locator('#demo details .demo-status').count(), 0, 'Review status cannot be hidden in a disclosure');
+        assert.equal(await page.locator('#demo .demo-card').count(), 2);
+        if (artifacts) await page.locator('#demo').screenshot({ path: path.join(artifacts, `demo-collapsed-${width}.png`) });
+        const session = await context.newCDPSession(page);
+        for (const [index, cardSelector] of demoCards.entries()) {
+          assert.equal(await page.locator(`${cardSelector} details`).getAttribute('name'), null,
+            'Cases must remain independently openable');
+          assert(!(await page.locator(`${cardSelector} .demo-reasoning-print`).isVisible()),
+            `${cardSelector}: print copy must not duplicate screen content`);
+          await verifyDisclosureState(page, session, cardSelector, false);
+          const summary = page.locator(`${cardSelector} summary`);
+          await page.keyboard.press('Tab');
+          await verifyKeyboardFocus(summary, `${cardSelector} at ${width}`);
+          await page.keyboard.press(index === 0 ? 'Enter' : 'Space');
+          await verifyDisclosureState(page, session, cardSelector, true);
+          await page.keyboard.press(index === 0 ? 'Space' : 'Enter');
+          await verifyDisclosureState(page, session, cardSelector, false);
+          await summary.click();
+          await verifyDisclosureState(page, session, cardSelector, true);
+          assert(!(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)),
+            `${cardSelector}: expanded reasoning overflows at ${width}`);
+          demoCaseChecks++;
+        }
+        assert.equal(await page.locator('#demo details[open]').count(), 2, 'Opening one case must not close the other');
+        await session.detach();
+        const correctionLink = page.locator('#demo a[href="https://github.com/Jstn-1g/open-education-proposal/issues/1"]');
+        assert.equal(await correctionLink.count(), 1, 'Demo must lead to the existing correction discussion');
+        const sourcesLink = page.locator('#demo a[href$="open-source.html#review-draft"]');
+        assert.equal(await sourcesLink.count(), 1, 'Demo must link its source draft and limits');
+        assert.equal(new URL(await sourcesLink.getAttribute('href'), origin).href,
+          new URL('open-source.html#review-draft', origin).href);
+        if (artifacts) await page.locator('#demo').screenshot({ path: path.join(artifacts, `demo-expanded-${width}.png`) });
+        await page.keyboard.press('Tab');
+        assert(await correctionLink.evaluate(element => element === document.activeElement), 'Correction link must follow the cases in keyboard order');
+        const downloadLink = page.locator('#demo a[href$="help-and-access-draft.md"]');
+        await page.keyboard.press('Tab');
+        assert(await downloadLink.evaluate(element => element === document.activeElement), 'Download must be reachable after the correction link');
+        await verifyDraftDownload(page, context, downloadLink, true);
+        await page.keyboard.press('Tab');
+        assert(await sourcesLink.evaluate(element => element === document.activeElement), 'Source details must be reachable after the download');
+        // Reload so the following skip-link and page-level checks start cleanly.
+        await page.goto(new URL(`${slug}.html`, origin).href);
+      }
       if (slug === 'open-source') {
         const link = page.getByRole('link', { name: 'Download editable draft (.md) →', exact: true });
-        const downloadURL = new URL('help-and-access-draft.md', origin).href;
-        assert.equal(new URL(await link.getAttribute('href'), origin).href, downloadURL);
-        const [download] = await Promise.all([page.waitForEvent('download'), link.click()]);
-        assert.equal(download.suggestedFilename(), 'help-and-access-draft.md');
-        assert.equal(await download.failure(), null);
-        const bytes = await readFile(await download.path());
-        const manifestResponse = await context.request.get(new URL('manifest.json', origin).href, { maxRedirects: 0 });
-        assert.equal(manifestResponse.status(), 200);
-        const manifest = await manifestResponse.json();
-        assert.equal(createHash('sha256').update(bytes).digest('hex'), manifest.files['help-and-access-draft.md']);
-        assert(bytes.toString('utf8').includes('Not yet specialist-reviewed.'));
-        downloadChecks++;
+        await verifyDraftDownload(page, context, link);
         // Restore the initial focus state before checking the skip link.
         await page.goto(new URL(`${slug}.html`, origin).href);
       }
@@ -97,6 +193,18 @@ try {
     await page.addStyleTag({ content: 'html { font-size: 200% !important; } * { line-height: 1.5 !important; letter-spacing: .12em !important; word-spacing: .16em !important; } p { margin-bottom: 2em !important; }' });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
     assert(!overflow, `${slug}: overflow at 200% text and spacing overrides`);
+    if (slug === 'index') {
+      for (const cardSelector of demoCards) {
+        const summary = page.locator(`${cardSelector} summary`);
+        await tabTo(page, summary, `${cardSelector} under forced colors`);
+        await verifyKeyboardFocus(summary, `${cardSelector} under forced colors`);
+        await page.keyboard.press('Enter');
+        assert(await page.locator(`${cardSelector} .demo-reasoning`).isVisible());
+      }
+      assert.equal(await page.locator('#demo details[open]').count(), 2);
+      assert(!(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)),
+        'Expanded demo overflows at 200% text and spacing overrides');
+    }
   }
   await context.close();
   const printContext = await browser.newContext({ viewport: { width: 794, height: 1123 }, javaScriptEnabled: false });
@@ -108,6 +216,18 @@ try {
     assert(await printPage.locator('h1').isVisible(), `${slug}: print heading hidden`);
     assert(!(await printPage.locator('nav').isVisible()), `${slug}: print navigation visible`);
     assert(!(await printPage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)), `${slug}: print overflow`);
+    if (slug === 'index') {
+      for (const cardSelector of demoCards) {
+        assert(!(await printPage.locator(`${cardSelector} details`).isVisible()),
+          `${cardSelector}: interactive disclosure must not duplicate printed reasoning`);
+        const printReasoning = printPage.locator(`${cardSelector} .demo-reasoning-print`);
+        assert(await printReasoning.isVisible(), `${cardSelector}: reasoning must print even if never opened`);
+        assert.equal(normalizeText(await printReasoning.textContent()),
+          normalizeText(await printPage.locator(`${cardSelector} .demo-reasoning`).textContent()),
+          `${cardSelector}: printed reasoning differs from interactive reasoning`);
+        demoPrintChecks++;
+      }
+    }
     // Check the intended keep rules and the block footer used to address the
     // observed flex-fragmentation bug. Actual pagination still needs visual
     // review of Letter and A4 output; computed CSS alone cannot establish it.
@@ -137,7 +257,7 @@ try {
     if (artifacts && slug === 'standard') await printPage.screenshot({ path: path.join(artifacts, 'standard-print.png'), fullPage: true });
   }
   await printContext.close();
-  console.log(JSON.stringify({ result: 'PASS', viewportRouteChecks: reports.length, textSpacingForcedColorChecks: routes.length, printMediaChecks: routes.length, accessibilityTreeChecks, downloadChecks, clientJavaScript: false, reports }, null, 2));
+  console.log(JSON.stringify({ result: 'PASS', viewportRouteChecks: reports.length, textSpacingForcedColorChecks: routes.length, printMediaChecks: routes.length, accessibilityTreeChecks, downloadChecks, demoCaseChecks, demoPrintChecks, demoKeyboardFocusChecks, clientJavaScript: false, reports }, null, 2));
 } finally {
   await browser.close();
 }

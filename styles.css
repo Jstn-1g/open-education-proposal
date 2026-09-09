@@ -78,10 +78,32 @@ p{max-width:65ch;margin-bottom:1.2rem}
 .site-footer p{font-size:.875rem;margin-top:1rem;color:var(--muted)}
 .footer-meta{font-size:.875rem;max-width:32ch}
 .footer-meta p{margin-top:0}
+.demo h2 em{color:var(--blue);font-weight:400}
+.demo-status{max-width:none;border-left:3px solid var(--blue);background:var(--glass);padding:1rem 1.4rem;font-size:1rem;margin-bottom:1.5rem}
+.demo-cases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem;align-items:start}
+.demo-card{min-width:0;border:1px solid var(--line);border-top:3px solid var(--blue);background:var(--white);padding:1.7rem}
+.demo-card h3{font-family:var(--serif);font-size:2rem;font-weight:400;margin-bottom:1.4rem}
+.demo-card p{font-size:1rem}
+.demo-card .small-label{color:var(--blue);font-size:.8rem;margin-bottom:.8rem}
+.demo-card details{border-top:1px solid var(--line);margin-top:1.5rem}
+.demo-card summary{min-height:48px;padding:.9rem .25rem;cursor:pointer;color:var(--blue);font-size:1rem;font-weight:650}
+.demo-card summary:hover{text-decoration:underline;text-underline-offset:.22em}
+.demo-reasoning{padding-top:.6rem}
+.demo-reasoning p:last-child{margin-bottom:0}
+.demo-reasoning-print{display:none}
+.demo-safeguard{border-left:3px solid var(--blue);padding:.2rem 1.4rem;margin-block:1.8rem}
+.demo-safeguard p{max-width:80ch;font-size:1rem}
+.demo-safeguard p:last-child{margin-bottom:0}
+.demo-next{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:3rem;border-top:1px solid var(--line);padding-top:1.8rem}
+.demo-next>div{min-width:0}
+.demo-next p{font-size:1rem}
+.demo-next .support{font-size:.9rem;margin-top:.8rem}
 @media(max-width:1000px){.frame{width:calc(100% - 3rem)}.hero{gap:2rem}.site-header{align-items:flex-start;gap:2rem}nav{gap:.6rem 1.2rem}.section-head{grid-template-columns:1fr 2.5fr}.task{grid-template-columns:.3fr 1.2fr 1fr}}
 @media(max-width:720px){.frame{width:calc(100% - 2rem)}.status-bar{font-size:.8rem}.status-bar .frame{gap:.15rem}.site-header{display:block;padding-block:1.6rem}nav{margin-top:1.5rem;gap:.25rem 1.3rem}nav a{font-size:.9rem}.hero{grid-template-columns:1fr;padding-block:2.8rem 3rem;gap:2rem}h1{font-size:clamp(3rem,12vw,5rem)}.eyebrow{margin-bottom:1.2rem}.section{padding-block:2.5rem}.section-head{grid-template-columns:1fr;gap:.75rem}.three-col{grid-template-columns:1fr;gap:1rem}.principle{padding-top:1.2rem}.big-number{margin-bottom:.4rem}.statement{padding:1.5rem;margin-bottom:2.5rem}.page-intro{padding-block:2.5rem 1rem}.page-intro h1{font-size:clamp(3rem,11vw,5rem)}.reading{padding-top:0}.comparison{grid-template-columns:1fr}.comparison>div{padding:1.4rem}.comparison>div+div{border-left:0;border-top:1px solid var(--ink)}.task{grid-template-columns:1fr;gap:.7rem}.next{align-items:flex-start;flex-direction:column;gap:1rem}.site-footer{display:block}.footer-meta{margin-top:2rem}}
 @media(forced-colors:active){.button,.evidence,.note,.status-bar{border:1px solid CanvasText}.button{background:ButtonFace;color:ButtonText}a:focus-visible{outline-color:Highlight}.principle{border-color:CanvasText}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media(max-width:720px){.demo-cases,.demo-next{grid-template-columns:1fr;gap:1.2rem}.demo-card{padding:1.2rem}.demo-next>div+div{border-top:1px solid var(--line);padding-top:1.3rem}}
+@media(forced-colors:active){.demo-card,.demo-status,.demo-safeguard{border-color:CanvasText}summary:focus-visible{outline-color:Highlight}}
 @media print{
   /* Paper has a reading layout of its own, independent of screen breakpoints. */
   html{font-size:11pt}
@@ -141,4 +163,24 @@ p{max-width:65ch;margin-bottom:1.2rem}
   .button{background:none;color:black;min-height:0;padding:.4rem .6rem;font-size:11pt}
   /* Print links need readable text, not the extra space of screen click targets. */
   .text-link{min-height:0;padding:0;font-size:11pt}
+  /* Closed native disclosures do not reliably print across browsers. Keep an
+     equivalent print-only copy; it is display:none in the screen/AX tree. */
+  .demo-cases{display:block}
+  .demo-card{padding:.65rem;margin-block:.6rem;break-inside:avoid-page}
+  .demo-card h3{font-size:16pt;margin-bottom:.5rem}
+  .demo-card p,.demo-next p,.demo-safeguard p{font-size:11pt}
+  .demo-card .small-label{font-size:9pt;margin-bottom:.3rem}
+  .demo-card details{display:none}
+  .demo-reasoning-print{display:block}
+  .demo-status{padding:.5rem .7rem;margin-bottom:.6rem;font-size:10pt;break-inside:avoid-page}
+  .demo-safeguard{padding:.2rem .7rem;margin-block:.6rem;break-inside:avoid-page}
+  .demo-next{display:block;padding-top:.5rem;break-inside:avoid-page}
+  .demo-next>div+div{border-top:0;padding-top:.4rem}
+  .demo-next .support{font-size:10pt;margin-top:.4rem}
+  .demo h2 em,.demo-card .small-label{color:black}
+  /* Keep the contribution footer with useful content on Letter paper. */
+  .contribute-intro ~ .section{padding-block:.4rem}
+  .contribute-intro ~ .section .task{padding-block:.2rem}
+  .contribute-intro ~ .statement{padding-block:.4rem;margin-block:.4rem .5rem}
+  .contribute-intro ~ .statement .support{max-width:none}
 }

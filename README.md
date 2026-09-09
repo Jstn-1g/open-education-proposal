@@ -12,7 +12,9 @@ We want educators, researchers, accessibility specialists, families, designers, 
 
 Read the [proposal](PROPOSAL.md) and [contribution guide](CONTRIBUTING.md) as needed. Join an existing task above, or use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a different topic. A GitHub account is needed to post. You do not need code, a finished solution, or research citations to ask a question or report a barrier.
 
-Want something concrete to review? [Read the six fictional help-and-access cases](docs/REVIEW-CASES.md), or [download the editable plain-text draft](https://jstn-1g.github.io/open-education-proposal/help-and-access-draft.md). It carries its sources, uncertainties, and CC BY 4.0 attribution. **Not yet specialist-reviewed:** an adult discussion draft, not a classroom resource or assessment. Pick one case and challenge it in [task #1](https://github.com/Jstn-1g/open-education-proposal/issues/1).
+Want something concrete to review? [Explore the two-case demo](https://jstn-1g.github.io/open-education-proposal/#demo): the same read-aloud support can have different roles depending on the intended skill. Open each case to examine the provisional reasoning, then suggest one correction. No account, scripts, or AI service is needed to explore it.
+
+[Read all six fictional help-and-access cases](docs/REVIEW-CASES.md), or [download the editable plain-text draft](https://jstn-1g.github.io/open-education-proposal/help-and-access-draft.md). It carries its sources, uncertainties, and CC BY 4.0 attribution. **Not yet specialist-reviewed:** an adult discussion draft, not a classroom resource or assessment. Pick one case and challenge it in [task #1](https://github.com/Jstn-1g/open-education-proposal/issues/1).
 
 Want to challenge the bigger educational design? Review one question in [Design for people, not just performance](docs/LEARNING-DESIGN.md), covering motivation, relationships, development, access, and workload. These are proposed safeguards, not claims of a proven education system.
 

@@ -41,8 +41,8 @@
       "sha256": "26deba0cb8be56bdfc13e0f13c1b329c1cbd7dc16525f3e5bdf880800327195f"
     },
     "DEVELOPMENT.md": {
-      "bytes": 3631,
-      "sha256": "6883b11668720fca38c11a8a3e7b163aa32c15e1a55e27fae1b9eaca59f32602"
+      "bytes": 4565,
+      "sha256": "bcff4bb14bff523b920f7519eedf491df5ceed393c350ff177ae3a19bceb7def"
     },
     "GOVERNANCE.md": {
       "bytes": 5180,
@@ -73,8 +73,8 @@
       "sha256": "e2226b06c3fad817b4056ebaa828a7ef7ae0a592e2c90030830a3ba9170d6ab4"
     },
     "README.md": {
-      "bytes": 6321,
-      "sha256": "41d839f3656ff0aa4c91c6170732b05055267c07824c6588a0b1ce657ddd331a"
+      "bytes": 6636,
+      "sha256": "b86d561a5a36cd5fcbc035025b9cc63f9acbd0f31d8dcf6719fe8b051c22925c"
     },
     "SECURITY.md": {
       "bytes": 1838,
@@ -89,16 +89,16 @@
       "sha256": "0e5801d8ca15cb09ae910d99b3f323228481f65773b90f3c5be58d4f03cf4239"
     },
     "content/contribute.html": {
-      "bytes": 4958,
-      "sha256": "218aa37c50b3a428ea5907e16ef247e65ec918852a9b9d005b5d69d3a54a3c44"
+      "bytes": 5132,
+      "sha256": "ae29e862dc9bc824a8c7a934facb7c72a91029976a1f1d64effff9c8f8e1bcf4"
     },
     "content/governance.html": {
       "bytes": 5456,
       "sha256": "c05dbb962bc820681ddfb2f7beee438a62cfe15eaa64a5391523414e693eb54c"
     },
     "content/index.html": {
-      "bytes": 4517,
-      "sha256": "34570075390b41d708ea83bee18a1b06b9431db4fd4507c0d2d47768af890f04"
+      "bytes": 9448,
+      "sha256": "d38f00c8a75d5cfa4dff8f0f837412e58ce542daaeea248fe60b68b652848e14"
     },
     "content/open-source.html": {
       "bytes": 3662,
@@ -149,20 +149,20 @@
       "sha256": "097fe8c3260157693c946480234946862e59cf9f5df4cc47a67796d2ce9cb54b"
     },
     "styles.css": {
-      "bytes": 11273,
-      "sha256": "986a030f10f87e5f1767f662af883e247074cdd519392f8add3d7b3682954245"
+      "bytes": 14272,
+      "sha256": "2538f190ec769a1678e248076adab0cfea25125433145b37b4ab794b0f670caa"
     },
     "tests/browser.mjs": {
-      "bytes": 8980,
-      "sha256": "9f5343308448ad47a547e2c8094c5cb07de5ad743b7443782f2549c6e50c34e1"
+      "bytes": 16830,
+      "sha256": "2d1ff571c245506a602407b1b5aacddfdf29f76687f1796de7dc2b8d54c4e7c7"
     },
     "tests/test_release_check.py": {
       "bytes": 8979,
       "sha256": "06243d20d059843e15a746deba38375c6824244487e5bbf72e81988a6615dc80"
     },
     "tests/test_site.py": {
-      "bytes": 23039,
-      "sha256": "d7301e8c84d0f20d53ff6a7d8f12c14071731d5251cee243e837fd9cce93f81d"
+      "bytes": 25156,
+      "sha256": "2c264365b682d75f28729ec62aca668a8b41564e184c1f3eeb0e59ce44368ffe"
     }
   },
   "status": "local-review-candidate-not-published"
