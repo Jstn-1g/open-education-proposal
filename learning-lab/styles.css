@@ -1525,6 +1525,22 @@ button{
   font-weight:650;
   color:var(--accent)
 }
+#full-playground small{
+  display:block;
+  font-size:.875rem;
+  font-weight:400;
+  color:var(--muted)
+}
+.proposal-preview .header-links{
+  flex-direction:row;
+  align-items:center;
+  gap:.25rem 1rem
+}
+.proposal-preview .header-links a{
+  display:inline-flex;
+  align-items:center;
+  min-height:44px
+}
 .showcase .discovery-panel{
   justify-content:center;
   gap:1.25rem;
@@ -1583,6 +1599,7 @@ button{
   max-width:44ch
 }
 .preview-boundary{
+  font-size:1rem;
   margin:0 0 1.25rem;
   max-width:70ch
 }

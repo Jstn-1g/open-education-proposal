@@ -38,7 +38,7 @@ export async function createWorld(host) {
     }
     try {
       game = new Phaser.Game({type: Phaser.CANVAS, width:1000, height:620, parent:host,
-        banner:false, backgroundColor:'#d1edf4', audio:{noAudio:true},
+        banner:false, autoFocus:false, backgroundColor:'#d1edf4', audio:{noAudio:true},
         fps:{target:30, limit:30}, input:{keyboard:false, mouse:false, touch:false, gamepad:false},
         scene:LearningScene, render:{antialias:true}, scale:{mode:Phaser.Scale.NONE}});
     } catch (error) { clearTimeout(timer); reject(error); }

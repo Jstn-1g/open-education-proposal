@@ -89,8 +89,8 @@
       "sha256": "0e5801d8ca15cb09ae910d99b3f323228481f65773b90f3c5be58d4f03cf4239"
     },
     "content/contribute.html": {
-      "bytes": 5128,
-      "sha256": "0f4ef460899f125db418ae7074b46ea85a0afbc58674ce8bb8266089c0c34b51"
+      "bytes": 5520,
+      "sha256": "e8750a94971a8182a075fc936e0d52ebc84b40adf0eef7d909a3bf4bb3efacb8"
     },
     "content/discussion.html": {
       "bytes": 5228,
@@ -101,8 +101,8 @@
       "sha256": "76c5d8b1b4c357661a7af1413ae4bc01106751fda3cde21ac77ea9b31d8af1d4"
     },
     "content/index.html": {
-      "bytes": 2828,
-      "sha256": "f9b1152a403e75c0da7841b56f5a728b79b8b1baef1b425f50a15db5d344ffed"
+      "bytes": 2849,
+      "sha256": "129c108912f153b82ed37d0bd5085d245ad412ec58199211768ca7bce3fdaec9"
     },
     "content/open-source.html": {
       "bytes": 3948,
@@ -153,8 +153,8 @@
       "sha256": "dfb135c0fc89b233ac7c2637d4d27f3a0a7fc7bb96c5fd67f38349ba4bf2427a"
     },
     "learning-lab/app.mjs": {
-      "bytes": 14631,
-      "sha256": "b0458e1b2cc91a3a30051ed955416e86c4f6ee58bc4d038b0be724a2a1f9efe9"
+      "bytes": 14735,
+      "sha256": "d6c33b59c10b5319e844c068b583a486ee4bd2fc08cf5053d6c1399ff0f1662c"
     },
     "learning-lab/art/clockwork-room.png": {
       "bytes": 2042437,
@@ -169,8 +169,8 @@
       "sha256": "b7873365e9316cfe83c9477bb6ca6b7c5d244a3b6da5b7b040c125d19e5ca7e8"
     },
     "learning-lab/index.html": {
-      "bytes": 13380,
-      "sha256": "3fa6e77a8585862ae1190831850959e7b47e30c9038d381f53b882e4c03e1d78"
+      "bytes": 13431,
+      "sha256": "07e4244f3288eb8942d776846a4fd495923615f25054071230f2091575822735"
     },
     "learning-lab/model.mjs": {
       "bytes": 1739,
@@ -181,12 +181,12 @@
       "sha256": "67879875a7cd190a01c44e518e076de00d724829bb2b6088375c9cece50aa6a7"
     },
     "learning-lab/scene.mjs": {
-      "bytes": 8541,
-      "sha256": "9f77b1043f229d72cbf3c0d3b65bb5468b3e62e54070c51dd29e5444c402e9fb"
+      "bytes": 8558,
+      "sha256": "14a87a75612ee82d830b88db3ded0db4b2f3345d8b3e436f7d301d9f3b917eff"
     },
     "learning-lab/styles.css": {
-      "bytes": 28063,
-      "sha256": "85667856d0003d2e37f7d3a08f1fd8a8a0c5fa925f613fb481201074a665de4d"
+      "bytes": 28382,
+      "sha256": "14bb0ca7634741c64924bdff223d0f39eea24f28fadcdbcfa1ceeb056183f530"
     },
     "learning-lab/vendor/PHASER-LICENSE.txt": {
       "bytes": 1100,
@@ -217,8 +217,8 @@
       "sha256": "f060d9dcb85a68d3861cb902053c9a6832667caf9a2e9b691f601d797dcb4ea3"
     },
     "tests/learning-lab-browser.mjs": {
-      "bytes": 6437,
-      "sha256": "fdd089da6d2aad506f43c6e5cbaa7bbc48843022d2474cc8c5bb97a0abe3574d"
+      "bytes": 9477,
+      "sha256": "12f1df395d07216e3a492ed2c742e8e2bd4274623dbd33272cce9c7645cbfd76"
     },
     "tests/model.test.mjs": {
       "bytes": 2086,
@@ -229,8 +229,8 @@
       "sha256": "8bcb8c23abed750d84ebd83e0eeda52195b9806a0dc69a40427e6dc096a5feeb"
     },
     "tests/test_site.py": {
-      "bytes": 30313,
-      "sha256": "17ed55d4d2e8fd293b2ffac27d3738b308138b4b14deb9a5718d66e84b4a41b4"
+      "bytes": 30543,
+      "sha256": "8f6a9271c62565c9d73441566d0b26c2905f2b10006268f728233e70c68be01b"
     }
   },
   "status": "local-review-candidate-not-published"
