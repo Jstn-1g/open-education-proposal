@@ -31,6 +31,8 @@ class ReleaseCheckTests(unittest.TestCase):
         (self.root / "LICENSE").write_text("Fixture: Apache License", encoding="utf-8")
         (self.root / "LICENSE-CONTENT").write_text("Fixture: Creative Commons Attribution 4.0 International", encoding="utf-8")
         (self.root / "LICENSES.md").write_text("Synthetic attribution fixture.", encoding="utf-8")
+        (self.root / "docs").mkdir()
+        (self.root / "docs" / "REVIEW-CASES.md").write_text("Synthetic discussion draft.", encoding="utf-8")
         (self.root / "styles.css").write_text("body { color: black; }", encoding="utf-8")
         (self.root / "content").mkdir()
         for slug in ("index", "standard", "open-source", "contribute", "governance", "404"):

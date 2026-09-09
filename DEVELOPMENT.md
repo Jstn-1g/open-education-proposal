@@ -16,7 +16,7 @@ Open `http://127.0.0.1:8768/` locally. Stop the preview with Ctrl+C. The develop
 
 Edit the page fragments in `content/`, shared CSS in `styles.css`, or the shared frame in `build.py`. Rebuild to see a change. Keep the proposal and website wording consistent.
 
-The build writes only a dedicated output directory, refuses unrelated existing files, and records SHA-256 digests in `manifest.json`. It does not delete files. Outputs exclude source documents and tools except for the three public license and attribution notices linked from the site.
+The build writes only a dedicated output directory, refuses unrelated existing files, and records SHA-256 digests in `manifest.json`. It does not delete files. Outputs exclude source documents and tools except for three public license/attribution notices and the explicitly selected `docs/REVIEW-CASES.md`, copied byte-for-byte as `help-and-access-draft.md`. Edit that source file, not the generated download; its status, sources, and attribution must travel with the offline copy.
 
 For a project website, specify the actual project path at build time:
 
@@ -35,6 +35,8 @@ node tests/browser.mjs http://127.0.0.1:8768/
 ```
 
 The optional `PLAYWRIGHT_MODULE_PATH` environment variable may point to an existing Playwright `index.mjs`; `PLAYWRIGHT_CHANNEL=msedge` selects an existing Microsoft Edge installation. No browser testing dependency is included in the site or installed by this script. The optional second argument writes screenshots to a local review directory.
+
+At each width, the check also activates the editable-draft download, verifies its suggested filename, and matches its bytes to the build manifest. Source-byte identity is checked separately by the static suite.
 
 The browser check covers six pages at three widths with site JavaScript disabled, keyboard skip links, first-party-only requests, text enlargement/spacing with forced colors, and basic print-media layout. Print assertions check heading keep rules and the block footer used to avoid a known fragmentation problem; actual Letter/A4 page boundaries still need visual review after layout or substantial content changes. It also checks main landmarks, level-one headings, and nonempty link names in Chromium's accessibility tree. Static checks cover links, headings, output limits, and reproducible bytes. These checks do not establish full accessibility conformance. A screen-reader review and evaluation by people with access needs remain valuable.
 

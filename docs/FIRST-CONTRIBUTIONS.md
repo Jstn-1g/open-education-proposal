@@ -19,7 +19,7 @@ You can start with one example, a question about a source, or a barrier you enco
 - A reader can see why a support must not be banned merely because it is assistive.
 - Two relevant primary or professional sources are linked, with scope and limitations. Clearly label judgments not established by those sources.
 
-**Starting point:** [The proposal](../PROPOSAL.md) and [source notes](SOURCES.md). Do not create a scoring rule or ready-to-use assessment.
+**Starting point:** [Six fictional cases](REVIEW-CASES.md), alongside [the proposal](../PROPOSAL.md) and [source notes](SOURCES.md). The editable case draft is AI-assisted and not yet specialist-reviewed; publishing it does not complete this task. Challenge one case rather than writing a whole new table. Do not create a scoring rule or ready-to-use assessment.
 
 Use the [learning-design questions](LEARNING-DESIGN.md) to challenge one case: could the interpretation withhold access, stigmatize help-seeking, invite unnecessary recording, or add avoidable teacher work? A fictional counterexample belongs within this task, not in an additional required report.
 

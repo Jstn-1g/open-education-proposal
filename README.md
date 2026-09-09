@@ -12,12 +12,14 @@ We want educators, researchers, accessibility specialists, families, designers, 
 
 Read the [proposal](PROPOSAL.md) and [contribution guide](CONTRIBUTING.md) as needed. Join an existing task above, or use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a different topic. A GitHub account is needed to post. You do not need code, a finished solution, or research citations to ask a question or report a barrier.
 
+Want something concrete to review? [Read the six fictional help-and-access cases](docs/REVIEW-CASES.md), or [download the editable plain-text draft](https://jstn-1g.github.io/open-education-proposal/help-and-access-draft.md). It carries its sources, uncertainties, and CC BY 4.0 attribution. **Not yet specialist-reviewed:** an adult discussion draft, not a classroom resource or assessment. Pick one case and challenge it in [task #1](https://github.com/Jstn-1g/open-education-proposal/issues/1).
+
 Want to challenge the bigger educational design? Review one question in [Design for people, not just performance](docs/LEARNING-DESIGN.md), covering motivation, relationships, development, access, and workload. These are proposed safeguards, not claims of a proven education system.
 
 ## Now, next, and later
 
-- **Now:** Version 0.1.0 offers a draft proposal, evidence notes, an informational website, and a contributor kit for adult review.
-- **Next:** Aim for three first-month outputs: six fictional help-versus-access examples, one evidence note, and one accessibility report with a maintainer response. These are [planning targets, not promised deadlines](docs/ROADMAP.md).
+- **Now:** Version 0.1.0 offers a draft proposal, evidence notes, an informational website, a contributor kit, and six fictional discussion cases for adult review.
+- **Next:** Aim for three first-month outputs: reviewed help-versus-access examples, one evidence note, and one accessibility report with a maintainer response. Publishing an AI-assisted case draft does not complete the review task. These are [planning targets, not promised deadlines](docs/ROADMAP.md).
 - **Later:** Consider a small, openly licensed learning resource only with qualified human review, capacity to maintain it, and evidence appropriate to its claims. A complete learning path without a proprietary model is the longer-term ambition, not something this release delivers.
 
 This first release is not a curriculum, a learning app, an adopted education standard, or a service for children. Human teaching, relationships, and judgment remain central. AI is optional. Robot tutors, companions, simulated relationships, child profiling, and child records are outside this project’s scope.

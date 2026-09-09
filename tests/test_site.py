@@ -69,6 +69,8 @@ class SiteTests(unittest.TestCase):
             (source / "content" / path.name).write_bytes(path.read_bytes())
         for name in ("styles.css", "LICENSE", "LICENSE-CONTENT", "LICENSES.md"):
             (source / name).write_bytes((ROOT / name).read_bytes())
+        (source / "docs").mkdir()
+        (source / "docs/REVIEW-CASES.md").write_bytes((ROOT / "docs/REVIEW-CASES.md").read_bytes())
         self.release_data = {"status": "candidate", "repository": "https://github.com/test-owner/test-proposal", "maintainer": "test-owner", "conduct_contact": "", "security_contact": ""}
         (source / "release.json").write_text(json.dumps(self.release_data), encoding="utf-8")
         return source
@@ -186,10 +188,23 @@ class SiteTests(unittest.TestCase):
         (self.output / "manifest.json").write_text(json.dumps({"version": "0.1.0-candidate", "base": "/", "files": hashes}) + "\n", encoding="utf-8")
         return names
 
+    def test_missing_review_source_preserves_previous_build_and_creates_nothing(self):
+        source = self.release_source()
+        self.build()
+        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        (source / "docs/REVIEW-CASES.md").unlink()
+        fresh_output = Path(self.temp.name) / "new-output"
+        with patch.object(builder, "ROOT", source):
+            for destination in (self.output, fresh_output):
+                with self.assertRaises(FileNotFoundError):
+                    builder.build(destination)
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+        self.assertFalse(fresh_output.exists())
+
     def test_legacy_manifest_upgrades_to_complete_license_output(self):
         names = self.make_legacy_output()
         self.build()
-        expected = names | {"code-license.txt", "content-license.txt", "attribution.txt", "manifest.json"}
+        expected = names | {"code-license.txt", "content-license.txt", "attribution.txt", "manifest.json", "help-and-access-draft.md"}
         self.assertEqual({p.name for p in self.output.iterdir()}, expected)
         first = {p.name: p.read_bytes() for p in self.output.iterdir()}
         self.build()
@@ -252,6 +267,9 @@ class SiteTests(unittest.TestCase):
         status = json.loads((ROOT / "release.json").read_text(encoding="utf-8"))["status"]
         self.assertIn(status, {"candidate", "ready"})
         css_size = (self.output / "styles.css").stat().st_size
+        draft = self.output / "help-and-access-draft.md"
+        self.assertLess(draft.stat().st_size, 50_000)
+        self.assertNotRegex(draft.read_text(encoding="utf-8"), r"(?i)C:\\Users|/Users/|/home/|\.codex|baseline-0\.|W4-HUMAN|api[_-]?key\s*[=:]|BEGIN.*PRIVATE KEY")
         for path in self.output.glob("*.html"):
             self.assertLess(path.stat().st_size + css_size, 250_000)
             content = path.read_text(encoding="utf-8")
@@ -347,6 +365,63 @@ class SiteTests(unittest.TestCase):
             self.assertIn(target, contribution_guide)
             self.assertIn(target, first_tasks)
             self.assertIn(target, contribution_page.links)
+
+    def test_review_draft_is_an_exact_self_contained_download(self):
+        source = (ROOT / "docs/REVIEW-CASES.md").read_bytes()
+        text = source.decode("utf-8")
+        for phrase in ("Adult discussion draft", "Not yet specialist-reviewed", "CC BY 4.0",
+                       "https://github.com/Jstn-1g/open-education-proposal/issues/1"):
+            self.assertIn(phrase, text)
+        self.assertEqual(len(re.findall(r"^\| C[1-6] \|", text, re.M)), 6)
+        for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", text):
+            self.assertTrue(target.startswith("https://"), target)
+        for base in ("/", "/open-education-proposal/"):
+            documents = self.build(base)
+            payload = (self.output / "help-and-access-draft.md").read_bytes()
+            self.assertEqual(payload, source)
+            manifest = json.loads((self.output / "manifest.json").read_text())
+            self.assertEqual(manifest["files"]["help-and-access-draft.md"], hashlib.sha256(source).hexdigest())
+            self.assertIn(base + "help-and-access-draft.md", documents["open-source.html"].links)
+            self.assertIn(base + "open-source.html#review-draft", documents["contribute.html"].links)
+
+    def make_pre_download_output(self, status):
+        self.build()
+        download = self.output / "help-and-access-draft.md"
+        if download.exists():
+            download.unlink()
+        manifest_path = self.output / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["files"].pop("help-and-access-draft.md", None)
+        manifest["status"] = status
+        manifest["version"] = "0.1.0" if status == "ready" else "0.1.0-candidate"
+        self.assertEqual(len(manifest["files"]), 11)
+        manifest_path.write_text(json.dumps(manifest) + "\n", encoding="utf-8")
+
+    def test_pre_download_ready_and_candidate_builds_upgrade_safely(self):
+        for status in ("ready", "candidate"):
+            self.make_pre_download_output(status)
+            self.build()
+            self.assertEqual((self.output / "help-and-access-draft.md").read_bytes(),
+                             (ROOT / "docs/REVIEW-CASES.md").read_bytes())
+            first = {p.name: p.read_bytes() for p in self.output.iterdir()}
+            self.build()
+            self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
+
+    def test_modified_pre_download_build_is_preserved(self):
+        self.make_pre_download_output("ready")
+        (self.output / "index.html").write_bytes(b"A user's edit must survive.")
+        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        with self.assertRaises(ValueError):
+            self.build()
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+
+    def test_unmanifested_download_is_preserved(self):
+        self.make_pre_download_output("ready")
+        (self.output / "help-and-access-draft.md").write_bytes(b"An unrelated local draft.")
+        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        with self.assertRaises(ValueError):
+            self.build()
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
 
 
 if __name__ == "__main__":

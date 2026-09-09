@@ -25,7 +25,9 @@ LICENSE_ASSETS = {
     "content-license.txt": "LICENSE-CONTENT",
     "attribution.txt": "LICENSES.md",
 }
-OUTPUT_NAMES = LEGACY_OUTPUT_NAMES | set(LICENSE_ASSETS)
+PRE_DOWNLOAD_OUTPUT_NAMES = LEGACY_OUTPUT_NAMES | set(LICENSE_ASSETS)
+REVIEW_ASSETS = {"help-and-access-draft.md": "docs/REVIEW-CASES.md"}
+OUTPUT_NAMES = PRE_DOWNLOAD_OUTPUT_NAMES | set(REVIEW_ASSETS)
 VERSION = "0.1.0"
 RELEASE_FIELDS = {"status", "repository", "maintainer", "conduct_contact", "security_contact"}
 
@@ -142,11 +144,11 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
                     raise ValueError("Unrecognized build manifest.")
                 legacy = (set(previous) == {"version", "base", "files"}
                           and previous["version"] == "0.1.0-candidate"
-                          and set(files) in (LEGACY_OUTPUT_NAMES - {"manifest.json"}, OUTPUT_NAMES - {"manifest.json"}))
+                          and set(files) in (LEGACY_OUTPUT_NAMES - {"manifest.json"}, PRE_DOWNLOAD_OUTPUT_NAMES - {"manifest.json"}))
                 current = (set(previous) == {"version", "status", "base", "files"}
                            and previous["status"] in ("candidate", "ready")
                            and previous["version"] == output_version(previous["status"])
-                           and set(files) == OUTPUT_NAMES - {"manifest.json"})
+                           and set(files) in (PRE_DOWNLOAD_OUTPUT_NAMES - {"manifest.json"}, OUTPUT_NAMES - {"manifest.json"}))
                 if not (legacy or current):
                     raise ValueError("Unrecognized build manifest.")
                 base_path(previous["base"])
@@ -162,6 +164,7 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
     payload["styles.css"] = (ROOT / "styles.css").read_bytes()
     payload["robots.txt"] = b"User-agent: *\nAllow: /\n" if status == "ready" else b"User-agent: *\nDisallow: /\n"
     payload.update({destination: (ROOT / source).read_bytes() for destination, source in LICENSE_ASSETS.items()})
+    payload.update({destination: (ROOT / source).read_bytes() for destination, source in REVIEW_ASSETS.items()})
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in sorted(payload.items())}
     payload["manifest.json"] = (json.dumps({"version": output_version(status), "status": status, "base": base, "files": manifest}, indent=2) + "\n").encode("utf-8")
     output.mkdir(parents=True, exist_ok=True)

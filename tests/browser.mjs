@@ -1,6 +1,7 @@
 // Optional browser review using an existing Playwright installation. No installs.
 import assert from 'node:assert/strict';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 const moduleName = process.env.PLAYWRIGHT_MODULE_PATH;
@@ -14,6 +15,7 @@ const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIG
 const routes = ['index', 'standard', 'open-source', 'contribute', 'governance', '404'];
 const reports = [];
 let accessibilityTreeChecks = 0;
+let downloadChecks = 0;
 try {
   // Block any accidental off-origin request, so a regression cannot transmit data.
   for (const width of [1440, 768, 320]) {
@@ -45,6 +47,23 @@ try {
       assert.equal(metrics.h1, 1);
       assert.equal(metrics.scripts, 0);
       assert.equal(metrics.controls, 0);
+      if (slug === 'open-source') {
+        const link = page.getByRole('link', { name: 'Download editable draft (.md) →', exact: true });
+        const downloadURL = new URL('help-and-access-draft.md', origin).href;
+        assert.equal(new URL(await link.getAttribute('href'), origin).href, downloadURL);
+        const [download] = await Promise.all([page.waitForEvent('download'), link.click()]);
+        assert.equal(download.suggestedFilename(), 'help-and-access-draft.md');
+        assert.equal(await download.failure(), null);
+        const bytes = await readFile(await download.path());
+        const manifestResponse = await context.request.get(new URL('manifest.json', origin).href, { maxRedirects: 0 });
+        assert.equal(manifestResponse.status(), 200);
+        const manifest = await manifestResponse.json();
+        assert.equal(createHash('sha256').update(bytes).digest('hex'), manifest.files['help-and-access-draft.md']);
+        assert(bytes.toString('utf8').includes('Not yet specialist-reviewed.'));
+        downloadChecks++;
+        // Restore the initial focus state before checking the skip link.
+        await page.goto(new URL(`${slug}.html`, origin).href);
+      }
       if (width === 320) {
         const session = await context.newCDPSession(page);
         const { nodes } = await session.send('Accessibility.getFullAXTree');
@@ -118,7 +137,7 @@ try {
     if (artifacts && slug === 'standard') await printPage.screenshot({ path: path.join(artifacts, 'standard-print.png'), fullPage: true });
   }
   await printContext.close();
-  console.log(JSON.stringify({ result: 'PASS', viewportRouteChecks: reports.length, textSpacingForcedColorChecks: routes.length, printMediaChecks: routes.length, accessibilityTreeChecks, clientJavaScript: false, reports }, null, 2));
+  console.log(JSON.stringify({ result: 'PASS', viewportRouteChecks: reports.length, textSpacingForcedColorChecks: routes.length, printMediaChecks: routes.length, accessibilityTreeChecks, downloadChecks, clientJavaScript: false, reports }, null, 2));
 } finally {
   await browser.close();
 }
