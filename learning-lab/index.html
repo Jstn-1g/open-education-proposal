@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="{{robots}}">
+  <meta name="description" content="Two unvalidated learning-design examples: explore fractions and investigate an ideal pendulum model.">
+  <title>Learning Lab · Open Education · Playable preview</title>
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to activities</a>
+  <header class="masthead wrap">
+    <a class="brand" href="{{base}}index.html">Open Education<span>Learning Lab</span></a>
+    <div class="header-links"><a href="#research" class="research-link">Behind the learning</a><a href="{{base}}contribute.html">Help build this ↗</a></div>
+  </header>
+  <main id="main" class="wrap" tabindex="-1">
+    <div class="intro">
+      <div><h1>Ideas you can <em>play with.</em></h1></div>
+      <p class="prototype-note">Unvalidated design examples · For adult review<br>No accounts. No scores. Room to explore.</p>
+    </div>
+    <div class="playground-toolbar">
+    <nav class="experience-picker" aria-label="Choose an example">
+      <button type="button" id="choose-8" aria-controls="age8" aria-pressed="true" disabled><span><strong>Fraction Bridge</strong><small>Age 8 example</small></span></button>
+      <button type="button" id="choose-14" aria-controls="age14" aria-pressed="false" disabled><span><strong>Clockwork Lab</strong><small>Age 14 example</small></span></button>
+    </nav>
+    <div class="access-bar"><button type="button" id="graphics-toggle" aria-pressed="false" disabled>Simple view</button><span id="graphics-status" class="sr-only" role="status"></span></div>
+    </div>
+    <p id="loading-note" class="notice">Interactive controls need JavaScript. The explanations and research notes remain available below.</p>
+    <section id="age8" class="activity" aria-labelledby="bridge-mission">
+      <div class="activity-heading"><h2 id="bridge-mission">Make 1/2 another way.</h2></div>
+      <fieldset id="fraction-controls" disabled>
+        <legend class="sr-only">Fraction playground</legend>
+        <div class="game-layout">
+        <div class="fraction-stage">
+          <div class="stage-top"><span class="small-label">The full bridge is 1 whole</span><span class="amount-readout"><span>Built so far</span><output id="fraction-label" aria-label="Filled fraction">1/2</output></span></div>
+          <div class="fraction-world">
+          <div id="fraction-scene" class="scene-surface" aria-hidden="true"></div>
+          <div id="pieces" class="pieces" role="group" aria-label="Placed bridge pieces"><button type="button" data-units="4" aria-pressed="true" aria-label="Piece 1, one half, selected"><span>1/2</span></button></div>
+          </div>
+        </div>
+        <div class="discovery-panel">
+          <p id="fraction-status" role="status" aria-live="polite" aria-atomic="true">Your half reaches the flag. Try “Split selected piece”.</p>
+          <div class="selected-tools"><p id="split-note">Piece 1 selected · 1/2</p><div class="button-row edit-pieces"><button type="button" id="split-piece" class="primary">Split selected piece</button><button type="button" id="remove-piece" class="full-only">Remove</button></div></div>
+          <div class="fraction-toolbar full-only"><span id="split-label">Add a piece</span><div class="button-row piece-palette" role="group" aria-labelledby="split-label"><button type="button" data-add="4"><span class="palette-bar half" aria-hidden="true"></span><strong>+ 1/2</strong></button><button type="button" data-add="2"><span class="palette-bar quarter" aria-hidden="true"></span><strong>+ 1/4</strong></button><button type="button" data-add="1"><span class="palette-bar eighth" aria-hidden="true"></span><strong>+ 1/8</strong></button></div></div>
+        <div class="play-actions"><button type="button" id="check-fraction">Check my bridge</button><button type="button" id="fraction-undo" disabled>Undo</button><button type="button" id="fraction-reset">Start again</button></div>
+        <div id="puzzle-panel" class="puzzle-panel"><div class="button-row"><button type="button" id="puzzle-help">Show one way</button><button type="button" id="puzzle" class="full-only">Next flag</button></div></div>
+        </div></div>
+      </fieldset>
+      <details class="connection"><summary>See it on a number line</summary><p>The filled amount has a place between 0 and 1.</p><svg viewBox="0 0 600 110" role="img" aria-labelledby="line-title"><title id="line-title">One half on a number line from zero to one</title><line x1="30" y1="40" x2="570" y2="40" class="number-axis"/><path d="M30 30v20 M300 32v16 M570 30v20" class="number-axis"/><line id="amount-line" x1="30" y1="40" x2="300" y2="40" class="amount-line"/><circle id="amount-dot" cx="300" cy="40" r="9"/><text x="30" y="85">0</text><text x="300" y="85">1/2</text><text x="570" y="85">1 whole</text></svg></details>
+    </section>
+    <section id="age14" class="activity" aria-labelledby="pendulum-title">
+      <div class="activity-heading"><h2 id="pendulum-title">Does more mass change the rhythm?</h2></div>
+      <p class="model-note">A simplified model for small swings—not a real experiment. One cycle is a full back-and-forth.</p>
+      <noscript><p class="notice">Static example: with length 1 m, both a 100 g bob and a 200 g bob have a calculated period of about 2.01 seconds in this ideal model. Enable JavaScript to compare setups.</p></noscript>
+      <div class="lab-grid">
+        <div class="pendulum-stage">
+          <div class="pendulum-labels"><p><strong>A</strong> Reference<span>1 m · 100 g</span></p><p><strong>B</strong> Your setup<span id="setup-label">1 m · 200 g</span></p></div>
+          <div id="clockwork-scene" class="scene-surface" aria-hidden="true"></div>
+          <svg id="pendulum-scene" viewBox="0 0 640 320" role="img" aria-labelledby="pendulum-scene-title"><title id="pendulum-scene-title">Two pendulums ready to compare</title><path d="M45 35H595" class="support-line"/><path d="M160 45V285 M480 45V285" class="reference-line"/><g id="swing-a"><line x1="160" y1="45" x2="160" y2="195" class="string"/><circle cx="160" cy="195" r="18" class="bob-a"/><text x="160" y="201" class="bob-letter">A</text></g><g id="swing-b"><line id="string-b" x1="480" y1="45" x2="480" y2="195" class="string"/><circle id="bob-b" cx="480" cy="195" r="22" class="bob-b"/><text id="bob-b-letter" x="480" y="201" class="bob-letter">B</text></g><circle cx="160" cy="45" r="5" class="pivot"/><circle cx="480" cy="45" r="5" class="pivot"/></svg>
+          <div class="motion-controls"><p id="graph-window" hidden>Swing angle: A above, B below · 0–4 seconds</p><button type="button" id="motion-toggle" disabled>Play motion</button><button type="button" id="motion-step" disabled>Step ¼ cycle of A</button><span id="motion-note" role="status">Run a comparison first. Then play or step through.</span></div>
+        </div>
+        <fieldset id="pendulum-controls" class="lab-controls" disabled>
+          <legend>Set up B</legend>
+          <label for="length" class="full-only">Length <small>From the hanging point to the ball’s centre</small></label><select id="length" class="full-only"><option value="0.5">0.5 m</option><option value="1" selected>1 m</option><option value="1.5">1.5 m</option></select>
+          <label for="mass">Mass of B’s ball <small>The hanging ball is called a bob.</small></label><select id="mass"><option value="100">100 g</option><option value="200" selected>200 g</option><option value="400">400 g</option></select>
+          <p id="test-design" class="test-design">Only mass changes. Both lengths stay the same.</p>
+          <details class="prediction-choice full-only"><summary>Make a prediction (optional)</summary><fieldset class="prediction"><legend>B will complete each cycle…</legend><label><input type="radio" name="prediction" value="faster"> In less time</label><label><input type="radio" name="prediction" value="same"> In the same time</label><label><input type="radio" name="prediction" value="slower"> In more time</label></fieldset></details>
+          <button type="button" id="run-model" class="primary">Run comparison</button><button type="button" id="lab-reset">Reset setup</button>
+        </fieldset>
+      </div>
+      <div id="lab-results" class="lab-results" hidden>
+        <div class="result-pair"><div><span>A · time per cycle</span><strong id="period-a">2.01 s</strong></div><div><span>B · time per cycle</span><strong id="period-b">2.01 s</strong></div></div>
+        <p id="lab-conclusion" role="status" tabindex="-1"></p><p id="prediction-readback" class="quiet" hidden></p>
+        <details class="full-only"><summary>How to read the moving lines</summary><p>Each line shows one pendulum’s angle, from −8° to +8°. Both use the same four-second window.</p><p>When the lines match, the rhythms match in this model. This does not mean the balls move at the same speed.</p></details>
+        <details class="full-only"><summary>Why does the model do that?</summary><p id="model-explanation"></p><p>It uses T = 2π√(L/g), with g = 9.81 m/s². Mass is absent from this formula. Both start at 8°. We approximate small swings and ignore air resistance, friction, string mass, and stretch.</p><p>A model shows consequences of its assumptions. It cannot, by itself, establish what every real pendulum does.</p></details>
+      </div>
+      <p class="quiet lab-question full-only">What would you keep the same in a real comparison? What might this model leave out?</p>
+    </section>
+    <nav class="playground-links" aria-label="Explore further"><a id="full-playground" href="index.html#age8" target="_top">Open full playground</a><a href="index.html#research" target="_top">Evidence &amp; limits</a></nav>
+    <details id="research" class="research full-only">
+      <summary>For educators &amp; reviewers · Purpose, evidence, and limits</summary>
+      <div class="research-grid">
+        <div><h2>Age 8: a quantity stays the same</h2><p>Proposed goal: connect equal partitions to equivalent fractions of a fixed whole. Assumes familiarity with equal shares; age alone does not establish readiness.</p><p>The IES fractions guide recommends number lines and understanding fractions as numbers. Its relevant recommendation has moderate evidence. Our connection from pieces to symbols to a number line is a design application—not a tested intervention.</p><p><a href="https://ies.ed.gov/ncee/wwc/PracticeGuide/15">IES fractions guidance</a> · <a href="https://ies.ed.gov/ncee/wwc/PracticeGuide/1">IES guidance on representations and worked examples</a></p><p>A randomized fraction-game study found no transfer to several untrained fraction tasks. Enjoyment and successful matching are not proof of understanding. <a href="https://pubmed.ncbi.nlm.nih.gov/35078086/">Nuraydin and colleagues, 2022</a>.</p><p>Paper alternative: fold two identical strips to show one half and two quarters. Discuss what changed and what stayed the same.</p></div>
+        <div><h2>Age 14: investigate one factor</h2><p>Proposed goal: distinguish a controlled comparison from changing two factors, and distinguish a model's prediction from real-world evidence. Assumes an understanding of length, mass, and elapsed time; no algebra is required to interact.</p><p>The physics follows the ideal small-angle pendulum model in <a href="https://openstax.org/books/university-physics-volume-1/pages/15-4-pendulums">OpenStax University Physics, §15.4</a>. The curriculum connection is to controlling variables and examining models in <a href="https://www.nextgenscience.org/resources/ngss-appendices">NGSS Appendix F</a>; this is not a claim of certified alignment or effectiveness.</p><p>Showing a prediction, visual comparison, and short explanation is an evidence-informed design choice. It does not demonstrate that this prototype teaches scientific reasoning.</p><p>Paper alternative: compare supplied setup diagrams and calculated periods, identifying which variables differ. No physical experiment is requested here.</p></div>
+      </div>
+      <p><strong>Review status:</strong> AI-assisted design and implementation; no qualified educator, accessibility-practitioner, or child-user review yet. Neither age suitability, enjoyment, learning gains, nor full accessibility conformance has been established. These design examples are not approved classroom resources.</p>
+      <p>No accounts, chat, recordings, analytics, persistent progress, or learner profiles. Activity inputs exist only in this page's memory and reset on reload; the chosen example can remain in the URL. No child recruitment or evaluation is part of this preview.</p>
+    </details>
+    <footer><span>Open Education · Unvalidated design examples</span><span><a href="{{base}}open-source.html#licenses">Licenses &amp; source</a> · <a href="{{base}}governance.html#release">Status &amp; responsibilities</a></span></footer>
+  </main>
+</body>
+</html>

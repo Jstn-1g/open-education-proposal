@@ -5,11 +5,13 @@ Accessibility is part of the work, not a certification badge. WCAG 2.2 AA is our
 ## Implemented
 
 - Semantic pages with one main heading, meaningful heading order, navigation landmarks, current-page indication, and a keyboard skip link.
-- Visible focus, underlined text links, flexible layouts, system fonts, and no required client-side JavaScript.
-- No animation, autoplay, forms, tracking widgets, or remote fonts.
+- Visible focus, underlined text links, flexible layouts and system fonts. Proposal/discussion pages and static explanations can be read without JavaScript; interactive demos need it.
+- No submitted forms, tracking widgets or remote fonts. Demo inputs stay in page memory. Pendulum motion is time-limited, pausable and starts paused for reduced motion; manual steps and interactive Simple view are available.
 - Print styles that remove navigation and keep the reading content visible.
 
 ## Recorded checks
+
+The newer interactive demonstrator has a separate [scope and verification record](LEARNING-LAB.md). Historical checks below concern the earlier reading website and do not certify the new Canvas experience. Native controls and text expose quantities alongside Canvas annotations; that does not establish complete screen-reader or dyslexic-user usability.
 
 The reproducible checks are in `tests/test_site.py` and `tests/browser.mjs`; see [development instructions](../DEVELOPMENT.md). On 4 September 2026, checks passed in installed Microsoft Edge through Playwright for all six pages at 320, 768, and 1440 CSS pixels, keyboard access to main content, and reflow with enlarged text and spacing overrides in forced-color mode. Root and project-subpath navigation were exercised. Print-media checks passed for visible headings, hidden navigation, and horizontal fit; paginated paper output was not evaluated. Passing these checks demonstrates only the assertions they make.
 

@@ -1,6 +1,7 @@
 """Exercise the publication guard without a network, license grant, or real contact."""
 import importlib.util
 import json
+import shutil
 from pathlib import Path
 import tempfile
 import unittest
@@ -35,10 +36,11 @@ class ReleaseCheckTests(unittest.TestCase):
         (self.root / "docs" / "REVIEW-CASES.md").write_text("Synthetic discussion draft.", encoding="utf-8")
         (self.root / "styles.css").write_text("body { color: black; }", encoding="utf-8")
         (self.root / "content").mkdir()
-        for slug in ("index", "standard", "open-source", "contribute", "governance", "404"):
+        for slug in ("index", "standard", "open-source", "contribute", "governance", "discussion", "404"):
             (self.root / "content" / f"{slug}.html").write_text("<h1>Community proposal</h1>", encoding="utf-8")
         self.builder_source = (ROOT / "build.py").read_text(encoding="utf-8")
         (self.root / "build.py").write_text(self.builder_source, encoding="utf-8")
+        shutil.copytree(ROOT / "learning-lab", self.root / "learning-lab")
 
     def save(self):
         (self.root / "release.json").write_text(json.dumps(self.data), encoding="utf-8")

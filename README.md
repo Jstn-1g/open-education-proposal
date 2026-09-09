@@ -12,7 +12,9 @@ We want educators, researchers, accessibility specialists, families, designers, 
 
 Read the [proposal](PROPOSAL.md) and [contribution guide](CONTRIBUTING.md) as needed. Join an existing task above, or use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a different topic. A GitHub account is needed to post. You do not need code, a finished solution, or research citations to ask a question or report a barrier.
 
-Want something concrete to review? [Explore the two-case demo](https://jstn-1g.github.io/open-education-proposal/#demo): the same read-aloud support can have different roles depending on the intended skill. Open each case to examine the provisional reasoning, then suggest one correction. No account, scripts, or AI service is needed to explore it.
+Want something concrete to review? [Try Fraction Bridge or Clockwork Lab](https://jstn-1g.github.io/open-education-proposal/#demo), then [open the full playground](https://jstn-1g.github.io/open-education-proposal/learning-lab/index.html). These illustrated, interactive design examples are for adult review—not validated lessons or approved classroom resources. The age labels are tentative design starting points, not readiness assessments. Play needs JavaScript; Simple view avoids the engine and scene downloads. No account or AI service is needed, and activity inputs stay in page memory.
+
+The earlier [two read-aloud discussion cases](https://jstn-1g.github.io/open-education-proposal/discussion.html#demo) remain available without scripts. They explore how the same support can have different roles depending on the intended skill.
 
 [Read all six fictional help-and-access cases](docs/REVIEW-CASES.md), or [download the editable plain-text draft](https://jstn-1g.github.io/open-education-proposal/help-and-access-draft.md). It carries its sources, uncertainties, and CC BY 4.0 attribution. **Not yet specialist-reviewed:** an adult discussion draft, not a classroom resource or assessment. Pick one case and challenge it in [task #1](https://github.com/Jstn-1g/open-education-proposal/issues/1).
 
@@ -20,7 +22,7 @@ Want to challenge the bigger educational design? Review one question in [Design 
 
 ## Now, next, and later
 
-- **Now:** Version 0.1.0 offers a draft proposal, evidence notes, an informational website, a contributor kit, and six fictional discussion cases for adult review.
+- **Now:** Version 0.1.0 offers a draft proposal, evidence notes, a contributor website, six fictional discussion cases and two interactive design examples for adult review.
 - **Next:** Aim for three first-month outputs: reviewed help-versus-access examples, one evidence note, and one accessibility report with a maintainer response. Publishing an AI-assisted case draft does not complete the review task. These are [planning targets, not promised deadlines](docs/ROADMAP.md).
 - **Later:** Consider a small, openly licensed learning resource only with qualified human review, capacity to maintain it, and evidence appropriate to its claims. A complete learning path without a proprietary model is the longer-term ambition, not something this release delivers.
 
@@ -38,7 +40,7 @@ Public code-scanning results must be reviewed before community changes are merge
 
 The repository is [Jstn-1g/open-education-proposal](https://github.com/Jstn-1g/open-education-proposal). Jstn-1g is the accountable human owner and initial maintainer, with GPT-6 assisting development and review.
 
-Code is licensed under Apache-2.0 and content under CC BY 4.0, as detailed in [licenses and attribution](LICENSES.md). The informational website is hosted on GitHub Pages; source changes and website deployments are reviewed separately.
+Project code is licensed under Apache-2.0 and content under CC BY 4.0; the bundled Phaser engine retains its MIT license. See [licenses and attribution](LICENSES.md) and [asset provenance](learning-lab/ASSETS.md). The website is hosted on GitHub Pages; source changes and website deployments are reviewed separately.
 
 Private conduct and security concerns go to [jstn0513@gmail.com](mailto:jstn0513@gmail.com), handled by Jstn-1g. Do not post sensitive details in public issues. No guaranteed response time or continuous monitoring is offered.
 

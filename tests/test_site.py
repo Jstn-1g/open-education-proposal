@@ -8,10 +8,11 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import tempfile
 import unittest
 from unittest.mock import patch
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urljoin
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("proposal_build", ROOT / "build.py")
@@ -52,6 +53,10 @@ class Document(HTMLParser):
             self.headings.append(int(tag[1]))
 
 
+def snapshot(directory):
+    return {p.relative_to(directory).as_posix(): p.read_bytes() for p in directory.rglob("*") if p.is_file()}
+
+
 class SiteTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="education-site-test-")
@@ -60,11 +65,12 @@ class SiteTests(unittest.TestCase):
 
     def build(self, base="/"):
         builder.build(self.output, base)
-        return {p.name: Document(p.read_text(encoding="utf-8")) for p in self.output.glob("*.html")}
+        return {p.relative_to(self.output).as_posix(): Document(p.read_text(encoding="utf-8")) for p in self.output.rglob("*.html")}
 
     def release_source(self):
         source = Path(self.temp.name) / "source"
         (source / "content").mkdir(parents=True)
+        shutil.copytree(ROOT / "learning-lab", source / "learning-lab")
         for path in (ROOT / "content").glob("*.html"):
             (source / "content" / path.name).write_bytes(path.read_bytes())
         for name in ("styles.css", "LICENSE", "LICENSE-CONTENT", "LICENSES.md"):
@@ -93,10 +99,12 @@ class SiteTests(unittest.TestCase):
                     self.assertEqual(policies, [expected])
                     page = (self.output / name).read_text(encoding="utf-8")
                     if status == "ready":
-                        self.assertIn("Community proposal · v0.1.0", page)
+                        if name != "learning-lab/index.html":
+                            self.assertIn("Community proposal · v0.1.0", page)
                         self.assertNotIn("Not yet released", page)
                     else:
-                        self.assertIn("Not yet released", page)
+                        if name != "learning-lab/index.html":
+                            self.assertIn("Not yet released", page)
 
     def test_malformed_release_config_fails_before_writing(self):
         source = self.release_source()
@@ -120,29 +128,29 @@ class SiteTests(unittest.TestCase):
         (source / "release.json").write_text(json.dumps(self.release_data), encoding="utf-8")
         with patch.object(builder, "ROOT", source):
             self.build()
-            first = {p.name: p.read_bytes() for p in self.output.iterdir()}
+            first = snapshot(self.output)
             self.assertEqual(json.loads(first["manifest.json"])["version"], "0.1.0")
             self.build()
-            self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
+            self.assertEqual(first, snapshot(self.output))
             (source / "release.json").write_text("{broken", encoding="utf-8")
             with self.assertRaises(ValueError):
                 builder.build(self.output)
-            self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
+            self.assertEqual(first, snapshot(self.output))
 
     def test_build_is_deterministic_and_manifest_matches_bytes(self):
         self.build()
-        first = {p.name:p.read_bytes() for p in self.output.iterdir()}
+        first = snapshot(self.output)
         self.build()
-        self.assertEqual(first, {p.name:p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(first, snapshot(self.output))
         manifest = json.loads(first["manifest.json"])
         for name, digest in manifest["files"].items():
             self.assertEqual(digest, hashlib.sha256(first[name]).hexdigest())
-        self.assertEqual(len([n for n in first if n.endswith(".html")]), 6)
+        self.assertEqual(len([n for n in first if n.endswith(".html")]), 8)
 
     def test_every_internal_link_and_fragment_works_at_root_and_project_path(self):
         for base in ("/", "/open-education-proposal/"):
             documents = self.build(base)
-            assets = {p.name for p in self.output.iterdir() if p.is_file()}
+            assets = set(snapshot(self.output))
             for name, doc in documents.items():
                 for href in doc.links:
                     target = urlsplit(href)
@@ -150,6 +158,7 @@ class SiteTests(unittest.TestCase):
                         self.assertTrue(external_reference(href), (name, href))
                         continue
                     self.assertFalse(target.netloc, (name, href))
+                    target = urlsplit(urljoin(base + name, href))
                     if not target.path:
                         dest = doc
                     else:
@@ -161,7 +170,11 @@ class SiteTests(unittest.TestCase):
                     if target.fragment:
                         self.assertIsNotNone(dest, (name, href, "Only HTML documents have checked fragments"))
                         self.assertIn(target.fragment, dest.ids, (name, href))
-                self.assertEqual(doc.resources, [base + "styles.css"])
+                for resource in doc.resources:
+                    resolved = urlsplit(urljoin(base + name, resource))
+                    self.assertFalse(resolved.scheme or resolved.netloc, (name, resource))
+                    self.assertTrue(resolved.path.startswith(base))
+                    self.assertIn(resolved.path[len(base):], assets)
 
     def test_generated_license_assets_are_exact_source_bytes(self):
         self.build("/open-education-proposal/")
@@ -191,40 +204,40 @@ class SiteTests(unittest.TestCase):
     def test_missing_review_source_preserves_previous_build_and_creates_nothing(self):
         source = self.release_source()
         self.build()
-        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        before = snapshot(self.output)
         (source / "docs/REVIEW-CASES.md").unlink()
         fresh_output = Path(self.temp.name) / "new-output"
         with patch.object(builder, "ROOT", source):
             for destination in (self.output, fresh_output):
                 with self.assertRaises(FileNotFoundError):
                     builder.build(destination)
-        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(before, snapshot(self.output))
         self.assertFalse(fresh_output.exists())
 
     def test_legacy_manifest_upgrades_to_complete_license_output(self):
         names = self.make_legacy_output()
         self.build()
-        expected = names | {"code-license.txt", "content-license.txt", "attribution.txt", "manifest.json", "help-and-access-draft.md"}
-        self.assertEqual({p.name for p in self.output.iterdir()}, expected)
-        first = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        expected = builder.OUTPUT_NAMES
+        self.assertEqual(set(snapshot(self.output)), expected)
+        first = snapshot(self.output)
         self.build()
-        self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(first, snapshot(self.output))
 
     def test_modified_legacy_output_is_preserved(self):
         self.make_legacy_output()
         (self.output / "index.html").write_bytes(b"local change to preserve")
-        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        before = snapshot(self.output)
         with self.assertRaises(ValueError):
             builder.build(self.output)
-        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(before, snapshot(self.output))
 
     def test_legacy_output_with_unmanifested_license_asset_is_preserved(self):
         self.make_legacy_output()
         (self.output / "code-license.txt").write_bytes(b"unrelated file")
-        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        before = snapshot(self.output)
         with self.assertRaises(ValueError):
             builder.build(self.output)
-        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(before, snapshot(self.output))
 
     def test_partial_license_manifest_is_not_an_owned_build(self):
         self.make_legacy_output()
@@ -234,10 +247,10 @@ class SiteTests(unittest.TestCase):
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         manifest["files"]["code-license.txt"] = hashlib.sha256(data).hexdigest()
         manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
-        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        before = snapshot(self.output)
         with self.assertRaises(ValueError):
             builder.build(self.output)
-        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(before, snapshot(self.output))
 
     def test_semantic_structure_and_navigation(self):
         for name, doc in self.build().items():
@@ -249,11 +262,14 @@ class SiteTests(unittest.TestCase):
             for before, after in zip(doc.headings, doc.headings[1:]):
                 self.assertLessEqual(after, before + 1, name)
             active = [a for tag, a in doc.tags if tag == "a" and a.get("aria-current") == "page"]
-            self.assertEqual(len(active), 0 if name == "404.html" else 1)
+            self.assertEqual(len(active), 0 if name in ("404.html", "learning-lab/index.html") else 1)
 
-    def test_no_scripts_collection_or_external_resources(self):
+    def test_scripts_are_scoped_and_no_collection_or_external_resources(self):
         for name, doc in self.build().items():
-            self.assertFalse({tag for tag, _ in doc.tags} & {"script", "iframe", "form", "input", "object", "embed", "video", "audio"}, name)
+            forbidden = {"form", "object", "embed", "video", "audio"}
+            if name not in ("index.html", "learning-lab/index.html"):
+                forbidden |= {"script", "iframe", "input"}
+            self.assertFalse({tag for tag, _ in doc.tags} & forbidden, name)
             for tag, attrs in doc.tags:
                 self.assertFalse(any(k.startswith("on") for k in attrs), (name, tag))
             policies = [a["content"] for t, a in doc.tags if t == "meta" and a.get("http-equiv") == "Content-Security-Policy"]
@@ -387,7 +403,7 @@ class SiteTests(unittest.TestCase):
     def test_guided_demo_has_independent_disclosures_and_reuse_routes(self):
         for base in ("/", "/open-education-proposal/"):
             documents = self.build(base)
-            home = documents["index.html"]
+            home = documents["discussion.html"]
             for identifier in ("demo", "demo-c1", "demo-c2", "demo-title"):
                 self.assertIn(identifier, home.ids)
             disclosures = [attrs for tag, attrs in home.tags if tag == "details"]
@@ -395,15 +411,89 @@ class SiteTests(unittest.TestCase):
             for attrs in disclosures:
                 self.assertTrue({"name", "open", "hidden"}.isdisjoint(attrs))
             self.assertEqual(sum(tag == "summary" for tag, _ in home.tags), 2)
-            for href in ("#demo", base + "help-and-access-draft.md",
+            for href in (base + "index.html#demo", base + "help-and-access-draft.md",
                          base + "open-source.html#review-draft",
                          "https://github.com/Jstn-1g/open-education-proposal/issues/1"):
                 self.assertIn(href, home.links)
             self.assertIn(base + "index.html#demo", documents["contribute.html"].links)
 
+    def test_interactive_homepage_and_lab_have_narrow_runtime_policies(self):
+        for base in ("/", "/open-education-proposal/"):
+            docs = self.build(base)
+            home, lab = docs["index.html"], docs["learning-lab/index.html"]
+            frames = [attrs for tag, attrs in home.tags if tag == "iframe"]
+            self.assertEqual(len(frames), 1)
+            self.assertEqual(frames[0]["src"], base + "learning-lab/index.html?embed=1&focus=1#age8")
+            self.assertTrue(frames[0].get("title"))
+            for name, document in docs.items():
+                scripts = [attrs for tag, attrs in document.tags if tag == "script"]
+                if name in ("index.html", "learning-lab/index.html"):
+                    self.assertEqual(len(scripts), 1)
+                    self.assertEqual(scripts[0].get("type"), "module")
+                    csp = next(attrs["content"] for tag, attrs in document.tags if attrs.get("http-equiv") == "Content-Security-Policy")
+                    for directive in ("script-src 'self'", "connect-src 'none'", "form-action 'none'", "base-uri 'none'"):
+                        self.assertIn(directive, csp)
+                    self.assertNotIn("unsafe-", csp)
+                else:
+                    self.assertEqual(scripts, [], name)
+            self.assertIn(base + "index.html", lab.links)
+            self.assertIn(base + "contribute.html", lab.links)
+            self.assertIn("index.html#age8", lab.links)
+            text = (self.output / "learning-lab/index.html").read_text(encoding="utf-8")
+            for phrase in ("For adult review", "not approved classroom resources", "no qualified educator", "page's memory"):
+                self.assertIn(phrase, text)
+            self.assertNotIn("Local learning-design", text)
+
+    def test_renderer_identity_and_explicit_initial_payload_budget(self):
+        self.build()
+        engine = self.output / "learning-lab/vendor/phaser-3.90.0.min.js"
+        notice = self.output / "learning-lab/vendor/PHASER-LICENSE.txt"
+        self.assertEqual(hashlib.sha256(engine.read_bytes()).hexdigest(), "e92ddef111ba42e92d316979c732311757093688ea1810591cb7aa2858eba7a7")
+        self.assertEqual(hashlib.sha256(notice.read_bytes()).hexdigest(), "c3123cd25de4eccf1fd5a5a0a6fc872299116d1dbbb48b00f2554a4c35220a65")
+        self.assertLess(sum(len(data) for data in snapshot(self.output).values()), 6_000_000)
+        for name, data in snapshot(self.output).items():
+            if name.endswith((".html", ".mjs", ".md")):
+                self.assertNotRegex(data.decode("utf-8"), r"(?i)C:\\Users|/Users/|\.codex|BEGIN.*PRIVATE KEY")
+
+    def test_nested_modified_and_unowned_assets_are_preserved(self):
+        self.build()
+        asset = self.output / "learning-lab/app.mjs"
+        asset.write_bytes(b"A local edit must survive.")
+        before = snapshot(self.output)
+        with self.assertRaises(ValueError):
+            self.build()
+        self.assertEqual(before, snapshot(self.output))
+        extra = self.output / "learning-lab/private.txt"
+        extra.write_bytes(b"Never overwrite this.")
+        with self.assertRaises(ValueError):
+            self.build()
+        self.assertEqual(extra.read_bytes(), b"Never overwrite this.")
+
+    def test_nested_hardlinked_asset_preserves_external_file(self):
+        self.build()
+        asset = self.output / "learning-lab/app.mjs"
+        outside = Path(self.temp.name) / "outside.mjs"
+        outside.write_bytes(asset.read_bytes())
+        asset.unlink()
+        os.link(outside, asset)
+        before = outside.read_bytes()
+        with self.assertRaises(ValueError):
+            self.build()
+        self.assertEqual(outside.read_bytes(), before)
+
+    def test_missing_runtime_asset_does_not_partially_write_build(self):
+        source = self.release_source()
+        self.build()
+        before = snapshot(self.output)
+        (source / "learning-lab/app.mjs").unlink()
+        with patch.object(builder, "ROOT", source):
+            with self.assertRaises(FileNotFoundError):
+                self.build()
+        self.assertEqual(before, snapshot(self.output))
+
     def test_demo_preserves_source_reasoning_and_visible_limits(self):
         self.build()
-        home = (self.output / "index.html").read_text(encoding="utf-8")
+        home = (self.output / "discussion.html").read_text(encoding="utf-8")
         source = (ROOT / "docs/REVIEW-CASES.md").read_text(encoding="utf-8")
         # A screen disclosure and its print fallback must retain the same
         # provisional interpretation and uncertainty as the source cases.
@@ -420,7 +510,7 @@ class SiteTests(unittest.TestCase):
 
     def test_demo_controls_include_visible_case_context(self):
         for base in ("/", "/open-education-proposal/"):
-            home = self.build(base)["index.html"]
+            home = self.build(base)["discussion.html"]
             summaries = [attrs for tag, attrs in home.tags if tag == "summary"]
             self.assertEqual(len(summaries), 2)
             for case, attrs in zip(("c1", "c2"), summaries):
@@ -431,12 +521,16 @@ class SiteTests(unittest.TestCase):
 
     def make_pre_download_output(self, status):
         self.build()
+        # Construct the exact older flat output in this test-owned temporary directory.
+        shutil.rmtree(self.output / "learning-lab")
+        (self.output / "discussion.html").unlink()
         download = self.output / "help-and-access-draft.md"
         if download.exists():
             download.unlink()
         manifest_path = self.output / "manifest.json"
         manifest = json.loads(manifest_path.read_text())
-        manifest["files"].pop("help-and-access-draft.md", None)
+        manifest["files"] = {name: digest for name, digest in manifest["files"].items()
+                             if name in builder.PRE_DOWNLOAD_OUTPUT_NAMES - {"manifest.json"}}
         manifest["status"] = status
         manifest["version"] = "0.1.0" if status == "ready" else "0.1.0-candidate"
         self.assertEqual(len(manifest["files"]), 11)
@@ -448,25 +542,25 @@ class SiteTests(unittest.TestCase):
             self.build()
             self.assertEqual((self.output / "help-and-access-draft.md").read_bytes(),
                              (ROOT / "docs/REVIEW-CASES.md").read_bytes())
-            first = {p.name: p.read_bytes() for p in self.output.iterdir()}
+            first = snapshot(self.output)
             self.build()
-            self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
+            self.assertEqual(first, snapshot(self.output))
 
     def test_modified_pre_download_build_is_preserved(self):
         self.make_pre_download_output("ready")
         (self.output / "index.html").write_bytes(b"A user's edit must survive.")
-        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        before = snapshot(self.output)
         with self.assertRaises(ValueError):
             self.build()
-        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(before, snapshot(self.output))
 
     def test_unmanifested_download_is_preserved(self):
         self.make_pre_download_output("ready")
         (self.output / "help-and-access-draft.md").write_bytes(b"An unrelated local draft.")
-        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        before = snapshot(self.output)
         with self.assertRaises(ValueError):
             self.build()
-        self.assertEqual(before, {p.name: p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(before, snapshot(self.output))
 
 
 if __name__ == "__main__":

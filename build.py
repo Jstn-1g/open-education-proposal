@@ -16,10 +16,11 @@ PAGES = {
     "open-source": ("Education people can inspect and improve.", "Open source"),
     "contribute": ("Bring one useful change.", "Contribute"),
     "governance": ("A small start. Clear responsibilities.", "Our commitments"),
+    "discussion": ("Same support. Different claim.", "Discussion cases"),
     "404": ("Page not found", "Page not found"),
 }
 DESCRIPTION = "Help build an open education proposal: make instructional help visible, preserve access support, and examine what learners understand later."
-LEGACY_OUTPUT_NAMES = {f"{slug}.html" for slug in PAGES} | {"styles.css", "manifest.json", "robots.txt"}
+LEGACY_OUTPUT_NAMES = {f"{slug}.html" for slug in PAGES if slug != "discussion"} | {"styles.css", "manifest.json", "robots.txt"}
 LICENSE_ASSETS = {
     "code-license.txt": "LICENSE",
     "content-license.txt": "LICENSE-CONTENT",
@@ -27,7 +28,13 @@ LICENSE_ASSETS = {
 }
 PRE_DOWNLOAD_OUTPUT_NAMES = LEGACY_OUTPUT_NAMES | set(LICENSE_ASSETS)
 REVIEW_ASSETS = {"help-and-access-draft.md": "docs/REVIEW-CASES.md"}
-OUTPUT_NAMES = PRE_DOWNLOAD_OUTPUT_NAMES | set(REVIEW_ASSETS)
+PRE_INTERACTIVE_OUTPUT_NAMES = PRE_DOWNLOAD_OUTPUT_NAMES | set(REVIEW_ASSETS)
+LAB_ASSETS = (
+    "index.html", "app.mjs", "bridge.mjs", "model.mjs", "scene.mjs", "styles.css",
+    "proposal-preview.mjs", "vendor/phaser-3.90.0.min.js", "vendor/PHASER-LICENSE.txt",
+    "art/fraction-canyon.png", "art/clockwork-room.png", "ASSETS.md",
+)
+OUTPUT_NAMES = PRE_INTERACTIVE_OUTPUT_NAMES | {"discussion.html"} | {"learning-lab/" + name for name in LAB_ASSETS}
 VERSION = "0.1.0"
 RELEASE_FIELDS = {"status", "repository", "maintainer", "conduct_contact", "security_contact"}
 
@@ -84,9 +91,11 @@ def render(slug: str, fragment: str, base: str, *, status: str | None = None) ->
     banner = f"Community proposal · v{VERSION}" if status == "ready" else 'Community edition <span>Local review candidate · Not yet released</span>'
     robots = "noindex, nofollow, noarchive" if status == "candidate" else ("noindex, follow" if slug == "404" else "index, follow")
     title, _ = PAGES[slug]
+    if slug == "index" and fragment.startswith("<!doctype html>"):
+        return fragment.replace("{{base}}", base).replace("{{robots}}", robots).replace("{{banner}}", banner)
     nav = "\n".join(
         f'<a href="{base}{name}.html"' + (' aria-current="page"' if name == slug else '') + f'>{label}</a>'
-        for name, (_, label) in PAGES.items() if name != "404"
+        for name, (_, label) in PAGES.items() if name != "404" and (name != "discussion" or name == slug)
     )
     fragment = fragment.replace("{{base}}", base)
     return f'''<!doctype html>
@@ -118,6 +127,25 @@ def render(slug: str, fragment: str, base: str, *, status: str | None = None) ->
 '''
 
 
+def output_inventory(output: Path) -> set[str]:
+    """Validate each directory before descending; never follow linked paths."""
+    files = set()
+    allowed_dirs = {str(parent).replace("\\", "/") for name in OUTPUT_NAMES
+                    for parent in Path(name).parents if str(parent) != "."}
+    pending = [output]
+    while pending:
+        for entry in pending.pop().iterdir():
+            ordinary_path(entry)
+            name = entry.relative_to(output).as_posix()
+            if entry.is_dir() and name in allowed_dirs:
+                pending.append(entry)
+            elif entry.is_file() and name in OUTPUT_NAMES:
+                files.add(name)
+            else:
+                raise ValueError("Output contains unrelated files; choose an empty directory.")
+    return files
+
+
 def build(output: Path, base: str = "/") -> dict[str, str]:
     base = base_path(base)
     status = release_status()  # One snapshot for all pages, robots, and the manifest.
@@ -129,11 +157,7 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
     if output.exists():
         if not output.is_dir():
             raise ValueError("Output is not a directory.")
-        unexpected = [p.name for p in output.iterdir() if p.name not in OUTPUT_NAMES or not p.is_file() or p.is_symlink()]
-        if unexpected:
-            raise ValueError("Output contains unrelated files; choose an empty directory.")
-        for p in output.iterdir():
-            ordinary_path(p)
+        existing_files = output_inventory(output)
         if any(output.iterdir()):
             try:
                 previous = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
@@ -148,11 +172,11 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
                 current = (set(previous) == {"version", "status", "base", "files"}
                            and previous["status"] in ("candidate", "ready")
                            and previous["version"] == output_version(previous["status"])
-                           and set(files) in (PRE_DOWNLOAD_OUTPUT_NAMES - {"manifest.json"}, OUTPUT_NAMES - {"manifest.json"}))
+                           and set(files) in (PRE_DOWNLOAD_OUTPUT_NAMES - {"manifest.json"}, PRE_INTERACTIVE_OUTPUT_NAMES - {"manifest.json"}, OUTPUT_NAMES - {"manifest.json"}))
                 if not (legacy or current):
                     raise ValueError("Unrecognized build manifest.")
                 base_path(previous["base"])
-                if {p.name for p in output.iterdir()} != set(files) | {"manifest.json"}:
+                if existing_files != set(files) | {"manifest.json"}:
                     raise ValueError("Output does not match its recorded file set; preserve it and choose a new empty directory.")
                 for name, digest in files.items():
                     if (not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest)
@@ -165,11 +189,22 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
     payload["robots.txt"] = b"User-agent: *\nAllow: /\n" if status == "ready" else b"User-agent: *\nDisallow: /\n"
     payload.update({destination: (ROOT / source).read_bytes() for destination, source in LICENSE_ASSETS.items()})
     payload.update({destination: (ROOT / source).read_bytes() for destination, source in REVIEW_ASSETS.items()})
+    for name in LAB_ASSETS:
+        source = ROOT / "learning-lab" / name
+        ordinary_path(source)
+        data = source.read_bytes()
+        if name == "index.html":
+            robots = "index, follow" if status == "ready" else "noindex, nofollow, noarchive"
+            data = data.decode("utf-8").replace("{{base}}", base).replace("{{robots}}", robots).encode("utf-8")
+        payload["learning-lab/" + name] = data
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in sorted(payload.items())}
     payload["manifest.json"] = (json.dumps({"version": output_version(status), "status": status, "base": base, "files": manifest}, indent=2) + "\n").encode("utf-8")
     output.mkdir(parents=True, exist_ok=True)
     for name, data in payload.items():
-        (output / name).write_bytes(data)
+        target = output / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        ordinary_path(target)
+        target.write_bytes(data)
     return manifest
 
 
