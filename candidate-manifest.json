@@ -37,8 +37,8 @@
       "sha256": "1050c970e899350dfc59c897bcc75f08aeb24c97fa91a801ef4f5b3d39ed0ec2"
     },
     "CONTRIBUTING.md": {
-      "bytes": 3128,
-      "sha256": "ce1b147d64c18280cbff82529143646e696b59c4d01fbd28d5f2b7c953755626"
+      "bytes": 3467,
+      "sha256": "7b5867c079347e2c37c0390bd625e618258ba3bbda3c4151aa46955db637f5bb"
     },
     "DEVELOPMENT.md": {
       "bytes": 3222,
@@ -69,12 +69,12 @@
       "sha256": "195a1eeffa64ecd45faf6296ec219bd1ce9ba6850d1f4187b2ef167f542ce380"
     },
     "PROPOSAL.md": {
-      "bytes": 3691,
-      "sha256": "f57e9f34a2e0f07c360c1295573f9e3a8e57fae6652d5845498782fafb880b71"
+      "bytes": 3990,
+      "sha256": "e2226b06c3fad817b4056ebaa828a7ef7ae0a592e2c90030830a3ba9170d6ab4"
     },
     "README.md": {
-      "bytes": 4855,
-      "sha256": "f17b7d6a23d8f41ca896660574f392403d548042b3106279729326054080c101"
+      "bytes": 5189,
+      "sha256": "a2adba8874b97fc5a9390d20e6055e467ed5c4a3f4f0a05255450f34f455eab6"
     },
     "SECURITY.md": {
       "bytes": 1838,
@@ -89,32 +89,32 @@
       "sha256": "0e5801d8ca15cb09ae910d99b3f323228481f65773b90f3c5be58d4f03cf4239"
     },
     "content/contribute.html": {
-      "bytes": 4755,
-      "sha256": "911b80ce47b6ddd3f357bb3454e0c39fd79300bcde547783404d929ff50cf3cc"
+      "bytes": 4922,
+      "sha256": "938ee2fdff9d4d8db3196582353b4862e2e3461cd2ce0873a07c0ee4ab856692"
     },
     "content/governance.html": {
       "bytes": 5101,
       "sha256": "37b72d952c27975725ab0532d255943e90f5f99757f0f69031c97eb8ecdfb88f"
     },
     "content/index.html": {
-      "bytes": 4481,
-      "sha256": "69b13982210c437319be61fe48f03d6cfb6d633408840cbbfc21c7f9b3d0bd72"
+      "bytes": 4517,
+      "sha256": "34570075390b41d708ea83bee18a1b06b9431db4fd4507c0d2d47768af890f04"
     },
     "content/open-source.html": {
       "bytes": 2897,
       "sha256": "15a8319dc105a5e6e401967c2552675b65957c54ce1feecca25f6622df25b820"
     },
     "content/standard.html": {
-      "bytes": 3417,
-      "sha256": "2e43c3d55ad7b8212590a947b21f6b8b131eab970c342a8b4ed3b51b11003da6"
+      "bytes": 3627,
+      "sha256": "e4a07efcc2db19f0c16feae4715f9772fff5209b0aee26268a00a26395937b22"
     },
     "docs/ACCESSIBILITY.md": {
       "bytes": 3836,
       "sha256": "aeef290b92fc5337c227d92529e64218e07c934a5688931414f6570922df73ca"
     },
     "docs/FIRST-CONTRIBUTIONS.md": {
-      "bytes": 4180,
-      "sha256": "62a5de58f3789b992b38334a6da293a8fa6304b977f3424405a6f2878dc1e861"
+      "bytes": 5276,
+      "sha256": "6270d5e26291e413a763ec57d3c586793a7d9d53687eb1106bbf7827f3885388"
     },
     "docs/LEARNING-DESIGN.md": {
       "bytes": 7157,
@@ -145,20 +145,20 @@
       "sha256": "097fe8c3260157693c946480234946862e59cf9f5df4cc47a67796d2ce9cb54b"
     },
     "styles.css": {
-      "bytes": 11099,
-      "sha256": "7539b2ace5773d17e0e563f8baff6620dd098a3c9b8a950a86ff9c22636b05dd"
+      "bytes": 11273,
+      "sha256": "986a030f10f87e5f1767f662af883e247074cdd519392f8add3d7b3682954245"
     },
     "tests/browser.mjs": {
-      "bytes": 7098,
-      "sha256": "5307693f3ae3fa3631901beb1fb5f5302e2f24bbfb5b37995be39bafb2b67800"
+      "bytes": 7693,
+      "sha256": "439c84a4c6def9044843a874ca3e274957ec5708361b291419db8ccfe6d8b856"
     },
     "tests/test_release_check.py": {
       "bytes": 8833,
       "sha256": "ff4a5494f04c3f71a865f6fff5f3e4ab9ecedf4c7655c48c56481201f54006b4"
     },
     "tests/test_site.py": {
-      "bytes": 17904,
-      "sha256": "97c324df0b0495f27ca282f6ca5ab7166f9649839fc1926cbe86349a0590eb43"
+      "bytes": 18687,
+      "sha256": "ccd4af70f2dc870f047b0a22f31d2d6946e04970464b257cb01c0007fc8aba51"
     }
   },
   "status": "local-review-candidate-not-published"

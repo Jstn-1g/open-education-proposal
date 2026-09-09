@@ -2,15 +2,15 @@
 
 Help build learning materials that people can read, adapt, and improve together. The goal is stronger human understanding, with technology that people can inspect and choose whether to use.
 
-Our first proposal is simple: **record what help was used, then separately describe what a learner can demonstrate on fresh work.** Getting an answer with help does not, by itself, show independent understanding. Keep access support available; the [proposal explains the difference between teaching help and access support](PROPOSAL.md#the-change-we-want).
+Our first proposal is simple: **when claiming independent understanding, distinguish instructional help from evidence on fresh work.** Not every activity needs a test or record. Keep necessary access support available and narrow the claim when needed; the [proposal explains the difference between teaching help and access support](PROPOSAL.md#the-change-we-want).
 
 We want educators, researchers, accessibility specialists, families, designers, writers, and developers to challenge this proposal and make it practical.
 
 ## Start with one useful contribution
 
-Choose a [first task](docs/FIRST-CONTRIBUTIONS.md): clarify the difference between instructional help and access support, check an evidence claim, or improve the website's accessibility. Each task has a small deliverable and a clear definition of done.
+[Visit the website](https://jstn-1g.github.io/open-education-proposal/) or choose a [first task](docs/FIRST-CONTRIBUTIONS.md). Start with one comment: a [fictional example](https://github.com/Jstn-1g/open-education-proposal/issues/1), an [evidence question](https://github.com/Jstn-1g/open-education-proposal/issues/2), or a [reading barrier](https://github.com/Jstn-1g/open-education-proposal/issues/3). The full task criteria are goals for later, not an entry requirement.
 
-Read the [proposal](PROPOSAL.md), then the [contribution guide](CONTRIBUTING.md). Use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a question, correction, or accessibility report. You do not need to code or arrive with a finished solution.
+Read the [proposal](PROPOSAL.md) and [contribution guide](CONTRIBUTING.md) as needed. Join an existing task above, or use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a different topic. A GitHub account is needed to post. You do not need code, a finished solution, or research citations to ask a question or report a barrier.
 
 Want to challenge the bigger educational design? Review one question in [Design for people, not just performance](docs/LEARNING-DESIGN.md), covering motivation, relationships, development, access, and workload. These are proposed safeguards, not claims of a proven education system.
 
@@ -32,7 +32,7 @@ Public code-scanning results must be reviewed before community changes are merge
 
 The repository is [Jstn-1g/open-education-proposal](https://github.com/Jstn-1g/open-education-proposal). Jstn-1g is the accountable human owner and initial maintainer, with GPT-6 assisting development and review.
 
-Code is licensed under Apache-2.0 and content under CC BY 4.0, as detailed in [licenses and attribution](LICENSES.md). Hosting is managed separately; these documents do not claim that a live website has been deployed.
+Code is licensed under Apache-2.0 and content under CC BY 4.0, as detailed in [licenses and attribution](LICENSES.md). The informational website is hosted on GitHub Pages; source changes and website deployments are reviewed separately.
 
 Private conduct and security concerns go to [jstn0513@gmail.com](mailto:jstn0513@gmail.com), handled by Jstn-1g. Do not post sensitive details in public issues. No guaranteed response time or continuous monitoring is offered.
 

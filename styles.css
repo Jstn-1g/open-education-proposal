@@ -127,7 +127,8 @@ p{max-width:65ch;margin-bottom:1.2rem}
   .comparison{grid-template-columns:1fr 1fr;margin-block:.7rem;break-inside:avoid-page}
   .comparison>div{padding:.7rem}
   .comparison>div+div{border-top:0;border-left:1px solid var(--ink);background:none}
-  .task{display:grid;grid-template-columns:1fr 1fr;gap:.35rem 1rem;padding-block:.7rem;break-inside:avoid-page}
+  .task{display:grid;grid-template-columns:1fr 1fr;gap:.2rem 1rem;padding-block:.4rem;break-inside:avoid-page}
+  .task p:last-child{margin-bottom:0}
   .task-id{grid-column:1/-1;margin-bottom:0}
   /* Keep a single block for reliable pagination; flex footers can fragment. */
   .site-footer{display:block;padding-block:.65rem;margin-top:.75rem;break-inside:avoid-page}
@@ -138,4 +139,6 @@ p{max-width:65ch;margin-bottom:1.2rem}
   .footer-meta{margin-top:0;max-width:none}
   a,h1 em,.eyebrow,.index,.task-id,.small-label,.evidence-label,.big-number{color:black}
   .button{background:none;color:black;min-height:0;padding:.4rem .6rem;font-size:11pt}
+  /* Print links need readable text, not the extra space of screen click targets. */
+  .text-link{min-height:0;padding:0;font-size:11pt}
 }

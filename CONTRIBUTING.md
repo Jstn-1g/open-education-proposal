@@ -6,12 +6,12 @@ This guide covers adult contributions to community v0.1.0 at [Jstn-1g/open-educa
 
 Start with one of the [three first contributions](docs/FIRST-CONTRIBUTIONS.md). We welcome small corrections, clear counterexamples, source checks, and accessibility improvements. New product features, child activities, and participant recruitment are outside this release.
 
-Use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for an evidence or source correction, a proposal question or counterexample, or an accessibility barrier. A question is welcome even when you do not yet have a fix.
+Join the existing [fictional-case](https://github.com/Jstn-1g/open-education-proposal/issues/1), [evidence](https://github.com/Jstn-1g/open-education-proposal/issues/2), or [barrier](https://github.com/Jstn-1g/open-education-proposal/issues/3) discussion. Use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a different topic. Reading needs no account; posting needs a GitHub account. One question or short comment is enough to begin.
 
 ## Propose a change
 
 1. Read the task and check whether someone is already working on it.
-2. Explain the problem and your proposed change in the task discussion. A concise text proposal is enough; code is optional.
+2. Explain the question or problem in the task discussion. Include a proposed change if you have one; code and a fix are optional.
 3. Submit a pull request for an agreed change, or ask a maintainer to help turn the text proposal into a patch.
 4. A human maintainer reviews the evidence and affected material, then records acceptance, requested revisions, or closure with reasons and credit.
 
@@ -19,8 +19,8 @@ Maintainer-assisted changes depend on available capacity. There is no guaranteed
 
 ## Include what a reviewer needs
 
-- The problem, proposed change, and task it addresses.
-- Sources, relevant limitations, and any material disagreement.
+- The question or problem and the task it addresses; a proposed change if available.
+- Sources when making an evidence claim, with relevant limits and disagreements. A question or barrier report needs no research or proposed fix.
 - Authorship and third-party material, with permission or license evidence where needed.
 - Checks appropriate to the change. A wording correction does not need a test suite.
 

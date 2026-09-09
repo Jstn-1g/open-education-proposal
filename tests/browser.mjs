@@ -99,12 +99,22 @@ try {
       })),
       footerInside: getComputedStyle(document.querySelector('.site-footer')).breakInside,
       footerDisplay: getComputedStyle(document.querySelector('.site-footer')).display,
+      textLinks: [...document.querySelectorAll('.text-link')].map(link => ({
+        minHeight: getComputedStyle(link).minHeight,
+        paddingTop: getComputedStyle(link).paddingTop,
+        paddingBottom: getComputedStyle(link).paddingBottom,
+      })),
     }));
     for (const heading of pagination.headings) {
       assert(['avoid', 'avoid-page'].includes(heading.after), `${slug}: print heading can separate from following content: ${heading.text}`);
     }
     assert(['avoid', 'avoid-page'].includes(pagination.footerInside), `${slug}: print footer can fragment across pages`);
     assert.equal(pagination.footerDisplay, 'block', `${slug}: print footer must retain its reviewed block layout`);
+    for (const link of pagination.textLinks) {
+      assert.equal(link.minHeight, '0px', `${slug}: print link retains a screen-sized click target`);
+      assert.equal(link.paddingTop, '0px', `${slug}: print link retains screen padding`);
+      assert.equal(link.paddingBottom, '0px', `${slug}: print link retains screen padding`);
+    }
     if (artifacts && slug === 'standard') await printPage.screenshot({ path: path.join(artifacts, 'standard-print.png'), fullPage: true });
   }
   await printContext.close();

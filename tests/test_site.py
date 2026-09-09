@@ -335,6 +335,19 @@ class SiteTests(unittest.TestCase):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("## Review limits", readme)
 
+    def test_live_readme_and_first_tasks_have_direct_start_routes(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("https://jstn-1g.github.io/open-education-proposal/", readme)
+        contribution_guide = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+        first_tasks = (ROOT / "docs/FIRST-CONTRIBUTIONS.md").read_text(encoding="utf-8")
+        contribution_page = self.build()["contribute.html"]
+        for number in (1, 2, 3):
+            target = f"https://github.com/Jstn-1g/open-education-proposal/issues/{number}"
+            self.assertIn(target, readme)
+            self.assertIn(target, contribution_guide)
+            self.assertIn(target, first_tasks)
+            self.assertIn(target, contribution_page.links)
+
 
 if __name__ == "__main__":
     unittest.main()

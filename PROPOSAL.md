@@ -12,6 +12,8 @@ When an activity claims to show independent understanding, report instructional 
 
 For example, reading a mathematics prompt aloud may preserve the intended mathematics task. Reading the target words aloud would change a task assessing word decoding. Accessibility and subject specialists should review ambiguous cases together.
 
+Keep necessary support available even when the distinction is mixed or uncertain. Describe supported performance, narrow the claim, or leave it unresolved; do not withdraw an accommodation to make an independence claim. This reporting proposal does not require a test or record for every activity.
+
 ## What that could look like
 
 Consider a fictional example for adult discussion, not a ready-to-use lesson:
