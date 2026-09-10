@@ -17,6 +17,8 @@ if(showcase){
   $('#pendulum-controls>legend').classList.add('sr-only');
 }
 let blocks = [4], selected = 0, history = [], target = 4, matched = false;
+let fractionContext = !showcase;
+let bridgeContext = !showcase;
 const targets = [4, 6, 2, 8];
 let frame = 0, elapsed = 0, lastFrame = null, hasRun = false, running = false;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -31,18 +33,41 @@ function remember() { history.push({ blocks:[...blocks], selected }); if(history
 function clearMatch() { matched=false; }
 function syncWorld(time=elapsed) {
   if(!world || simple || document.hidden)return;
+  if(showcase && activeAge==='8' && !bridgeContext){world.pause();return;}
   world.set(activeAge==='8' ? {mode:'bridge',blocks:[...blocks],selected,target,matched} :
     {mode:'clockwork',length:length(),mass:mass(),time,hasRun}, $(activeAge==='8'?'#fraction-scene':'#clockwork-scene'));
 }
 function renderFraction(rebuild=true, focusPiece=false) {
   const total=amount(blocks);
+  const opening=showcase && !fractionContext;
+  const gentle=showcase && !bridgeContext;
+  const whole=gentle && fractionContext;
+  const divided=blocks.length>1;
+  document.body.classList.toggle('fraction-opening',opening);
+  document.body.classList.toggle('fraction-gentle',gentle);
+  document.body.classList.toggle('fraction-divided',gentle && divided);
+  $('#show-fraction-context').hidden=!opening || !divided;
+  $('#show-bridge').hidden=!whole;
+  $('#whole-label').hidden=!whole;
+  $('#split-piece').hidden=gentle && divided;
+  // The opener is a picture of a piece, not a selection task or a whole.
+  $('#pieces').inert=gentle;
+  if(gentle){
+    $('#pieces').setAttribute('aria-hidden','true');
+    $('.fraction-stage').setAttribute('role','img');
+    $('.fraction-stage').setAttribute('aria-label',whole?'The outline is one whole. Two equal pieces each fill one quarter of it. Together they fill one half.':divided?'Two equal pieces. Together they are the same size as the starting piece.':'One piece, ready to split into two equal pieces.');
+  }else{
+    $('#pieces').removeAttribute('aria-hidden');
+    $('.fraction-stage').removeAttribute('role');
+    $('.fraction-stage').removeAttribute('aria-label');
+  }
   $('#fraction-label').textContent=name(total);
-  $('#bridge-mission').textContent=total===target?'Make '+name(target)+' another way.':target===8?'Reach the other side.':'Reach the '+name(target)+' flag.';
+  $('#bridge-mission').textContent=opening?(divided?'Two equal pieces.':'Split this piece in two.'):whole?'Two quarters make one half.':total===target?'Make '+name(target)+' another way.':target===8?'Reach the other side.':'Reach the '+name(target)+' flag.';
   $('#split-note').textContent=selected>=0?'Piece '+(selected+1)+' selected · '+name(blocks[selected]):'No piece selected. Add one below.';
   const startingHalf=target===4 && blocks.length===1 && blocks[0]===4;
   const canSplit=selected>=0 && blocks[selected]>1;
   const suggestSplit=canSplit && (startingHalf || matched);
-  $('#split-action-label').textContent=selected<0?'Choose a piece':blocks[selected]===1?'Smallest piece':'Split '+name(blocks[selected]);
+  $('#split-action-label').textContent=opening?'Split in two':selected<0?'Choose a piece':blocks[selected]===1?'Smallest piece':'Split '+name(blocks[selected]);
   $('#split-piece').classList.toggle('primary',suggestSplit);
   $('#check-fraction').classList.toggle('primary',!suggestSplit);
   if(rebuild) {
@@ -68,7 +93,7 @@ function renderFraction(rebuild=true, focusPiece=false) {
   const x=30+540*total/8;
   $('#amount-dot').setAttribute('cx',x);$('#amount-line').setAttribute('x2',x);
   $('#line-title').textContent=name(total)+' of one whole, at '+total/8+' on a number line from zero to one';
-  if(focusPiece) (selected>=0?$('#pieces button[data-piece="'+selected+'"]'):$('[data-add="4"]')).focus();
+  if(focusPiece) (opening?(divided?$('#show-fraction-context'):$('#split-piece')):selected>=0?$('#pieces button[data-piece="'+selected+'"]'):$('[data-add="4"]')).focus();
   syncWorld();
 }
 $$('[data-add]').forEach(button=>button.addEventListener('click',()=>{
@@ -81,7 +106,18 @@ $('#split-piece').addEventListener('click',()=>{
   const next=split(blocks,selected);if(!next)return;
   const old=name(blocks[selected]), half=name(blocks[selected]/2), total=name(amount(blocks));
   remember();blocks=next;clearMatch();renderFraction(true,true);
-  announce('The bridge still reaches '+total+'. Check its end against the flag.',old+' → '+half+' + '+half);
+  if(showcase && !fractionContext) announce('Nothing was added or taken away.','Same amount as before.');
+  else announce('The bridge still reaches '+total+'. Check its end against the flag.',old+' → '+half+' + '+half);
+});
+$('#show-fraction-context').addEventListener('click',()=>{
+  fractionContext=true;renderFraction();
+  announce('The outline shows one whole. Your two pieces fill half of it.','1/4 + 1/4 = 1/2');
+  $('#show-bridge').focus();
+});
+$('#show-bridge').addEventListener('click',()=>{
+  bridgeContext=true;renderFraction();
+  announce('The same two quarters now reach the half flag. Choose a piece to split again.','Same pieces, on a bridge.');
+  $('#bridge-mission').focus();
 });
 $('#remove-piece').addEventListener('click',()=>{
   if(selected<0)return;remember();blocks.splice(selected,1);selected=Math.min(selected,blocks.length-1);
@@ -89,12 +125,18 @@ $('#remove-piece').addEventListener('click',()=>{
 });
 $('#fraction-undo').addEventListener('click',()=>{
   const previous=history.pop();if(!previous)return;
+  if(showcase && !history.length){fractionContext=false;bridgeContext=false;}
   blocks=previous.blocks;selected=previous.selected;clearMatch();renderFraction(true,!history.length);
-  announce('Undone. Bridge reaches '+name(amount(blocks))+'.');
+  if(showcase && !fractionContext) announce('','');
+  else announce('Undone. Bridge reaches '+name(amount(blocks))+'.');
 });
 $('#fraction-reset').addEventListener('click',()=>{
-  blocks=[4];selected=0;history=[];target=4;clearMatch();renderFraction();
-  announce('Make two equal pieces. Watch where the bridge ends.','Your move: split the half.');
+  blocks=[4];selected=0;history=[];target=4;fractionContext=!showcase;bridgeContext=!showcase;
+  if(showcase) $('#age8 .connection').open=false;
+  clearMatch();renderFraction();
+  if(showcase) announce('','');
+  else announce('Make two equal pieces. Watch where the bridge ends.','Your move: split the half.');
+  if(showcase) $('#split-piece').focus();
 });
 $('#puzzle').addEventListener('click',()=>{
   target=targets[(targets.indexOf(target)+1)%targets.length];clearMatch();renderFraction(false);
@@ -251,6 +293,7 @@ window.addEventListener('hashchange', () => {
   if (location.hash === '#research') $('#research').open=true;
 });
 $('.research-link').addEventListener('click', () => { $('#research').open = true; });
+if(showcase) announce('','');
 renderFraction(); updateSetup();
 $('#fraction-controls').disabled = false; $('#pendulum-controls').disabled = false; $('#loading-note').hidden = true;
 $('#choose-8').disabled = false; $('#choose-14').disabled = false; $('#graphics-toggle').disabled=false;

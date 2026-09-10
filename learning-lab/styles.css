@@ -1943,6 +1943,120 @@ button:active:not(:disabled){
     outline-offset:3px
   }
 }
+/* A single concrete action comes before the bridge, symbols and measuring tools. */
+.showcase.fraction-gentle #age8 .game-layout{
+  display:block
+}
+.showcase.fraction-gentle #age8 .activity-heading{
+  text-align:center
+}
+.showcase.fraction-gentle .fraction-stage{
+  border:0;
+  background:transparent;
+  min-height:0;
+  padding:24px 16px
+}
+.showcase.fraction-gentle .fraction-world{
+  position:static;
+  background:transparent;
+  min-height:0
+}
+.showcase.fraction-gentle .fraction-world .pieces{
+  display:grid;
+  grid-template-columns:repeat(8,minmax(0,1fr));
+  position:static;
+  width:min(100%,22rem);
+  height:88px;
+  margin:0 auto;
+  padding:0;
+  gap:0;
+  background:transparent
+}
+.showcase.fraction-gentle .fraction-world .pieces button{
+  min-width:0;
+  min-height:88px;
+  margin:0;
+  padding:0;
+  border:2px solid #956119;
+  border-radius:8px;
+  background:#f8d169;
+  color:#163641;
+  font-size:1rem;
+  white-space:nowrap;
+  box-shadow:none;
+  outline:0;
+  opacity:1
+}
+.showcase.fraction-gentle .stage-top,
+.showcase.fraction-gentle #fraction-scene,
+.showcase.fraction-gentle #split-note,
+.showcase.fraction-gentle #check-fraction,
+.showcase.fraction-gentle #puzzle-help,
+.showcase.fraction-gentle #age8 .connection,
+.showcase.fraction-gentle:not(.fraction-divided) #age8 .play-actions{
+  display:none
+}
+.showcase.fraction-gentle .discovery-panel{
+  max-width:26rem;
+  margin:0 auto;
+  padding:0 20px 24px;
+  border:0;
+  background:transparent;
+  text-align:center
+}
+.showcase.fraction-gentle .edit-pieces{
+  display:block
+}
+.showcase.fraction-gentle #split-piece,
+.showcase.fraction-gentle #show-fraction-context,
+.showcase.fraction-gentle #show-bridge{
+  width:100%;
+  min-height:56px;
+  justify-content:center;
+  font-size:1.125rem
+}
+.showcase.fraction-gentle.fraction-divided .selected-tools{
+  display:none
+}
+.showcase.fraction-gentle #fraction-status{
+  background:none;
+  border:0;
+  padding:0;
+  margin:0
+}
+.showcase.fraction-gentle #fraction-status :empty{
+  display:none
+}
+.showcase.fraction-gentle #age8 .play-actions{
+  justify-content:center
+}
+@media(forced-colors:active){
+  .showcase.fraction-gentle .fraction-world .pieces button{
+    forced-color-adjust:none;
+    background:Canvas;
+    color:CanvasText;
+    border-color:CanvasText
+  }
+}
+.showcase.fraction-gentle .fraction-world::before{display:none}
+.showcase.fraction-opening .fraction-world .pieces{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  width:min(50%,11rem)
+}
+.showcase.fraction-opening .pieces span,
+.showcase.fraction-gentle .pieces .piece-mark{display:none}
+.showcase.fraction-gentle:not(.fraction-opening) .pieces{
+  outline:2px solid var(--ink);
+  outline-offset:4px;
+  border-radius:4px;
+  background:#e7f1f1
+}
+#whole-label{
+  text-align:center;
+  margin:0 0 1rem;
+  font-size:1rem;
+  font-weight:600
+}
 @media print{
   .masthead,.intro,.experience-picker,.access-bar,button,.scene-surface{
     display:none!important
