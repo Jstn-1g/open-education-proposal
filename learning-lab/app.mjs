@@ -23,7 +23,10 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const contrast = matchMedia('(forced-colors: active)');
 let activeAge = '8', world = null, loadingWorld = false;
 let simple = new URLSearchParams(location.search).get('view') === 'simple' || contrast.matches || Boolean(navigator.connection?.saveData);
-function announce(text) { $('#fraction-status').textContent = text; }
+function announce(text, title='Your bridge now.') {
+  $('#fraction-feedback-title').textContent = title;
+  $('#fraction-feedback-copy').textContent = text;
+}
 function remember() { history.push({ blocks:[...blocks], selected }); if(history.length>32) history.shift(); }
 function clearMatch() { matched=false; }
 function syncWorld(time=elapsed) {
@@ -36,9 +39,12 @@ function renderFraction(rebuild=true, focusPiece=false) {
   $('#fraction-label').textContent=name(total);
   $('#bridge-mission').textContent=total===target?'Make '+name(target)+' another way.':target===8?'Reach the other side.':'Reach the '+name(target)+' flag.';
   $('#split-note').textContent=selected>=0?'Piece '+(selected+1)+' selected · '+name(blocks[selected]):'No piece selected. Add one below.';
-  const firstSplit=target===4 && blocks.length===1 && blocks[0]===4 && !history.length && !matched;
-  $('#split-piece').classList.toggle('primary',firstSplit);
-  $('#check-fraction').classList.toggle('primary',!firstSplit);
+  const startingHalf=target===4 && blocks.length===1 && blocks[0]===4;
+  const canSplit=selected>=0 && blocks[selected]>1;
+  const suggestSplit=canSplit && (startingHalf || matched);
+  $('#split-action-label').textContent=selected<0?'Choose a piece':blocks[selected]===1?'Smallest piece':'Split '+name(blocks[selected]);
+  $('#split-piece').classList.toggle('primary',suggestSplit);
+  $('#check-fraction').classList.toggle('primary',!suggestSplit);
   if(rebuild) {
     $('#pieces').replaceChildren(...blocks.map((units,index)=>{
       const button=document.createElement('button');button.type='button';button.dataset.piece=index;
@@ -46,7 +52,7 @@ function renderFraction(rebuild=true, focusPiece=false) {
       const value=document.createElement('span');value.textContent=name(units);
       const mark=document.createElement('span');mark.className='piece-mark';mark.setAttribute('aria-hidden','true');
       button.append(value,mark);
-      button.addEventListener('click',()=>{selected=index;renderFraction(false);announce('Piece '+(index+1)+', '+name(units)+' selected. '+(units===1?'This is the smallest piece.':'You can split it into two equal pieces.'));});
+      button.addEventListener('click',()=>{selected=index;renderFraction(false);announce(units===1?(blocks.some(n=>n>1)?'This is the smallest piece. Choose a larger piece to split, or check the bridge.':'These are all the smallest pieces. Check the bridge, or undo your last change.'):'Split it into two equal pieces. Watch what stays the same.','Your '+name(units)+' piece is selected.');});
       return button;
     }));
   }
@@ -75,7 +81,7 @@ $('#split-piece').addEventListener('click',()=>{
   const next=split(blocks,selected);if(!next)return;
   const old=name(blocks[selected]), half=name(blocks[selected]/2), total=name(amount(blocks));
   remember();blocks=next;clearMatch();renderFraction(true,true);
-  announce(old+' became '+half+' + '+half+'. The bridge still reaches '+total+'.');
+  announce('The bridge still reaches '+total+'. Check its end against the flag.',old+' → '+half+' + '+half);
 });
 $('#remove-piece').addEventListener('click',()=>{
   if(selected<0)return;remember();blocks.splice(selected,1);selected=Math.min(selected,blocks.length-1);
@@ -88,18 +94,23 @@ $('#fraction-undo').addEventListener('click',()=>{
 });
 $('#fraction-reset').addEventListener('click',()=>{
   blocks=[4];selected=0;history=[];target=4;clearMatch();renderFraction();
-  announce('Your half reaches the flag. Try “Split piece”.');
+  announce('Make two equal pieces. Watch where the bridge ends.','Your move: split the half.');
 });
 $('#puzzle').addEventListener('click',()=>{
   target=targets[(targets.indexOf(target)+1)%targets.length];clearMatch();renderFraction(false);
   announce('New destination: '+name(target)+'. Build to the flag.');
 });
 $('#check-fraction').addEventListener('click',()=>{
-  matched=amount(blocks)===target;announce(compare(blocks,target));renderFraction(false);
+  matched=amount(blocks)===target;
+  const startingHalf=target===4 && blocks.length===1 && blocks[0]===4;
+  if(startingHalf) announce('The ends match. This is the starting half; split it to make the same amount with smaller pieces.','Same endpoint. Try another way.');
+  else if(matched) announce('The ends match. '+(blocks.some(n=>n>1)?'Choose a piece to split again, or open the number line.':'These are the smallest pieces. Open the number line to compare the amount.'),'Your '+blocks.length+(blocks.length===1?' piece reaches ':' pieces reach ')+name(target)+'.');
+  else announce(compare(blocks,target),'Compare the end with the flag.');
+  renderFraction(false);
 });
 $('#puzzle-help').addEventListener('click',()=>{
   remember();blocks=Array.from({length:target/2},()=>2);selected=0;clearMatch();renderFraction();
-  announce('One way: '+blocks.length+(blocks.length===1?' quarter reaches ':' quarters reach ')+name(target)+'. Try splitting one quarter.');
+  announce('One way: '+blocks.length+(blocks.length===1?' quarter reaches ':' quarters reach ')+name(target)+'. Try splitting one quarter.','A way to explore.');
 });
 async function enableWorld() {
   if(world){syncWorld();return;}
@@ -160,30 +171,34 @@ function playMotion() {
   $('#motion-note').textContent = 'Both start together at 8°. Motion pauses after 12 seconds.';
   frame = requestAnimationFrame(animate);
 }
-function updateSetup() {
+function updateSetup(clearPrediction = true) {
   stopMotion(); elapsed = 0; hasRun = false;
   $('#lab-results').hidden = true; $('#motion-toggle').disabled = true; $('#motion-step').disabled = true;
   $('#motion-controls').hidden = true;
   $('#comparison-announcement').textContent = '';
-  $$('input[name=prediction]').forEach(input => { input.checked = false; });
+  $('#prediction-readback').hidden = true; $('#prediction-readback').textContent = '';
+  if(clearPrediction) $$('input[name=prediction]').forEach(input => { input.checked = false; });
   $('#setup-label').textContent = `${length()} m · ${mass()} g`;
   const y = 45 + 150 * length();
   $('#string-b').setAttribute('y2', y); $('#bob-b').setAttribute('cy', y); $('#bob-b-letter').setAttribute('y', y + 6);
   // Bob centre, not its edge, defines model length. Size is only a mass cue.
   $('#bob-b').setAttribute('r', mass() === 100 ? 18 : mass() === 200 ? 22 : 27);
   const { changed } = compareSetup(length(), mass());
-  $('#test-design').textContent = {
-    mass: 'Only mass changes. Both lengths stay the same.',
-    length: 'Only length changes. Both masses stay the same.',
+  $('#lab-feedback-title').textContent = 'Your setup: B is '+mass()+' g'+(showcase?'':', '+length()+' m')+'.';
+  $('#lab-feedback-copy').textContent = {
+    mass: 'Only mass changes. A stays at 100 g; both lengths are 1 m.',
+    length: 'Only length changes. A stays at 1 m; both masses are 100 g.',
     both: 'Length and mass both change. Make one match A to test the other.',
-    neither: 'Both setups match. Try changing just length or just mass.',
+    neither: showcase ? 'Both setups match. Try another mass for B.' : 'Both setups match. Try changing just length or just mass.',
   }[changed];
   $('#test-design').classList.toggle('warning', changed === 'both');
+  $('#test-design').classList.remove('has-result');
   $('#motion-note').textContent = 'Run a comparison first. Then play or step through.';
   $('#pendulum-scene-title').textContent = `Ready: A is 1 metre and 100 grams; B is ${length()} metres and ${mass()} grams. No result yet.`;
   drawMotion();
 }
-$('#length').addEventListener('change', updateSetup); $('#mass').addEventListener('change', updateSetup);
+$('#length').addEventListener('change', () => updateSetup()); $('#mass').addEventListener('change', () => updateSetup());
+$$('input[name=prediction]').forEach(input => input.addEventListener('change', () => updateSetup(false)));
 $('#run-model').addEventListener('click', () => {
   stopMotion(); elapsed = 0; hasRun = true;
   const comparison = compareSetup(length(), mass());
@@ -199,6 +214,12 @@ $('#run-model').addEventListener('click', () => {
   $('#motion-controls').hidden = false;
   // This live region is already exposed before Run, unlike the hidden result panel.
   $('#comparison-announcement').textContent = `Comparison ready. A: ${period(1).toFixed(2)} seconds per cycle. B: ${period(length()).toFixed(2)} seconds per cycle. ${$('#lab-conclusion').textContent}`;
+  $('#test-design').classList.add('has-result');
+  $('#lab-feedback-title').textContent = {faster:'B takes less time per cycle.',same:'Same time per cycle.',slower:'B takes more time per cycle.'}[comparison.outcome];
+  const next = comparison.changed==='both' ? 'Both length and mass changed. Set B’s mass to 100 g to compare lengths.' :
+    comparison.changed==='length' ? 'Try '+(length()===0.5?'1.5':'0.5')+' m next, keeping the mass at 100 g.' :
+    'Try '+(mass()===200?'400':'200')+' g next, keeping the length at 1 m.';
+  $('#lab-feedback-copy').textContent = 'In this model, your '+mass()+' g ball takes '+period(length()).toFixed(2)+' s per cycle. '+next;
   drawMotion();
   if (!reduced.matches && !simple) playMotion();
   else $('#motion-note').textContent = 'Motion paused. Play or step through at your own pace.';

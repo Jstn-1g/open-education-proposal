@@ -81,6 +81,16 @@ try{
       assert.match(await demo.locator('#lab-conclusion').textContent(),/In this model/);
       assert.equal(await demo.locator('#motion-toggle').textContent(),'Play motion');
     }
+    if(large){
+      await demo.locator('.prediction-choice summary').click();
+      await demo.locator('input[name=prediction][value="same"]').check();
+      await demo.locator('#run-model').focus();
+      const beforeRun=await demo.locator('#run-model').boundingBox();
+      await page.keyboard.press('Enter');await fit(page);
+      const afterRun=await demo.locator('#run-model').boundingBox();
+      assert.ok(Math.abs(afterRun.y-beforeRun.y)<2,'Expanded feedback must not displace the focused Run control');
+      assert.ok(afterRun.y>=0 && afterRun.y+Math.min(afterRun.height,44)<=900,'Run stays visibly reachable at 200% text');
+    }
     await demo.locator('#motion-step').click();assert.match(await demo.locator('#motion-note').textContent(),/Paused at 0.50 seconds/);
     await fit(page);
     await demo.locator('#graphics-toggle').click();
@@ -113,8 +123,9 @@ try{
     await demo.locator('#run-model').scrollIntoViewIfNeeded();const before=await page.evaluate(()=>scrollY);
     await demo.locator('#run-model').tap();await fit(page);
     assert.ok(Math.abs(await page.evaluate(()=>scrollY)-before)<4,'Run must not jump away from the controls');
-    const order=await demo.locator('#run-model').evaluate(e=>({run:e.getBoundingClientRect().bottom,scene:document.querySelector('.pendulum-stage').getBoundingClientRect().top}));
-    assert.ok(order.scene>order.run && order.scene-order.run<80,'Scene follows directly after Run on narrow layouts');
+    const order=await demo.locator('#run-model').evaluate(e=>({run:e.getBoundingClientRect().bottom,feedback:document.querySelector('#test-design').getBoundingClientRect().top,feedbackEnd:document.querySelector('#test-design').getBoundingClientRect().bottom,scene:document.querySelector('.pendulum-stage').getBoundingClientRect().top}));
+    assert.ok(order.feedback>order.run && order.feedback-order.run<80,'Feedback follows the Run/Reset actions on narrow layouts');
+    assert.ok(order.scene>order.feedbackEnd && order.scene-order.feedbackEnd<40,'Scene follows the concise feedback');
     assert.equal(await demo.locator('#period-b').textContent(),'2.01 s');
     assert.match(await demo.locator('#comparison-announcement').textContent(),/Comparison ready\. A: 2.01 seconds per cycle\. B: 2.01 seconds per cycle\. In this model/);
     await demo.locator('#motion-step').tap();assert.match(await demo.locator('#motion-note').textContent(),/Paused at 0.50 seconds/);
@@ -137,6 +148,32 @@ try{
   assert.ok(await rp.locator('input[name=mass][value="200"]').isChecked());assert.ok(await rp.locator('#motion-controls').isHidden());
   assert.equal(await rp.locator('#comparison-announcement').textContent(),'','Reset clears the previous result announcement');
   await radioContext.close();report.checks.push('Native radio keyboard control, all nine setups, stable Run focus, and reset');
+  const feedbackContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
+  const feedbackPage=await feedbackContext.newPage();await feedbackPage.goto(base+'index.html');
+  const guide=feedbackPage.frameLocator('#learning-demo');await guide.locator('#loading-note').waitFor({state:'hidden'});
+  await guide.locator('#check-fraction').click();
+  assert.ok(await guide.locator('#split-piece').evaluate(e=>e.classList.contains('primary')),'Starting-half Check must keep Split prominent');
+  assert.match(await guide.locator('#fraction-status').textContent(),/starting half/);
+  await guide.locator('#split-piece').click();assert.equal(await guide.locator('#fraction-feedback-title').textContent(),'1/2 → 1/4 + 1/4');
+  assert.equal(await guide.locator('#split-action-label').textContent(),'Split 1/4');
+  await guide.locator('#fraction-undo').click();assert.equal(await guide.locator('#split-action-label').textContent(),'Split 1/2');
+  await guide.locator('#choose-14').click();await guide.locator('input[name=mass][value="100"]').check();
+  assert.doesNotMatch(await guide.locator('#lab-feedback-copy').textContent(),/length/,'Focused guidance must not suggest hidden length controls');
+  await guide.locator('input[name=mass][value="400"]').check();
+  await guide.locator('.prediction-choice summary').click();await guide.locator('input[name=prediction][value="faster"]').check();
+  await guide.locator('#run-model').click();
+  assert.match(await guide.locator('#lab-feedback-copy').textContent(),/your 400 g ball takes 2.01 s/);
+  assert.match(await guide.locator('#prediction-readback').textContent(),/You predicted: less time/);
+  const gap=await guide.locator('#test-design').evaluate(e=>e.getBoundingClientRect().top-document.querySelector('#run-model').getBoundingClientRect().bottom);
+  assert.ok(gap>=0 && gap<40,'The choice-specific feedback sits directly beside Run even with prediction expanded');
+  await guide.locator('input[name=prediction][value="same"]').check();
+  assert.ok(await guide.locator('#lab-results').isHidden(),'Changing a prediction must invalidate the old comparison readback');
+  assert.ok(await guide.locator('#prediction-readback').isHidden());
+  assert.ok(await guide.locator('input[name=prediction][value="same"]').isChecked());
+  await guide.locator('#run-model').click();assert.match(await guide.locator('#prediction-readback').textContent(),/You predicted: the same time/);
+  await guide.locator('#lab-reset').click();assert.ok(await guide.locator('#prediction-readback').isHidden());
+  assert.equal(await guide.locator('#lab-feedback-title').textContent(),'Your setup: B is 200 g.');
+  await feedbackContext.close();report.checks.push('Choice-specific guidance, initial Check orientation, nearby prediction feedback, and stale-result clearing');
   const fallback=await browser.newContext({reducedMotion:'reduce'});
   await fallback.route('**/phaser-3.90.0.min.js',r=>r.abort());
   const fp=await fallback.newPage();await fp.goto(base+'index.html');const fd=fp.frameLocator('#learning-demo');
