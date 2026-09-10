@@ -1643,6 +1643,60 @@ button{
     border-bottom-color:Highlight
   }
 }
+/* Feedback responds to the current choice, without adding a second task panel. */
+.choice-feedback>strong{
+  display:block;
+  font-size:1.125rem;
+  line-height:1.4;
+  font-weight:650
+}
+.choice-feedback>p{
+  margin:.45rem 0 0;
+  font-size:1rem;
+  line-height:1.55
+}
+#fraction-feedback-title{
+  font-size:1.25rem
+}
+#test-design.has-result:not(.warning){
+  border-color:var(--ink);
+  background:#ecf4f8
+}
+.prediction-choice>summary{
+  display:list-item;
+  padding:.65rem 0
+}
+.prediction-choice>summary .quiet{
+  display:block;
+  font-size:.875rem;
+  font-weight:400
+}
+.prediction label{
+  margin-top:.5rem;
+  padding:.6rem .75rem;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#f4f8f7;
+  cursor:pointer
+}
+.prediction label:has(:checked){
+  border-color:var(--accent);
+  background:#e6f2ed
+}
+.prediction input{
+  accent-color:var(--accent)
+}
+@media(max-width:760px){
+  .wrap{
+    padding-inline:clamp(12px,4vw,16px)
+  }
+  .lab-controls,.discovery-panel,.showcase .discovery-panel{
+    padding:clamp(10px,4vw,16px)
+  }
+  #fraction-status,#test-design{
+    padding:clamp(10px,3vw,14px)
+  }
+}
 /* Touch controls: one action row, visible choices, then the result. */
 button,.segmented-options label{
   touch-action:manipulation;
@@ -1789,10 +1843,10 @@ button:active:not(:disabled){
   }
   .lab-controls{
     border-top:0;
-    padding:1rem
+    padding:clamp(10px,4vw,16px)
   }
   .comparison-actions{
-    grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr))
   }
   #run-model{
     grid-column:auto
@@ -1843,7 +1897,7 @@ button:active:not(:disabled){
   }
   .discovery-panel,.showcase .discovery-panel{
     gap:.85rem;
-    padding:1rem;
+    padding:clamp(10px,4vw,16px);
     justify-content:flex-start
   }
   .selected-tools>p{
