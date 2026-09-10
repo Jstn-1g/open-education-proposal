@@ -22,6 +22,16 @@ async function fit(page){
     assert.deepEqual(await frame.locator('button,select,output').evaluateAll(els=>els.filter(e=>e.checkVisibility({checkVisibilityCSS:true})&&e.scrollWidth>e.clientWidth+2).map(e=>e.id)),[],'Visible controls must contain their labels');
   }
 }
+async function revealBridge(demo){
+  await demo.locator('#show-fraction-context').click();
+  assert.deepEqual(await demo.locator('#pieces button').evaluateAll(nodes=>nodes.flatMap(e=>{
+    const range=document.createRange();range.selectNodeContents(e.querySelector('span'));
+    const text=range.getBoundingClientRect(),piece=e.getBoundingClientRect();
+    return text.left<piece.left || text.right>piece.right || text.top<piece.top || text.bottom>piece.bottom ? [e.textContent] : [];
+  })),[],'Fraction labels stay inside their pieces when the whole is shown');
+  await demo.locator('#show-bridge').click();
+  await demo.locator('#fraction-scene canvas[data-mode="bridge"],body.simple-view').first().waitFor();
+}
 try{
   for(const width of [390,1365]){
     const ctx=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
@@ -30,11 +40,11 @@ try{
     for(const fragment of ['', '#demo']){
       await page.goto(base+'index.html'+fragment);
       const demo=page.frameLocator('#learning-demo');
-      await demo.locator('body.world-ready,body.simple-view').waitFor();
+      await demo.locator('#loading-note').waitFor({state:'hidden'});
       await fit(page);
-      const position=await page.evaluate(()=>({scroll:scrollY,boundary:document.querySelector('#demo').getBoundingClientRect().top}));
+      const position=await page.evaluate(()=>({scroll:scrollY,maxScroll:document.documentElement.scrollHeight-innerHeight,boundary:document.querySelector('#demo').getBoundingClientRect().top}));
       if(!fragment)assert.equal(position.scroll,0,'A first visit must not skip the introduction or review limits');
-      else assert.ok(Math.abs(position.boundary)<2,'The demo link must land at its review boundary, not inside the activity');
+      else assert.ok(position.boundary>=-2 && (Math.abs(position.boundary)<2 || Math.abs(position.scroll-position.maxScroll)<2),'The demo link exposes its review boundary; a short page may reach its scroll limit first: '+JSON.stringify(position));
     }
     const skipPage=await ctx.newPage();await skipPage.goto(base+'index.html');
     await skipPage.frameLocator('#learning-demo').locator('#loading-note').waitFor({state:'hidden'});
@@ -67,11 +77,13 @@ try{
     await page.goto(base+'index.html');const demo=page.frameLocator('#learning-demo');
     await demo.locator('#loading-note').waitFor({state:'hidden'});
     assert.ok(await demo.locator('body').evaluate(e=>e.classList.contains('showcase')));
-    assert.equal(await demo.locator('.discovery-panel button:visible').count(),5,'Five focused toolkit actions, versus ten in the full playground');
+    assert.equal(await demo.locator('.discovery-panel button:visible').count(),1,'Only one initial activity action: split the piece');
     assert.ok(await demo.locator('[data-add="4"]').isHidden());assert.ok(await demo.locator('#remove-piece').isHidden());assert.ok(await demo.locator('#puzzle').isHidden());
     await demo.locator('#split-piece').click();assert.equal(await demo.locator('#pieces button').count(),2);
+    await revealBridge(demo);
     await demo.locator('#check-fraction').click();assert.match(await demo.locator('#fraction-status').textContent(),/ends match/);
     await demo.locator('#fraction-undo').click();assert.equal(await demo.locator('#pieces button').count(),1);
+    await demo.locator('#split-piece').click();await revealBridge(demo);
     await demo.locator('#puzzle-help').click();assert.match(await demo.locator('#fraction-status').textContent(),/2 quarters/);
     await demo.locator('#fraction-reset').click();await fit(page);
     await demo.locator('#choose-14').click();assert.ok(await demo.locator('#length').isHidden());
@@ -108,11 +120,12 @@ try{
   for(const viewport of [{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:844,height:390}]){
     const ctx=await browser.newContext({viewport,hasTouch:true,isMobile:true,reducedMotion:'reduce'});
     const page=await ctx.newPage();await page.goto(base+'index.html#demo');
-    const demo=page.frameLocator('#learning-demo');await demo.locator('body.world-ready,body.simple-view').waitFor();
+    const demo=page.frameLocator('#learning-demo');await demo.locator('#loading-note').waitFor({state:'hidden'});
     await fit(page);
     const distance=await demo.locator('#split-piece').evaluate(e=>e.getBoundingClientRect().top-document.querySelector('#pieces').getBoundingClientRect().bottom);
     assert.ok(distance<75,'Split is immediately next to the placed pieces on mobile');
     await demo.locator('#split-piece').tap();assert.equal(await demo.locator('#pieces button').count(),2);
+    await revealBridge(demo);
     await demo.locator('#check-fraction').tap();assert.match(await demo.locator('#fraction-status').textContent(),/ends match/);
     await demo.locator('#choose-14').tap();
     assert.ok(await demo.locator('#motion-controls').isHidden(),'Motion tools appear only when a comparison exists');
@@ -151,12 +164,29 @@ try{
   const feedbackContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
   const feedbackPage=await feedbackContext.newPage();await feedbackPage.goto(base+'index.html');
   const guide=feedbackPage.frameLocator('#learning-demo');await guide.locator('#loading-note').waitFor({state:'hidden'});
-  await guide.locator('#check-fraction').click();
-  assert.ok(await guide.locator('#split-piece').evaluate(e=>e.classList.contains('primary')),'Starting-half Check must keep Split prominent');
-  assert.match(await guide.locator('#fraction-status').textContent(),/starting half/);
-  await guide.locator('#split-piece').click();assert.equal(await guide.locator('#fraction-feedback-title').textContent(),'1/2 → 1/4 + 1/4');
+  assert.equal(await guide.locator('#bridge-mission').innerText(),'Split this piece in two.');
+  assert.equal(await guide.locator('#split-action-label').innerText(),'Split in two');
+  assert.ok(await guide.locator('#check-fraction').isHidden());
+  assert.ok(await guide.locator('#fraction-scene').isHidden());
+  assert.doesNotMatch(await guide.locator('#age8').innerText(),/1\/2|1\/4|flag|number line|Built so far/,'No symbols or measuring tasks before the first action');
+  const original=await guide.locator('#pieces button').boundingBox();
+  await guide.locator('#split-piece').click();
+  assert.equal(await guide.locator('#bridge-mission').innerText(),'Two equal pieces.');
+  const halves=await guide.locator('#pieces button').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().width));
+  assert.equal(halves.length,2);assert.ok(Math.abs(halves[0]-halves[1])<1);
+  assert.ok(Math.abs(halves[0]+halves[1]-original.width)<1,'Splitting does not add or remove visible amount');
+  assert.ok(await guide.locator('#show-fraction-context').evaluate(e=>document.activeElement===e));
+  await guide.locator('#show-fraction-context').click();
+  assert.equal(await guide.locator('#bridge-mission').innerText(),'Two quarters make one half.');
+  assert.equal(await guide.locator('#fraction-feedback-title').innerText(),'1/4 + 1/4 = 1/2');
+  const quarters=await guide.locator('#pieces button').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().width));
+  assert.ok(quarters.every((width,index)=>Math.abs(width-halves[index])<1),'Showing the whole adds context without shrinking the pieces');
+  assert.ok(await guide.locator('#whole-label').isVisible());
+  assert.ok(await guide.locator('#fraction-scene').isHidden(),'The whole is introduced separately from the bridge');
+  await guide.locator('#show-bridge').click();
   assert.equal(await guide.locator('#split-action-label').textContent(),'Split 1/4');
-  await guide.locator('#fraction-undo').click();assert.equal(await guide.locator('#split-action-label').textContent(),'Split 1/2');
+  await guide.locator('#fraction-undo').click();assert.equal(await guide.locator('#split-action-label').textContent(),'Split in two');
+  assert.ok(await guide.locator('#fraction-scene').isHidden());
   await guide.locator('#choose-14').click();await guide.locator('input[name=mass][value="100"]').check();
   assert.doesNotMatch(await guide.locator('#lab-feedback-copy').textContent(),/length/,'Focused guidance must not suggest hidden length controls');
   await guide.locator('input[name=mass][value="400"]').check();
@@ -173,7 +203,7 @@ try{
   await guide.locator('#run-model').click();assert.match(await guide.locator('#prediction-readback').textContent(),/You predicted: the same time/);
   await guide.locator('#lab-reset').click();assert.ok(await guide.locator('#prediction-readback').isHidden());
   assert.equal(await guide.locator('#lab-feedback-title').textContent(),'Your setup: B is 200 g.');
-  await feedbackContext.close();report.checks.push('Choice-specific guidance, initial Check orientation, nearby prediction feedback, and stale-result clearing');
+  await feedbackContext.close();report.checks.push('One-action opening, exact equal split, separate whole/bridge reveals and reset; nearby prediction feedback and stale-result clearing');
   const fallback=await browser.newContext({reducedMotion:'reduce'});
   await fallback.route('**/phaser-3.90.0.min.js',r=>r.abort());
   const fp=await fallback.newPage();await fp.goto(base+'index.html');const fd=fp.frameLocator('#learning-demo');

@@ -31,19 +31,22 @@
     </div>
     <p id="loading-note" class="notice">Interactive controls need JavaScript. The explanations and research notes remain available below.</p>
     <section id="age8" class="activity" aria-labelledby="bridge-mission">
-      <div class="activity-heading"><h2 id="bridge-mission">Make 1/2 another way.</h2></div>
+      <div class="activity-heading"><h2 id="bridge-mission" tabindex="-1">Make 1/2 another way.</h2></div>
       <fieldset id="fraction-controls" disabled>
         <legend class="sr-only">Fraction playground</legend>
         <div class="game-layout">
         <div class="fraction-stage">
           <div class="stage-top"><span class="small-label">The full bridge is 1 whole</span><span class="amount-readout"><span>Built so far</span><output id="fraction-label" aria-label="Filled fraction">1/2</output></span></div>
           <div class="fraction-world">
+          <p id="whole-label" hidden>One whole</p>
           <div id="fraction-scene" class="scene-surface" aria-hidden="true"></div>
           <div id="pieces" class="pieces" role="group" aria-label="Placed bridge pieces"><button type="button" data-units="4" aria-pressed="true" aria-label="Piece 1, one half, selected"><span>1/2</span></button></div>
           </div>
         </div>
         <div class="discovery-panel">
           <div class="selected-tools"><p id="split-note">Piece 1 selected · 1/2</p><div class="button-row edit-pieces"><button type="button" id="split-piece" class="primary"><svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v18M8 7H3v10h5M16 7h5v10h-5"/></svg><span id="split-action-label">Split 1/2</span></button><button type="button" id="check-fraction"><svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12 4 4L19 6"/></svg>Check bridge</button><button type="button" id="remove-piece" class="full-only">Remove</button></div></div>
+          <button type="button" id="show-fraction-context" class="primary" hidden>Show the whole</button>
+          <button type="button" id="show-bridge" class="primary" hidden>Try it on the bridge</button>
           <div id="fraction-status" class="choice-feedback" role="status" aria-live="polite" aria-atomic="true"><strong id="fraction-feedback-title">Your move: split the half.</strong><p id="fraction-feedback-copy">Make two equal pieces. Watch where the bridge ends.</p></div>
           <div class="fraction-toolbar full-only"><span id="split-label">Add a piece</span><div class="button-row piece-palette" role="group" aria-labelledby="split-label"><button type="button" data-add="4"><span class="palette-bar half" aria-hidden="true"></span><strong>+ 1/2</strong></button><button type="button" data-add="2"><span class="palette-bar quarter" aria-hidden="true"></span><strong>+ 1/4</strong></button><button type="button" data-add="1"><span class="palette-bar eighth" aria-hidden="true"></span><strong>+ 1/8</strong></button></div></div>
         <div class="play-actions"><button type="button" id="fraction-undo" disabled>Undo</button><button type="button" id="fraction-reset">Start again</button><button type="button" id="puzzle-help">Show one way</button></div>
