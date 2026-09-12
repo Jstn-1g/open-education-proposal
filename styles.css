@@ -98,6 +98,33 @@ p{max-width:65ch;margin-bottom:1.2rem}
 .demo-next>div{min-width:0}
 .demo-next p{font-size:1rem}
 .demo-next .support{font-size:.9rem;margin-top:.8rem}
+.contribute-intro.page-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:1rem 3rem;align-items:end;max-width:none;padding-block:3rem 2rem}
+.contribute-intro .eyebrow{grid-column:1/-1;margin-bottom:0}
+.contribute-intro h1{margin-bottom:0;font-size:clamp(3.3rem,5.5vw,5.5rem)}
+.contribute-intro .lede{margin-bottom:0;font-size:1.2rem;max-width:45ch}
+.contribute-start{padding-bottom:2.5rem}
+.contribute-start>h2{font-family:var(--sans);font-size:1.3rem;line-height:1.3;font-weight:650;letter-spacing:-.025em;margin-bottom:.6rem}
+.contribute-welcome{font-size:1rem;max-width:none;margin-bottom:1.4rem}
+.contribute-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.contribute-choice{display:flex;flex-direction:column;min-width:0;padding:1.4rem;background:var(--white);border:1px solid var(--line);border-top:3px solid var(--blue)}
+.contribute-choice h3{font-family:var(--serif);font-size:1.9rem;font-weight:400;letter-spacing:-.035em}
+.contribute-choice p{font-size:1rem}
+.contribute-choice>.button{margin-top:auto;align-self:flex-start;gap:.5rem}
+.contribute-context{display:grid;grid-template-columns:1fr 1fr;gap:1rem 2rem;margin-top:1.2rem}
+.contribute-context p{font-size:.9rem;color:var(--muted);margin-bottom:0}
+.contribute-tasks .contribute-task{grid-template-columns:minmax(9rem,.32fr) minmax(0,1fr);gap:2rem}
+.contribute-task>div{min-width:0}
+.contribute-task>div>p:last-of-type{margin-bottom:.5rem}
+.contribute-criteria{border-top:1px solid var(--line);max-width:65ch}
+.contribute-criteria summary{min-height:44px;padding:.7rem .2rem;cursor:pointer;color:var(--blue);font-size:1rem;font-weight:600}
+.contribute-criteria summary:hover{text-decoration:underline;text-underline-offset:.22em}
+.contribute-criteria-copy{padding:.4rem .2rem .6rem}
+.contribute-criteria-copy h4{font-size:1rem;margin:0 0 .6rem}
+.contribute-criteria-copy p{margin:1rem 0 0}
+.contribute-criteria-print{display:none}
+@media(max-width:900px){.contribute-intro.page-intro{grid-template-columns:1fr;gap:1rem}.contribute-choices{grid-template-columns:1fr}.contribute-choice{padding:1.2rem}.contribute-choice h3{margin-bottom:.5rem}.contribute-choice p{max-width:65ch}.contribute-context{grid-template-columns:1fr;gap:.75rem}}
+@media(max-width:720px){.contribute-intro.page-intro{padding-block:2rem 1.75rem}.contribute-intro h1{font-size:clamp(3rem,11vw,5rem)}.contribute-tasks .contribute-task{grid-template-columns:1fr;gap:.7rem}.contribute-start{padding-bottom:2rem}}
+@media(forced-colors:active){.contribute-choice,.contribute-criteria{border-color:CanvasText}}
 @media(max-width:1000px){.frame{width:calc(100% - 3rem)}.hero{gap:2rem}.site-header{align-items:flex-start;gap:2rem}nav{gap:.6rem 1.2rem}.section-head{grid-template-columns:1fr 2.5fr}.task{grid-template-columns:.3fr 1.2fr 1fr}}
 @media(max-width:720px){.frame{width:calc(100% - 2rem)}.status-bar{font-size:.8rem}.status-bar .frame{gap:.15rem}.site-header{display:block;padding-block:1.6rem}nav{margin-top:1.5rem;gap:.25rem 1.3rem}nav a{font-size:.9rem}.hero{grid-template-columns:1fr;padding-block:2.8rem 3rem;gap:2rem}h1{font-size:clamp(3rem,12vw,5rem)}.eyebrow{margin-bottom:1.2rem}.section{padding-block:2.5rem}.section-head{grid-template-columns:1fr;gap:.75rem}.three-col{grid-template-columns:1fr;gap:1rem}.principle{padding-top:1.2rem}.big-number{margin-bottom:.4rem}.statement{padding:1.5rem;margin-bottom:2.5rem}.page-intro{padding-block:2.5rem 1rem}.page-intro h1{font-size:clamp(3rem,11vw,5rem)}.reading{padding-top:0}.comparison{grid-template-columns:1fr}.comparison>div{padding:1.4rem}.comparison>div+div{border-left:0;border-top:1px solid var(--ink)}.task{grid-template-columns:1fr;gap:.7rem}.next{align-items:flex-start;flex-direction:column;gap:1rem}.site-footer{display:block}.footer-meta{margin-top:2rem}}
 @media(forced-colors:active){.button,.evidence,.note,.status-bar{border:1px solid CanvasText}.button{background:ButtonFace;color:ButtonText}a:focus-visible{outline-color:Highlight}.principle{border-color:CanvasText}}
@@ -183,4 +210,27 @@ p{max-width:65ch;margin-bottom:1.2rem}
   .contribute-intro ~ .section .task{padding-block:.2rem}
   .contribute-intro ~ .statement{padding-block:.4rem;margin-block:.4rem .5rem}
   .contribute-intro ~ .statement .support{max-width:none}
+  .contribute-intro.page-intro{display:block;padding-block:1rem .8rem}
+  .contribute-intro .eyebrow{margin-bottom:.5rem}
+  .contribute-intro h1{font-size:30pt;margin-bottom:.6rem}
+  .contribute-intro .lede{font-size:12pt}
+  .contribute-start{padding-bottom:.65rem}
+  .contribute-start>h2{font-size:14pt;margin-bottom:.4rem}
+  .contribute-welcome{font-size:11pt;margin-bottom:.65rem}
+  .contribute-choices{grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;break-inside:avoid-page}
+  .contribute-choice{padding:.6rem;background:none}
+  .contribute-choice h3{font-size:14pt;margin-bottom:.4rem}
+  .contribute-choice p,.contribute-context p{font-size:10pt}
+  .contribute-choice>.button{font-size:10pt;padding:.3rem;min-height:0}
+  .contribute-context{grid-template-columns:1fr 1fr;gap:1rem;margin-top:.65rem}
+  .contribute-task{display:block;break-inside:avoid-page}
+  .contribute-task .task-id{margin-bottom:.3rem}
+  .contribute-task>div>p:last-of-type{margin-bottom:.3rem}
+  /* Match the discussion-page print fallback: native closed details can omit
+     content on paper, so the equivalent copy is visible only for printing. */
+  .contribute-criteria{display:none}
+  .contribute-criteria-print{display:block}
+  .contribute-criteria-print h4{margin-block:.3rem}
+  .contribute-criteria-print p{margin-block:.3rem 0}
+  .contribute-tasks + .section{break-inside:avoid-page}
 }

@@ -6,7 +6,7 @@ Our first proposal is simple: **when claiming independent understanding, disting
 
 We want educators, researchers, accessibility specialists, families, designers, writers, and developers to challenge this proposal and make it practical.
 
-The next practical step is an **open creation-and-sharing community**. [Try an activity](https://jstn-1g.github.io/open-education-proposal/activity-studio/index.html) or [open the Studio](https://jstn-1g.github.io/open-education-proposal/activity-studio/edit.html) to remix a Fraction Bridge activity without code, preview the same player, download/reopen a recipe and propose it for maintainer review. This is an early adult-contributor preview, not automatic public hosting, qualified lesson approval or a general game editor. The [authoring guide](docs/ACTIVITY-STUDIO.md) explains the workflow and local-build paths.
+The live [Activity Library](https://jstn-1g.github.io/open-education-proposal/activity-studio/index.html) and [Studio](https://jstn-1g.github.io/open-education-proposal/activity-studio/edit.html) are the first tools for an **open creation-and-sharing community**. Remix a Fraction Bridge activity without code, preview the same player, download/reopen a recipe and propose it for maintainer review. This is an early adult-contributor preview, not automatic public hosting, qualified lesson approval or a general game editor. The [authoring guide](docs/ACTIVITY-STUDIO.md) explains the workflow and local-build paths.
 
 ## Start with one useful contribution
 
@@ -24,11 +24,11 @@ Want to challenge the bigger educational design? Review one question in [Design 
 
 ## Now, next, and later
 
-- **Now:** Version 0.1.0 offers a draft proposal, evidence notes, a contributor website, six fictional discussion cases and two interactive design examples for adult review.
-- **Next:** Aim for three first-month outputs: reviewed help-versus-access examples, one evidence note, and one accessibility report with a maintainer response. Publishing an AI-assisted case draft does not complete the review task. These are [planning targets, not promised deadlines](docs/ROADMAP.md).
+- **Now:** Version 0.1.0 offers a draft proposal, evidence notes, a contributor website, six fictional discussion cases, two interactive design examples and the live Activity Library and Studio for remixing Fraction Bridge recipes. All are for adult review.
+- **Next:** Aim for three first-month outputs: reviewed help-versus-access examples, one evidence note, and one accessibility report with a maintainer response. Publishing an AI-assisted case draft does not complete the review task. Studio publication does not complete these review targets or establish educator usability. These are [planning targets, not promised deadlines](docs/ROADMAP.md).
 - **Later:** Consider a small, openly licensed learning resource only with qualified human review, capacity to maintain it, and evidence appropriate to its claims. A complete learning path without a proprietary model is the longer-term ambition, not something this release delivers.
 
-This first release is not a curriculum, a learning app, an adopted education standard, or a service for children. Human teaching, relationships, and judgment remain central. AI is optional. Robot tutors, companions, simulated relationships, child profiling, and child records are outside this project’s scope.
+This release is an adult proposal and authoring preview, not a curriculum, a validated classroom resource, an adopted education standard, or a service for children. Human teaching, relationships, and judgment remain central. AI is optional. Robot tutors, companions, simulated relationships, child profiling, and child records are outside this project’s scope.
 
 ## Review limits
 

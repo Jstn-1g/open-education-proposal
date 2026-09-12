@@ -1,8 +1,8 @@
 # The first 30 days after launch
 
-Version 0.1.0 starts with an adult proposal, evidence notes, a contributor website and design examples. The next source milestone adds a bounded [Activity Studio and library](ACTIVITY-STUDIO.md): educators remix trusted activities and propose them for review. It is not a complete curriculum or validated classroom platform. Source progress and public deployment are recorded separately.
+Version 0.1.0 offers an adult proposal, evidence notes, a contributor website and design examples. The public site now also includes the bounded [Activity Studio and library](ACTIVITY-STUDIO.md): adults can remix Fraction Bridge activities and propose them for review. It is not a complete curriculum or validated classroom platform. Source progress and public deployment are recorded separately.
 
-The dates below are **planning targets, not predictions or promises**, measured from the repository's opening for contributions. They do not claim that the work or a hosted website has been completed.
+The dates below remain **planning targets, not predictions or promises**, measured from the repository's opening for contributions. Publishing the website and Studio does not restart that window or complete the outputs and human reviews described below.
 
 Jstn-1g is the only confirmed maintainer. Work on a small reviewable piece at a time, and confirm a willing reviewer before expanding work that needs specialist judgment. A contributor can begin with one case, one paragraph, or one barrier report. If review capacity is missing, keep the draft and its unanswered questions visible; defer additional work rather than imply that review happened.
 
