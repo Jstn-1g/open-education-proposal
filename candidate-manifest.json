@@ -17,8 +17,8 @@
       "sha256": "54c2d20f77c1859e98e0846e5db73a17bc6eedb813195a27890367c01cd6a71e"
     },
     ".github/PULL_REQUEST_TEMPLATE.md": {
-      "bytes": 1239,
-      "sha256": "3f6cda5bbb592e57c2ef18cd5d0d4feacae2ff374e18f433069f1d899d408e53"
+      "bytes": 1414,
+      "sha256": "09b40467dff48efe0bbb43289a91b5e7eefd6f92088bf6fdb731747023866d24"
     },
     ".github/workflows/activity-checks.yml": {
       "bytes": 1824,
@@ -49,8 +49,8 @@
       "sha256": "8751330ed7a0a13dfdd4641b98d8e466e5a5e3ea180a8a6592db688b8512f80c"
     },
     "DEVELOPMENT.md": {
-      "bytes": 6625,
-      "sha256": "05f4f3efac02fe5442d41e71b841dacfa1f6ebdff74ab7631e43527841b5069c"
+      "bytes": 9333,
+      "sha256": "6113379364fd9fb9eecca8a642c4cbe6465f013a87fe2be0129f28980cedde68"
     },
     "GOVERNANCE.md": {
       "bytes": 5180,
@@ -117,8 +117,8 @@
       "sha256": "0fd86484dd68ed3a58e7a0fe612049618b486229d901c4878e3220e60e4a04a7"
     },
     "activity-studio/player.mjs": {
-      "bytes": 12048,
-      "sha256": "cbf0326ac99aabc9687076c9c6fc35f679ae47deb6c7408c1cb9c7d7b934bdcf"
+      "bytes": 12025,
+      "sha256": "156fe91b4173a68a11163cb86d60487d82ef8e655337b9e2351d5a3d0c3b647c"
     },
     "activity-studio/recipe.mjs": {
       "bytes": 7084,
@@ -169,8 +169,8 @@
       "sha256": "d2745f8529f5eecbc08cd934fd96bfea5a9ddf0d9e5ef10db87e5d2d8be0f7b0"
     },
     "docs/ACTIVITY-STUDIO.md": {
-      "bytes": 6854,
-      "sha256": "f2cd7f7f37a665ba6bfe2f6ea28f4e53cc19a0a473e1ff93e2bab784ebeda509"
+      "bytes": 6936,
+      "sha256": "263c30ef31fd53e8aadd20648a9a74dc53b6329450e9167f61bd07243c6fcab5"
     },
     "docs/FIRST-CONTRIBUTIONS.md": {
       "bytes": 5499,
@@ -277,8 +277,8 @@
       "sha256": "7725bfa64f4855b13b2b24f78250bafc608c519ec112e00a9fe594649fa260d1"
     },
     "tests/activity-studio-browser.mjs": {
-      "bytes": 65216,
-      "sha256": "d941c24734b67377c42330c5c11c7dec550fccd3a83c0dc03611ea579cf89740"
+      "bytes": 67910,
+      "sha256": "4ec034dddf734271b07266e19314d4971924877d52342bf6e6a54a8eddfdd4f8"
     },
     "tests/bridge.test.mjs": {
       "bytes": 1854,
