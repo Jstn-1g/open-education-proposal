@@ -269,8 +269,8 @@
       "sha256": "9bad13901223bb5774b6076b15161a1499041c3e00d2c4c722a07802ce721a18"
     },
     "styles.css": {
-      "bytes": 18186,
-      "sha256": "aeafd7a5103562a99aac6ccdc9ad062ab3e1c4138fd8dccfe638b8c534be3064"
+      "bytes": 18242,
+      "sha256": "fac6a05eb727beee7aa185781e23c1604c5d6c815f9b72e7c7a76f263ebf60de"
     },
     "tests/activity-recipe.test.mjs": {
       "bytes": 13055,
@@ -285,8 +285,8 @@
       "sha256": "eaea80379da2c79ac27cc3c871dd3d3f57faf7005c55df3a8a0d3df7d765316e"
     },
     "tests/browser.mjs": {
-      "bytes": 21570,
-      "sha256": "80c31bdce38001a0ac6cb5a7c27db7f5cd1862496389c24916425fab44fe859a"
+      "bytes": 21809,
+      "sha256": "b47e41356bd2e1a4b17fe205d49e7161c504cd4b847f2d7921b81619d118316c"
     },
     "tests/learning-lab-browser.mjs": {
       "bytes": 20566,

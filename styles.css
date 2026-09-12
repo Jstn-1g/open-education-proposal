@@ -232,4 +232,5 @@ p{max-width:65ch;margin-bottom:1.2rem}
   .contribute-criteria-print{display:block}
   .contribute-criteria-print h4{margin-block:.3rem}
   .contribute-criteria-print p{margin-block:.3rem 0}
+  .contribute-tasks + .section{break-inside:avoid-page}
 }

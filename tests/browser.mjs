@@ -270,6 +270,8 @@ try {
     assert(!(await printPage.locator('nav').isVisible()), `${slug}: print navigation visible`);
     assert(!(await printPage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)), `${slug}: print overflow`);
     if (slug === 'contribute') {
+      assert(['avoid', 'avoid-page'].includes(await printPage.locator('.contribute-tasks + .section').evaluate(element => getComputedStyle(element).breakInside)),
+        'The short contribution process should remain together on paper.');
       for (const task of await printPage.locator('.contribute-task').all()) {
         assert(!(await task.locator('.contribute-criteria').isVisible()), 'Native criteria must not duplicate printed criteria.');
         assert(await task.locator('.contribute-criteria-print').isVisible(), 'Criteria print even when never opened.');
