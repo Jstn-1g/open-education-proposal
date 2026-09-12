@@ -6,6 +6,8 @@ Our first proposal is simple: **when claiming independent understanding, disting
 
 We want educators, researchers, accessibility specialists, families, designers, writers, and developers to challenge this proposal and make it practical.
 
+The next practical step is an **open creation-and-sharing community**. This source now includes an early [Activity Studio and library](docs/ACTIVITY-STUDIO.md): remix a Fraction Bridge activity without code, preview the same player, download/reopen a recipe and propose it for maintainer review. It is not automatic public hosting, qualified lesson approval or a general game editor. Deployment is a separate step; see the guide for local paths.
+
 ## Start with one useful contribution
 
 [Visit the website](https://jstn-1g.github.io/open-education-proposal/) or choose a [first task](docs/FIRST-CONTRIBUTIONS.md). Start with one comment: a [fictional example](https://github.com/Jstn-1g/open-education-proposal/issues/1), an [evidence question](https://github.com/Jstn-1g/open-education-proposal/issues/2), or a [reading barrier](https://github.com/Jstn-1g/open-education-proposal/issues/3). The full task criteria are goals for later, not an entry requirement.

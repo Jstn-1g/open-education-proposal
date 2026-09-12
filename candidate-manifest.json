@@ -4,6 +4,10 @@
       "bytes": 1263,
       "sha256": "fcf2849e566e9f486ce033604167d57a4b61cf9ca215c15dc0352af353d3a368"
     },
+    ".github/ISSUE_TEMPLATE/activity-proposal.md": {
+      "bytes": 1612,
+      "sha256": "a5b42217c0f3c8b4a46fbb777e5cce139d8f0118c8d5e352acd432bcca5c4089"
+    },
     ".github/ISSUE_TEMPLATE/evidence-correction.md": {
       "bytes": 1205,
       "sha256": "807017d0842e804377512c287dd3da2f2c664e15dfb7e08dea1d334785f6d18c"
@@ -16,13 +20,17 @@
       "bytes": 1239,
       "sha256": "3f6cda5bbb592e57c2ef18cd5d0d4feacae2ff374e18f433069f1d899d408e53"
     },
+    ".github/workflows/activity-checks.yml": {
+      "bytes": 1824,
+      "sha256": "8bbd18a59ceabc5aba2a9fd11a02262dc4d3033b6756df9ed1b886944f69d3fa"
+    },
     ".github/workflows/checks.yml": {
       "bytes": 933,
       "sha256": "b926568cf9b51b33bc35defe22fa2af680dc78b9f032791e1e894fc92e19549d"
     },
     ".github/workflows/pages.yml": {
-      "bytes": 2034,
-      "sha256": "0b846f2b9fe4d01fc4a7dca649d0691b3aee73802eb94a53011eb51a863714f4"
+      "bytes": 2214,
+      "sha256": "f49c23d9339e61fa5071977ffd005275df44fcdf2b0ccc4e203438baa7d2cac7"
     },
     ".github/workflows/security.yml": {
       "bytes": 1265,
@@ -37,12 +45,12 @@
       "sha256": "1050c970e899350dfc59c897bcc75f08aeb24c97fa91a801ef4f5b3d39ed0ec2"
     },
     "CONTRIBUTING.md": {
-      "bytes": 3734,
-      "sha256": "26deba0cb8be56bdfc13e0f13c1b329c1cbd7dc16525f3e5bdf880800327195f"
+      "bytes": 3960,
+      "sha256": "8751330ed7a0a13dfdd4641b98d8e466e5a5e3ea180a8a6592db688b8512f80c"
     },
     "DEVELOPMENT.md": {
-      "bytes": 5780,
-      "sha256": "c68c7665fc567441087037f34f2594f97a564d621ce29cb2a95e0e86f933bf3a"
+      "bytes": 6625,
+      "sha256": "05f4f3efac02fe5442d41e71b841dacfa1f6ebdff74ab7631e43527841b5069c"
     },
     "GOVERNANCE.md": {
       "bytes": 5180,
@@ -73,24 +81,68 @@
       "sha256": "e2226b06c3fad817b4056ebaa828a7ef7ae0a592e2c90030830a3ba9170d6ab4"
     },
     "README.md": {
-      "bytes": 7219,
-      "sha256": "161d7391800f3dc8c48fb4ffb2221e66b41ab9be6cb663070877b8e671786ed7"
+      "bytes": 7666,
+      "sha256": "9863855ccb8e05bfe43ef9a3a081f87b74fedab53758423883b1b3864b3403da"
     },
     "SECURITY.md": {
       "bytes": 1838,
       "sha256": "2a99528009cf1fe624f9c2d47822763ccdc74ee85b6e191774955262cc8cc7ec"
     },
+    "activity-studio/edit.html": {
+      "bytes": 10412,
+      "sha256": "3fd1aa91c28fd4b60b286ed2effa3159ff25f3d5e97083b2f37cf4d1a28e6737"
+    },
+    "activity-studio/examples.mjs": {
+      "bytes": 2389,
+      "sha256": "d209b02135f8a2cb6f5ac4e6586a8079e4730e0a9cd2f7ee0c7ed0365cc84d36"
+    },
+    "activity-studio/index.html": {
+      "bytes": 3475,
+      "sha256": "d3c090b499b5e582f1a14f620014750277a560c898a19541a999c8dfa8bfbd39"
+    },
+    "activity-studio/library.mjs": {
+      "bytes": 1768,
+      "sha256": "fab353fa7c3f8cd73b843d5cbce3c26d02e37a8330be38c4400ebe3fd63ac1c5"
+    },
+    "activity-studio/play.html": {
+      "bytes": 3291,
+      "sha256": "60e5d219a7121e0b04b326fce89b36c32939d9a15dcd12029fee4c99217b2565"
+    },
+    "activity-studio/play.mjs": {
+      "bytes": 4314,
+      "sha256": "c4a5227fb495497f60f3d471d11c030f43d45dba711fd3cfd97bdac1104c9734"
+    },
+    "activity-studio/player.css": {
+      "bytes": 9397,
+      "sha256": "0fd86484dd68ed3a58e7a0fe612049618b486229d901c4878e3220e60e4a04a7"
+    },
+    "activity-studio/player.mjs": {
+      "bytes": 12048,
+      "sha256": "cbf0326ac99aabc9687076c9c6fc35f679ae47deb6c7408c1cb9c7d7b934bdcf"
+    },
+    "activity-studio/recipe.mjs": {
+      "bytes": 7084,
+      "sha256": "76f7086ee048521072021dfa59d0d9e789d5cce24f4525f3d52f719c18e96a3d"
+    },
+    "activity-studio/studio.css": {
+      "bytes": 12636,
+      "sha256": "d942971f1ae7a8d144bc7a1114c832ff1931436c6dd1f8e04c69be0631b66a99"
+    },
+    "activity-studio/studio.mjs": {
+      "bytes": 14950,
+      "sha256": "29fd71c0696a0360a658fd6990c4e19964f33f315a17a42bc74ce5920d56a2f3"
+    },
     "build.py": {
-      "bytes": 11876,
-      "sha256": "3baf75315841197dcbb3bcd1e094080b0452d7f2269cfdcdda7f7c166c350fb6"
+      "bytes": 12611,
+      "sha256": "8dd9c362b7e38f03a6528bf0cac66ab13a94d65cd8c9dbe45fd212a3baf40a33"
     },
     "content/404.html": {
       "bytes": 388,
       "sha256": "0e5801d8ca15cb09ae910d99b3f323228481f65773b90f3c5be58d4f03cf4239"
     },
     "content/contribute.html": {
-      "bytes": 5520,
-      "sha256": "e8750a94971a8182a075fc936e0d52ebc84b40adf0eef7d909a3bf4bb3efacb8"
+      "bytes": 6208,
+      "sha256": "b57c0f5a42fa997366807ad83ac2f0adb3a3bf6b8b1c573bb331810edf4317cd"
     },
     "content/discussion.html": {
       "bytes": 5228,
@@ -101,8 +153,8 @@
       "sha256": "76c5d8b1b4c357661a7af1413ae4bc01106751fda3cde21ac77ea9b31d8af1d4"
     },
     "content/index.html": {
-      "bytes": 2849,
-      "sha256": "129c108912f153b82ed37d0bd5085d245ad412ec58199211768ca7bce3fdaec9"
+      "bytes": 2978,
+      "sha256": "aa0a29f7c9737f1a13de5e0d68ddc1630f569b6c7d19bf1a6efaf56291c656fb"
     },
     "content/open-source.html": {
       "bytes": 3948,
@@ -116,6 +168,10 @@
       "bytes": 4420,
       "sha256": "d2745f8529f5eecbc08cd934fd96bfea5a9ddf0d9e5ef10db87e5d2d8be0f7b0"
     },
+    "docs/ACTIVITY-STUDIO.md": {
+      "bytes": 6467,
+      "sha256": "cfb22dd33172b7dc37dda75d8e2c8c5e8ed37556a3ae22af4830c57f019127c2"
+    },
     "docs/FIRST-CONTRIBUTIONS.md": {
       "bytes": 5499,
       "sha256": "5683c0941de162067156e5cdf1d3571ce95da16ea6e75018b5905e4f29fb417f"
@@ -125,20 +181,20 @@
       "sha256": "a503c185a20ff249784d60f0df134906310914acc51aaec9ac9612428a607db2"
     },
     "docs/LEARNING-LAB.md": {
-      "bytes": 3494,
-      "sha256": "15210e56ef86fdac4722ba6e96ecd0e7d35eb35ff84299205ff72e16a88be2cb"
+      "bytes": 4109,
+      "sha256": "817492fe15c3faf39021e0681ca76f125ecd8b3f77e2ee007bee9f8fe6e3b0a8"
     },
     "docs/PUBLISHING.md": {
-      "bytes": 8926,
-      "sha256": "715186ef646352d28c25fe41c2d1cf9dd4cb50dd0b170e116a1527193abcfed0"
+      "bytes": 10044,
+      "sha256": "d167b97a534ee33ec794d26b84e529288955da0eb71f829a709e40ff3e0f5f4e"
     },
     "docs/REVIEW-CASES.md": {
       "bytes": 7823,
       "sha256": "9d5f49705bc610b349e2b4cbd46f0e602e197779a52c08e89840bb12506ddf58"
     },
     "docs/ROADMAP.md": {
-      "bytes": 5805,
-      "sha256": "7a8ae42f85843cb6b7782f4b961b1ef98108ea8d21816e499a842410efe74df4"
+      "bytes": 6517,
+      "sha256": "3c0ee9299bd4f7243722d50cf8ccec7deeab062655235ba03ad0fdc1e491caf8"
     },
     "docs/SECURITY-CHECKS.md": {
       "bytes": 4588,
@@ -149,12 +205,16 @@
       "sha256": "3c9c172c963d04b02395dbbbe0a409d8a4d45c4112bd611b00f97aca8eda03c2"
     },
     "learning-lab/ASSETS.md": {
-      "bytes": 2484,
-      "sha256": "dfb135c0fc89b233ac7c2637d4d27f3a0a7fc7bb96c5fd67f38349ba4bf2427a"
+      "bytes": 3185,
+      "sha256": "b976752b93a6f60b50d34ac5c773e19ef961821e0c7a933be78395d28b0794eb"
     },
     "learning-lab/app.mjs": {
-      "bytes": 19925,
-      "sha256": "59c976649b2e8f9f6b837901387180e7fad5b7abe4aa2ddb774ee513a8e288cc"
+      "bytes": 20428,
+      "sha256": "d5ba52b46fe17bf89d15bb5090e4bb68d7d125f9f05314df7bd85e3d2f976f18"
+    },
+    "learning-lab/art/bridge-setting.png": {
+      "bytes": 1925928,
+      "sha256": "5644e40f504d415db0433665f4544a23186551ce53b7532fb48c01eee2016e35"
     },
     "learning-lab/art/clockwork-room.png": {
       "bytes": 2042437,
@@ -168,9 +228,13 @@
       "bytes": 1385,
       "sha256": "b7873365e9316cfe83c9477bb6ca6b7c5d244a3b6da5b7b040c125d19e5ca7e8"
     },
+    "learning-lab/builder.mjs": {
+      "bytes": 6439,
+      "sha256": "90345518e9a1ce271d93a8da3558e613e66b2e3da8a3fa59efd1afd1fecce1ee"
+    },
     "learning-lab/index.html": {
-      "bytes": 14898,
-      "sha256": "208505edf559325e2a344208b0c9f60135ab90316b8a9ea4c0794069ce35b558"
+      "bytes": 16156,
+      "sha256": "571f314278c1eb5c74adf9aec940d1e44421a6aff3c1152912ef14a53338cfcb"
     },
     "learning-lab/model.mjs": {
       "bytes": 1739,
@@ -185,8 +249,8 @@
       "sha256": "14a87a75612ee82d830b88db3ded0db4b2f3345d8b3e436f7d301d9f3b917eff"
     },
     "learning-lab/styles.css": {
-      "bytes": 37261,
-      "sha256": "e6836bea61f995e587e77d5c48aae1bb46fbf1d00d1041d34b267f11a70fa360"
+      "bytes": 40216,
+      "sha256": "7515faa4c13b88a295b7f67c1724c0f0145ada2a1de6232f6b2da001655adaf3"
     },
     "learning-lab/vendor/PHASER-LICENSE.txt": {
       "bytes": 1100,
@@ -201,12 +265,20 @@
       "sha256": "f296918b2487625110528642cb962c61e8d250a793f7cd60c82ab4ed669e402d"
     },
     "release_check.py": {
-      "bytes": 6742,
-      "sha256": "8a73a1b1de8f93f6ee1caf972ab1dff911fedf1d07aa0141f5862dabdf40c4cc"
+      "bytes": 6929,
+      "sha256": "9bad13901223bb5774b6076b15161a1499041c3e00d2c4c722a07802ce721a18"
     },
     "styles.css": {
       "bytes": 14272,
       "sha256": "2538f190ec769a1678e248076adab0cfea25125433145b37b4ab794b0f670caa"
+    },
+    "tests/activity-recipe.test.mjs": {
+      "bytes": 13055,
+      "sha256": "7725bfa64f4855b13b2b24f78250bafc608c519ec112e00a9fe594649fa260d1"
+    },
+    "tests/activity-studio-browser.mjs": {
+      "bytes": 65216,
+      "sha256": "d941c24734b67377c42330c5c11c7dec550fccd3a83c0dc03611ea579cf89740"
     },
     "tests/bridge.test.mjs": {
       "bytes": 1854,
@@ -217,20 +289,20 @@
       "sha256": "f060d9dcb85a68d3861cb902053c9a6832667caf9a2e9b691f601d797dcb4ea3"
     },
     "tests/learning-lab-browser.mjs": {
-      "bytes": 20177,
-      "sha256": "949cdfddd6d2672202a2c65008ebf2384feac4d8cd8fcc75a722f96fa2da7b40"
+      "bytes": 20566,
+      "sha256": "edfed2714fd7b9ffca60ea70d5ef199f01587f661b06c576cb7c5f2c8abf64b7"
     },
     "tests/model.test.mjs": {
       "bytes": 2086,
       "sha256": "1efb54fa1c6dee73cc1f90bbc09edc0ad08a1c24f191e8fb78a08302eb3be8b7"
     },
     "tests/test_release_check.py": {
-      "bytes": 9082,
-      "sha256": "8bcb8c23abed750d84ebd83e0eeda52195b9806a0dc69a40427e6dc096a5feeb"
+      "bytes": 9163,
+      "sha256": "1edea6517f78485f134d4e2e7342da1fbde494f375806b81c94728aee253ccc1"
     },
     "tests/test_site.py": {
-      "bytes": 30543,
-      "sha256": "8f6a9271c62565c9d73441566d0b26c2905f2b10006268f728233e70c68be01b"
+      "bytes": 42495,
+      "sha256": "96136bb3a976064a039f16bc8a3a3f4f35921b317931f69f857a637c2c6d00c7"
     }
   },
   "status": "local-review-candidate-not-published"

@@ -41,6 +41,7 @@ class ReleaseCheckTests(unittest.TestCase):
         self.builder_source = (ROOT / "build.py").read_text(encoding="utf-8")
         (self.root / "build.py").write_text(self.builder_source, encoding="utf-8")
         shutil.copytree(ROOT / "learning-lab", self.root / "learning-lab")
+        shutil.copytree(ROOT / "activity-studio", self.root / "activity-studio")
 
     def save(self):
         (self.root / "release.json").write_text(json.dumps(self.data), encoding="utf-8")

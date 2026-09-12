@@ -21,6 +21,14 @@ spec.loader.exec_module(builder)
 release_spec = importlib.util.spec_from_file_location("proposal_release", ROOT / "release_check.py")
 release = importlib.util.module_from_spec(release_spec)
 release_spec.loader.exec_module(release)
+STUDIO_PAGES = {"activity-studio/index.html", "activity-studio/edit.html", "activity-studio/play.html"}
+SCRIPT_PAGES = {"index.html", "learning-lab/index.html"} | STUDIO_PAGES
+STUDIO_ASSET_NAMES = {
+    "activity-studio/" + name for name in (
+        "index.html", "edit.html", "play.html", "library.mjs", "studio.mjs", "recipe.mjs",
+        "examples.mjs", "player.mjs", "play.mjs", "studio.css", "player.css",
+    )
+}
 
 
 def external_reference(href):
@@ -58,6 +66,20 @@ def snapshot(directory):
 
 
 class SiteTests(unittest.TestCase):
+    def test_interactive_checks_do_not_cancel_a_different_publication_workflow(self):
+        workflow = (ROOT / ".github/workflows/activity-checks.yml").read_text(encoding="utf-8")
+        group = re.search(r"^  group: (.+)$", workflow, re.MULTILINE).group(1)
+        self.assertEqual(group, "activities-${{ github.workflow }}-${{ github.ref }}")
+        self.assertIn("  cancel-in-progress: true", workflow)
+        # Reusable runs receive the caller's workflow context, not the file name.
+        def effective_group(name):
+            return group.replace("${{ github.workflow }}", name).replace("${{ github.ref }}", "refs/heads/main")
+        self.assertNotEqual(effective_group("Interactive activity checks"), effective_group("Publish website manually"))
+        pages = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+        self.assertIn("    uses: ./.github/workflows/activity-checks.yml", pages)
+        self.assertIn("    needs: interactive-checks", pages)
+        self.assertIn("  cancel-in-progress: false", pages)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="education-site-test-")
         self.addCleanup(self.temp.cleanup)
@@ -71,6 +93,7 @@ class SiteTests(unittest.TestCase):
         source = Path(self.temp.name) / "source"
         (source / "content").mkdir(parents=True)
         shutil.copytree(ROOT / "learning-lab", source / "learning-lab")
+        shutil.copytree(ROOT / "activity-studio", source / "activity-studio")
         for path in (ROOT / "content").glob("*.html"):
             (source / "content" / path.name).write_bytes(path.read_bytes())
         for name in ("styles.css", "LICENSE", "LICENSE-CONTENT", "LICENSES.md"):
@@ -99,11 +122,11 @@ class SiteTests(unittest.TestCase):
                     self.assertEqual(policies, [expected])
                     page = (self.output / name).read_text(encoding="utf-8")
                     if status == "ready":
-                        if name != "learning-lab/index.html":
+                        if name not in {"learning-lab/index.html"} | STUDIO_PAGES:
                             self.assertIn("Community proposal · v0.1.0", page)
                         self.assertNotIn("Not yet released", page)
                     else:
-                        if name != "learning-lab/index.html":
+                        if name not in {"learning-lab/index.html"} | STUDIO_PAGES:
                             self.assertIn("Not yet released", page)
 
     def test_malformed_release_config_fails_before_writing(self):
@@ -145,7 +168,7 @@ class SiteTests(unittest.TestCase):
         manifest = json.loads(first["manifest.json"])
         for name, digest in manifest["files"].items():
             self.assertEqual(digest, hashlib.sha256(first[name]).hexdigest())
-        self.assertEqual(len([n for n in first if n.endswith(".html")]), 8)
+        self.assertEqual(len([n for n in first if n.endswith(".html")]), 11)
 
     def test_every_internal_link_and_fragment_works_at_root_and_project_path(self):
         for base in ("/", "/open-education-proposal/"):
@@ -265,13 +288,17 @@ class SiteTests(unittest.TestCase):
             for before, after in zip(doc.headings, doc.headings[1:]):
                 self.assertLessEqual(after, before + 1, name)
             active = [a for tag, a in doc.tags if tag == "a" and a.get("aria-current") == "page"]
-            self.assertEqual(len(active), 0 if name in ("404.html", "learning-lab/index.html") else 1)
+            self.assertEqual(len(active), 0 if name in ("404.html", "learning-lab/index.html", "activity-studio/play.html") else 1)
 
     def test_scripts_are_scoped_and_no_collection_or_external_resources(self):
         for name, doc in self.build().items():
             forbidden = {"form", "object", "embed", "video", "audio"}
-            if name not in ("index.html", "learning-lab/index.html"):
-                forbidden |= {"script", "iframe", "input"}
+            if name not in SCRIPT_PAGES:
+                forbidden.add("script")
+            if name != "index.html":
+                forbidden.add("iframe")
+            if name not in {"learning-lab/index.html", "activity-studio/edit.html", "activity-studio/play.html"}:
+                forbidden |= {"input", "select", "textarea"}
             self.assertFalse({tag for tag, _ in doc.tags} & forbidden, name)
             for tag, attrs in doc.tags:
                 self.assertFalse(any(k.startswith("on") for k in attrs), (name, tag))
@@ -430,7 +457,7 @@ class SiteTests(unittest.TestCase):
             self.assertTrue(frames[0].get("title"))
             for name, document in docs.items():
                 scripts = [attrs for tag, attrs in document.tags if tag == "script"]
-                if name in ("index.html", "learning-lab/index.html"):
+                if name in SCRIPT_PAGES:
                     self.assertEqual(len(scripts), 1)
                     self.assertEqual(scripts[0].get("type"), "module")
                     csp = next(attrs["content"] for tag, attrs in document.tags if attrs.get("http-equiv") == "Content-Security-Policy")
@@ -453,10 +480,154 @@ class SiteTests(unittest.TestCase):
         notice = self.output / "learning-lab/vendor/PHASER-LICENSE.txt"
         self.assertEqual(hashlib.sha256(engine.read_bytes()).hexdigest(), "e92ddef111ba42e92d316979c732311757093688ea1810591cb7aa2858eba7a7")
         self.assertEqual(hashlib.sha256(notice.read_bytes()).hexdigest(), "c3123cd25de4eccf1fd5a5a0a6fc872299116d1dbbb48b00f2554a4c35220a65")
-        self.assertLess(sum(len(data) for data in snapshot(self.output).values()), 6_000_000)
+        payload = snapshot(self.output)
+        # Archive budget includes the retained full playground and the new builder.
+        self.assertLess(sum(len(data) for data in payload.values()), 8_000_000)
+        # The focused opener loads neither Phaser nor either older backdrop.
+        first = {"index.html", "learning-lab/index.html", "learning-lab/styles.css",
+                 "learning-lab/app.mjs", "learning-lab/builder.mjs", "learning-lab/model.mjs",
+                 "learning-lab/bridge.mjs", "learning-lab/scene.mjs",
+                 "learning-lab/proposal-preview.mjs", "learning-lab/art/bridge-setting.png"}
+        self.assertLess(sum(len(payload[name]) for name in first), 2_200_000)
         for name, data in snapshot(self.output).items():
             if name.endswith((".html", ".mjs", ".md")):
                 self.assertNotRegex(data.decode("utf-8"), r"(?i)C:\\Users|/Users/|\.codex|BEGIN.*PRIVATE KEY")
+
+    def test_activity_studio_exact_assets_templates_and_module_references(self):
+        for base in ("/", "/open-education-proposal/"):
+            with self.subTest(base=base):
+                documents = self.build(base)
+                payload = snapshot(self.output)
+                self.assertEqual({name for name in payload if name.startswith("activity-studio/")}, STUDIO_ASSET_NAMES)
+                self.assertEqual(len(payload), 39)
+                self.assertLess(sum(len(payload[name]) for name in STUDIO_ASSET_NAMES), 150_000)
+                for name in STUDIO_ASSET_NAMES:
+                    source = (ROOT / name).read_bytes()
+                    built = payload[name]
+                    if name in STUDIO_PAGES:
+                        status = json.loads((ROOT / "release.json").read_text(encoding="utf-8"))["status"]
+                        robots = "index, follow" if status == "ready" else "noindex, nofollow, noarchive"
+                        expected = source.decode("utf-8").replace("{{base}}", base).replace("{{robots}}", robots)
+                        self.assertEqual(built.decode("utf-8"), expected)
+                        self.assertNotIn("{{", expected)
+                        self.assertIn(base + "index.html", documents[name].links)
+                    else:
+                        self.assertEqual(built, source, name)
+                    if name.endswith(".mjs"):
+                        text = built.decode("utf-8")
+                        references = re.findall(r'''(?m)^import\s+.*?\s+from\s+['"]([^'"]+)['"]''', text)
+                        references += re.findall(r'''new URL\(\s*['"]([^'"]+)['"]\s*,\s*import\.meta\.url\s*\)''', text)
+                        for reference in references:
+                            target = urlsplit(urljoin(base + name, reference))
+                            self.assertFalse(target.scheme or target.netloc, (name, reference))
+                            self.assertTrue(target.path.startswith(base), (name, reference))
+                            self.assertIn(target.path[len(base):], payload, (name, reference))
+                    if name.endswith(".css"):
+                        self.assertNotRegex(built.decode("utf-8"), r"(?i)@import|url\s*\(")
+
+    def test_activity_studio_runtime_policies_do_not_expand_reading_pages(self):
+        documents = self.build()
+        expected_scripts = {
+            "activity-studio/index.html": "library.mjs",
+            "activity-studio/edit.html": "studio.mjs",
+            "activity-studio/play.html": "play.mjs",
+        }
+        for name, script in expected_scripts.items():
+            document = documents[name]
+            self.assertEqual([attrs for tag, attrs in document.tags if tag == "script"], [{"type": "module", "src": script}])
+            policy = next(attrs["content"] for tag, attrs in document.tags if attrs.get("http-equiv") == "Content-Security-Policy")
+            directives = {item.strip() for item in policy.split(";") if item.strip()}
+            self.assertEqual(directives, {
+                "default-src 'none'", "script-src 'self'", "style-src 'self'", "img-src 'self'",
+                "connect-src 'none'", "frame-src 'none'", "object-src 'none'",
+                "base-uri 'none'", "form-action 'none'",
+            })
+            self.assertFalse(any(tag in {"iframe", "form", "object", "embed"} for tag, _ in document.tags))
+        for name, document in documents.items():
+            if name not in SCRIPT_PAGES:
+                self.assertFalse(any(tag in {"script", "input", "select", "textarea", "form", "iframe"} for tag, _ in document.tags), name)
+
+    def make_pre_studio_output(self, status=None):
+        self.build()
+        # Remove only the known Studio files from a test-owned temporary build.
+        self.assertTrue(self.output.resolve().is_relative_to(Path(self.temp.name).resolve()))
+        manifest_path = self.output / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for name in STUDIO_ASSET_NAMES:
+            (self.output / name).unlink()
+            del manifest["files"][name]
+        (self.output / "activity-studio").rmdir()
+        if status is not None:
+            manifest["status"] = status
+            manifest["version"] = "0.1.0" if status == "ready" else "0.1.0-candidate"
+        self.assertEqual(len(manifest["files"]), 27)
+        manifest_path.write_text(json.dumps(manifest) + "\n", encoding="utf-8")
+
+    def test_pre_studio_ready_and_candidate_builds_upgrade_and_preserve_modifications(self):
+        for status in ("candidate", "ready"):
+            for modified in (False, True):
+                with self.subTest(status=status, modified=modified):
+                    self.output = Path(self.temp.name) / (status + ("-modified" if modified else "-clean"))
+                    self.make_pre_studio_output(status)
+                    if modified:
+                        (self.output / "learning-lab/builder.mjs").write_bytes(b"User edit: preserve this exact file.")
+                        before = snapshot(self.output)
+                        with self.assertRaises(ValueError):
+                            self.build()
+                        self.assertEqual(before, snapshot(self.output))
+                        self.assertFalse((self.output / "activity-studio").exists())
+                    else:
+                        self.build()
+                        first = snapshot(self.output)
+                        self.assertEqual(len(first), 39)
+                        self.build()
+                        self.assertEqual(first, snapshot(self.output))
+
+    def test_partial_or_unmanifested_studio_assets_do_not_establish_output_ownership(self):
+        for recorded in (False, True):
+            with self.subTest(recorded=recorded):
+                self.output = Path(self.temp.name) / ("partial" if recorded else "unmanifested")
+                self.make_pre_studio_output()
+                extra = self.output / "activity-studio/recipe.mjs"
+                extra.parent.mkdir()
+                extra.write_bytes(b"Unrelated draft: never overwrite.")
+                if recorded:
+                    manifest_path = self.output / "manifest.json"
+                    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                    manifest["files"]["activity-studio/recipe.mjs"] = hashlib.sha256(extra.read_bytes()).hexdigest()
+                    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                before = snapshot(self.output)
+                with self.assertRaises(ValueError):
+                    self.build()
+                self.assertEqual(before, snapshot(self.output))
+
+    def test_missing_studio_asset_preserves_build_and_creates_no_partial_output(self):
+        source = self.release_source()
+        self.build()
+        before = snapshot(self.output)
+        (source / "activity-studio/player.mjs").unlink()
+        fresh_output = Path(self.temp.name) / "new-output"
+        with patch.object(builder, "ROOT", source):
+            for destination in (self.output, fresh_output):
+                with self.assertRaises(FileNotFoundError):
+                    builder.build(destination)
+        self.assertEqual(before, snapshot(self.output))
+        self.assertFalse(fresh_output.exists())
+
+    def test_modified_studio_asset_and_unlisted_studio_file_are_preserved(self):
+        self.build()
+        asset = self.output / "activity-studio/studio.mjs"
+        asset.write_bytes(b"A local authoring change to preserve.")
+        before = snapshot(self.output)
+        with self.assertRaises(ValueError):
+            self.build()
+        self.assertEqual(before, snapshot(self.output))
+        extra = self.output / "activity-studio/private-recipe.json"
+        extra.write_bytes(b"Private draft: do not overwrite or publish.")
+        before = snapshot(self.output)
+        with self.assertRaises(ValueError):
+            self.build()
+        self.assertEqual(before, snapshot(self.output))
 
     def test_nested_modified_and_unowned_assets_are_preserved(self):
         self.build()
@@ -471,6 +642,32 @@ class SiteTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.build()
         self.assertEqual(extra.read_bytes(), b"Never overwrite this.")
+
+    def test_pre_builder_output_upgrades_and_modified_output_is_preserved(self):
+        for modified in (True, False):
+            with self.subTest(modified=modified):
+                # Exact preceding 25-asset layout, in this test's temporary directory.
+                self.output = Path(self.temp.name) / ("modified" if modified else "clean")
+                self.make_pre_studio_output()
+                manifest_path = self.output / "manifest.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                for name in ("learning-lab/builder.mjs", "learning-lab/art/bridge-setting.png"):
+                    (self.output / name).unlink()
+                    del manifest["files"][name]
+                self.assertEqual(len(manifest["files"]), 25)
+                manifest_path.write_text(json.dumps(manifest) + "\n", encoding="utf-8")
+                if modified:
+                    (self.output / "learning-lab/app.mjs").write_bytes(b"User edit")
+                    before = snapshot(self.output)
+                    with self.assertRaises(ValueError):
+                        self.build()
+                    self.assertEqual(before, snapshot(self.output))
+                else:
+                    self.build()
+                    first = snapshot(self.output)
+                    self.assertEqual(len(first), 39)
+                    self.build()
+                    self.assertEqual(first, snapshot(self.output))
 
     def test_nested_hardlinked_asset_preserves_external_file(self):
         self.build()
@@ -526,6 +723,7 @@ class SiteTests(unittest.TestCase):
         self.build()
         # Construct the exact older flat output in this test-owned temporary directory.
         shutil.rmtree(self.output / "learning-lab")
+        shutil.rmtree(self.output / "activity-studio")
         (self.output / "discussion.html").unlink()
         download = self.output / "help-and-access-draft.md"
         if download.exists():

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="{{robots}}">
+  <meta name="description" content="Try a local Fraction Bridge activity draft. No accounts or saved learner progress.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'">
+  <title>Try an activity · Activity Studio</title>
+  <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="player.css">
+  <script type="module" src="play.mjs"></script>
+</head>
+<body class="studio-page">
+  <a class="skip-link" href="#main">Skip to activity</a>
+  <header class="workspace-header">
+    <a class="brand" href="{{base}}index.html">Open Education</a>
+    <nav class="workspace-nav" aria-label="Activity workspace">
+      <a href="index.html">Library</a>
+      <a href="edit.html">Studio</a>
+    </nav>
+  </header>
+  <main id="main" class="workspace-main play-layout" tabindex="-1">
+    <div class="page-intro compact play-intro">
+      <h1 id="play-title">Try an activity</h1>
+      <p class="muted">Unreviewed draft · For adult exploration</p>
+    </div>
+    <div class="play-access">
+      <label><input id="play-simple" type="checkbox" disabled> Simple view</label>
+    </div>
+    <noscript><p class="notice">JavaScript is needed to place pieces or open an activity file. Paper alternative: cut two equal halves from a strip, then put them together to make the original whole. Keep the whole strip the same size when trying four quarters. <a href="index.html">Return to the activity library</a>.</p></noscript>
+    <div id="play-mount" class="card play-player-card"></div>
+    <section class="card play-controls" aria-label="Activity tools">
+      <div class="play-controls-row">
+        <a id="play-remix" class="button button-secondary" href="edit.html">Remix in the studio</a>
+      </div>
+      <p id="play-remix-note" class="muted" hidden>To remix an imported draft, open the studio and choose the same JSON file there.</p>
+      <details id="import">
+        <summary>Open another activity file</summary>
+        <p><label for="play-file">Choose an activity JSON file from your device</label><br><input id="play-file" type="file" accept=".json,application/json" aria-describedby="play-file-note" disabled></p>
+        <p id="play-file-note" class="muted">Maximum 32 KiB. The file stays in this page; opening it does not publish or submit it.</p>
+      </details>
+      <p id="play-status" class="notice" role="status" aria-live="polite" aria-atomic="true">JavaScript is needed to open and play an activity.</p>
+    </section>
+    <details id="play-about" class="card play-metadata-panel" hidden>
+      <summary>Purpose, authorship &amp; credits</summary>
+      <section id="play-metadata" class="play-metadata" aria-label="Activity information" hidden></section>
+    </details>
+  </main>
+  <footer class="workspace-footer"><span>Adult activity drafts · No learner records</span><a href="{{base}}open-source.html#licenses">Licenses &amp; attribution</a></footer>
+</body>
+</html>

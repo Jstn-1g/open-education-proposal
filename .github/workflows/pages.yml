@@ -11,7 +11,13 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  interactive-checks:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/activity-checks.yml
+    permissions:
+      contents: read
   build:
+    needs: interactive-checks
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10

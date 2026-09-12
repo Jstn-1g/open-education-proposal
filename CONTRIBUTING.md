@@ -4,7 +4,7 @@ This guide covers adult contributions to community v0.1.0 at [Jstn-1g/open-educa
 
 ## Choose a task
 
-Start with one of the [three first contributions](docs/FIRST-CONTRIBUTIONS.md). We welcome small corrections, clear counterexamples, source checks, and accessibility improvements. New product features, child activities, and participant recruitment are outside this release.
+Start with one of the [three first contributions](docs/FIRST-CONTRIBUTIONS.md), or [remix an activity draft](docs/ACTIVITY-STUDIO.md). We welcome small corrections, clear counterexamples, source checks, accessibility improvements and bounded Fraction Bridge recipes for adult review. Classroom deployment, participant recruitment and learner-data collection remain outside this release. Propose new game mechanics for discussion before sending executable code; activity files cannot contain scripts.
 
 Join the existing [fictional-case](https://github.com/Jstn-1g/open-education-proposal/issues/1), [evidence](https://github.com/Jstn-1g/open-education-proposal/issues/2), or [barrier](https://github.com/Jstn-1g/open-education-proposal/issues/3) discussion. Use the [issue chooser](https://github.com/Jstn-1g/open-education-proposal/issues/new/choose) for a different topic. Reading needs no account; posting needs a GitHub account. One question or short comment is enough to begin.
 

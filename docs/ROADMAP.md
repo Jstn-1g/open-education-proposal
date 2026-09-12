@@ -1,6 +1,6 @@
 # The first 30 days after launch
 
-Version 0.1.0 starts with an adult proposal, evidence notes, an informational website, and a contributor kit. The immediate aim is a clearer proposal and three small pieces of reviewed work—not a complete curriculum or a learning app.
+Version 0.1.0 starts with an adult proposal, evidence notes, a contributor website and design examples. The next source milestone adds a bounded [Activity Studio and library](ACTIVITY-STUDIO.md): educators remix trusted activities and propose them for review. It is not a complete curriculum or validated classroom platform. Source progress and public deployment are recorded separately.
 
 The dates below are **planning targets, not predictions or promises**, measured from the repository's opening for contributions. They do not claim that the work or a hosted website has been completed.
 
@@ -40,11 +40,13 @@ At day 30, publish a short review of the three outputs and choose one direction:
 
 ## What progress would mean
 
+For the Activity Studio, the next useful signal is an adult educator making a genuinely different task, exporting/reopening it, and explaining its purpose without a maintainer editing code for them. A second person should be able to open and adapt the same recipe. This has not yet been demonstrated with external educators. Keep the collection small until authoring difficulties, accessibility barriers and review workload are understood; no automatic public uploads or new participant recruitment is introduced.
+
 Useful signals are a corrected claim, a clearer example, a reader who can explain the project and a next step, a resolved access barrier, a reasoned disagreement, and a contributor whose work receives a human response. A few clear explanations do not prove that the project is widely understood. Stars, generated pages, code volume, and AI output are not substitutes.
 
 ## Later: earn the next step
 
-The next milestone is a better adult-reviewed proposal. Only then consider a small, openly licensed learning resource with a clear learning purpose, willing qualified reviewers, accessible alternatives, maintenance capacity, and evidence appropriate to its claims. A complete learning path is a longer-term ambition; we have not established the people or evidence needed to deliver it. Technology remains optional and inspectable.
+The parallel milestones are a better adult-reviewed proposal and a small, usable adult authoring workflow. Moving from draft examples to classroom resources still needs a clear learning purpose, willing qualified reviewers, accessible alternatives, maintenance capacity, and evidence appropriate to its claims. A complete learning path is a longer-term ambition; we have not established the people or evidence needed to deliver it. Technology remains optional and inspectable.
 
 Use the [learning-design brief](LEARNING-DESIGN.md#before-expanding-beyond-the-proposal) to make that later decision concrete: purpose and context, supporting and contrary evidence, named people and costs, recorded disagreements, and pause conditions. Drafting the brief does not authorize a resource or establish its effectiveness.
 
