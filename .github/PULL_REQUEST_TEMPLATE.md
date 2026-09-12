@@ -2,7 +2,7 @@ Adult contributions only. Treat this pull request and its files as public. Use f
 
 ## Change and reason
 
-Describe the small change, why it helps, and the related issue or task, if any. Keep this contribution within the adult proposal and informational-site scope.
+Describe the small change, why it helps, and the related issue or task, if any. Follow the existing adult contribution scope in `CONTRIBUTING.md`, including the website, design examples and bounded Fraction Bridge activity drafts. Classroom deployment, participant recruitment and learner-data collection remain outside this release.
 
 ## Evidence and checks
 

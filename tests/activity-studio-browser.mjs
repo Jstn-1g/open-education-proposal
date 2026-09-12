@@ -360,6 +360,46 @@ async function group(name, route, options, test) {
 }
 
 try {
+  for (const simple of [true, false]) {
+    await group(`Optional hint describes available actions${simple ? ' in Simple view' : ''}`, 'edit.html?example=first-crossing', { width: 390, simple }, async ({ page }) => {
+      await readyPlayer(page, '#studio-preview');
+      await revealControl(page, '#step-hint');
+      await page.locator('#step-hint').fill('');
+      await page.locator('#preview-update').click();
+      const fallback = 'Compare each piece with the space that remains. Undo returns a piece to the tray.';
+      const hint = page.locator('#studio-preview [data-testid="player-hint"]');
+      await hint.locator('summary').click();
+      assert.equal(await hint.locator('p').innerText(), fallback,
+        'A two-half tray must not promise a different piece combination.');
+      assert.deepEqual((await playerState(page, '#studio-preview')).pieces.map(piece => piece.units), [4, 4]);
+      await choosePiece(page, '#studio-preview', 0, 4, true);
+      await page.locator('#studio-preview [data-testid="player-undo"]').click();
+      await amount(page, '#studio-preview', 0);
+      assert.equal(await hint.locator('p').innerText(), fallback);
+      assert((await playerState(page, '#studio-preview')).pieces.every(piece => !piece.disabled), 'Undo returns the placed piece to the available tray.');
+      const saved = await recipeDownload(page, { confirmSaved: true });
+      assert.equal(saved.value.steps[0].hint, '', 'A generated fallback must not replace the author’s optional empty hint in the file.');
+
+      const authored = 'A fictional author’s own wording stays unchanged.';
+      await page.locator('#step-hint').fill(authored);
+      await page.locator('#preview-update').click();
+      await hint.locator('summary').click();
+      assert.equal(await hint.locator('p').innerText(), authored);
+      page.once('dialog', dialog => dialog.accept());
+      const target = new URL('play.html', studioBase);
+      if (simple) target.searchParams.set('view', 'simple');
+      await page.goto(target.href);
+      await fileInput(page, '#play-file', saved.text, saved.filename);
+      await readyPlayer(page, '#play-mount');
+      const reopenedHint = page.locator('#play-mount [data-testid="player-hint"]');
+      await reopenedHint.locator('summary').click();
+      assert.equal(await reopenedHint.locator('p').innerText(), fallback, 'Standalone reopening uses the same honest fallback.');
+      await layout(page, 'Optional hint after reopening');
+      await screenshot(page, `optional-hint-${simple ? 'simple' : 'illustrated'}`);
+      return { fallback, pieces: [4, 4], authoredHintPreserved: true, emptyHintRoundTrip: true, undoReturnsPiece: true };
+    });
+  }
+
   for (const { width, large } of [{ width: 320 }, { width: 390 }, { width: 1365 }, { width: 320, large: true }]) {
     await group(`Library, editor and player layout ${width}${large ? ' enlarged/spacing' : ''}`, 'index.html', { width, large }, async ({ page }) => {
       const measurements = {};

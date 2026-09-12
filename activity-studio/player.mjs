@@ -147,7 +147,7 @@ export function mountPlayer(root, recipe, {simple = false, onComplete, startStep
     undo.disabled = reset.disabled = placed.length === 0;
     next.hidden = !complete || finalStep;
     replay.hidden = !complete || !finalStep;
-    hintCopy.textContent = step().hint || 'Compare each piece with the space that remains. Undo returns a piece so you can try another combination.';
+    hintCopy.textContent = step().hint || 'Compare each piece with the space that remains. Undo returns a piece to the tray.';
   }
   function makeTray() {
     const rows = [];
