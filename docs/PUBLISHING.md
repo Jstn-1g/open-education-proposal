@@ -46,14 +46,17 @@ None of these three workflows requests repository secrets, uses `pull_request_ta
 
 ## Pinned Actions
 
-The following official release commits were verified on 6 September 2026. Version comments aid review; the workflows execute the full commit pins. Recheck upstream release notes and the exact commit before updating a pin.
+The following official release commits were verified on 6 September 2026, except `actions/setup-node`, verified on 12 September 2026. Version comments aid review; the workflows execute the full commit pins. Recheck upstream release notes and the exact commit before updating a pin.
 
 | Action | Release | Pinned commit |
 | --- | --- | --- |
 | `actions/checkout` | [v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1) | [`3d3c42e5aac5ba805825da76410c181273ba90b1`](https://github.com/actions/checkout/commit/3d3c42e5aac5ba805825da76410c181273ba90b1) |
 | `actions/setup-python` | [v7.0.0](https://github.com/actions/setup-python/releases/tag/v7.0.0) | [`5fda3b95a4ea91299a34e894583c3862153e4b97`](https://github.com/actions/setup-python/commit/5fda3b95a4ea91299a34e894583c3862153e4b97) |
+| `actions/setup-node` | [v7.0.0](https://github.com/actions/setup-node/releases/tag/v7.0.0) | [`820762786026740c76f36085b0efc47a31fe5020`](https://github.com/actions/setup-node/commit/820762786026740c76f36085b0efc47a31fe5020) |
 | `actions/configure-pages` | [v6.0.0](https://github.com/actions/configure-pages/releases/tag/v6.0.0) | [`45bfe0192ca1faeb007ade9deae92b16b8254a0d`](https://github.com/actions/configure-pages/commit/45bfe0192ca1faeb007ade9deae92b16b8254a0d) |
 | `actions/upload-pages-artifact` | [v5.0.0](https://github.com/actions/upload-pages-artifact/releases/tag/v5.0.0) | [`fc324d3547104276b827a68afc52ff2a11cc49c9`](https://github.com/actions/upload-pages-artifact/commit/fc324d3547104276b827a68afc52ff2a11cc49c9) |
 | `actions/deploy-pages` | [v5.0.1](https://github.com/actions/deploy-pages/releases/tag/v5.0.1) | [`368f82528645a54fb793d4d04e342629a3f51346`](https://github.com/actions/deploy-pages/commit/368f82528645a54fb793d4d04e342629a3f51346) |
 
 The artifact action also pins its internal `actions/upload-artifact` dependency. This is a dependency choice for hosting automation, not a dependency shipped to readers of the website.
+
+`setup-node` v7 runs the action itself on Node 24; `node-version: '22'` still selects Node 22 for our tests. Automatic package-manager caching is explicitly disabled to preserve the previous workflow's behavior. GitHub-hosted Ubuntu runners must meet the action's documented minimum runner version, 2.327.1. Check both the direct interactive run and the reusable Pages prerequisite after updating it; passing local tests alone does not execute a hosted Action.

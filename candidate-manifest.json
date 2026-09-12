@@ -21,8 +21,8 @@
       "sha256": "09b40467dff48efe0bbb43289a91b5e7eefd6f92088bf6fdb731747023866d24"
     },
     ".github/workflows/activity-checks.yml": {
-      "bytes": 1824,
-      "sha256": "8bbd18a59ceabc5aba2a9fd11a02262dc4d3033b6756df9ed1b886944f69d3fa"
+      "bytes": 1867,
+      "sha256": "640e83498bbf21b3d864065715176b4b2dfd14156df6c4c8ab3f4b7aa25ecc25"
     },
     ".github/workflows/checks.yml": {
       "bytes": 933,
@@ -185,8 +185,8 @@
       "sha256": "817492fe15c3faf39021e0681ca76f125ecd8b3f77e2ee007bee9f8fe6e3b0a8"
     },
     "docs/PUBLISHING.md": {
-      "bytes": 10044,
-      "sha256": "d167b97a534ee33ec794d26b84e529288955da0eb71f829a709e40ff3e0f5f4e"
+      "bytes": 10795,
+      "sha256": "2e89d2dd7b618d25fa94dbd930b4a0bd1909bc0b0661b0fe79c19a743c1ca329"
     },
     "docs/REVIEW-CASES.md": {
       "bytes": 7823,
@@ -301,8 +301,8 @@
       "sha256": "1edea6517f78485f134d4e2e7342da1fbde494f375806b81c94728aee253ccc1"
     },
     "tests/test_site.py": {
-      "bytes": 43267,
-      "sha256": "76e18e5766bc52e8211d12987ccf2d32d1fe9cb4fb315c6398fdac1d0ad07405"
+      "bytes": 43879,
+      "sha256": "7f2ad961c8bd7fa4694f2004c5080fbe5017d3aa6e9f54c4c0c446dd88430c0a"
     }
   },
   "status": "local-review-candidate-not-published"

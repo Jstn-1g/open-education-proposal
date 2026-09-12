@@ -90,6 +90,14 @@ class SiteTests(unittest.TestCase):
         self.assertIn("    needs: interactive-checks", pages)
         self.assertIn("  cancel-in-progress: false", pages)
 
+    def test_interactive_node_setup_preserves_runtime_and_no_package_cache(self):
+        workflow = (ROOT / ".github/workflows/activity-checks.yml").read_text(encoding="utf-8")
+        setup = workflow.split("      - name: Set up Node\n", 1)[1].split("      - name:", 1)[0]
+        self.assertIn("uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0", setup)
+        self.assertIn("          node-version: '22'\n", setup)
+        self.assertIn("          package-manager-cache: false\n", setup)
+        self.assertNotRegex(setup, r"(?m)^\s+(cache|token|registry-url|node-version-file):")
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="education-site-test-")
         self.addCleanup(self.temp.cleanup)
