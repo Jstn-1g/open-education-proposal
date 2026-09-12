@@ -2,6 +2,8 @@
 
 The Activity Studio is an early authoring tool for adult contributors. It extends one trusted Fraction Bridge template—not a general game engine or a classroom-ready platform. The first library contains two project examples, not independently reviewed community submissions.
 
+[Try an activity in the live library](https://jstn-1g.github.io/open-education-proposal/activity-studio/index.html) or [open the live Studio](https://jstn-1g.github.io/open-education-proposal/activity-studio/edit.html). No installation or account is needed to make, preview or save a local activity file. Proposing a public library addition is a separate GitHub action described below.
+
 ## A complete local workflow
 
 1. Open the built website's **Activity Library** and try an example.
