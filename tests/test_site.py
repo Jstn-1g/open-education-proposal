@@ -66,6 +66,16 @@ def snapshot(directory):
 
 
 class SiteTests(unittest.TestCase):
+    def test_public_release_pages_explain_existing_authoring_and_local_files(self):
+        for base in ("/", "/open-education-proposal/"):
+            pages = self.build(base)
+            for name in ("governance.html", "open-source.html"):
+                self.assertIn(base + "activity-studio/index.html", pages[name].links)
+            self.assertIn(base + "activity-studio/edit.html", pages["open-source.html"].links)
+            privacy = (self.output / "governance.html").read_text(encoding="utf-8").split('id="privacy"', 1)[1].split('id="corrections"', 1)[0]
+            for boundary in ("activity file you select", "Nothing is uploaded or saved automatically", "not a standalone game", "separate GitHub action"):
+                self.assertIn(boundary, privacy)
+
     def test_interactive_checks_do_not_cancel_a_different_publication_workflow(self):
         workflow = (ROOT / ".github/workflows/activity-checks.yml").read_text(encoding="utf-8")
         group = re.search(r"^  group: (.+)$", workflow, re.MULTILINE).group(1)

@@ -19,12 +19,51 @@ let downloadChecks = 0;
 let demoCaseChecks = 0;
 let demoPrintChecks = 0;
 let demoKeyboardFocusChecks = 0;
+let contributionDisclosureChecks = 0;
+let contributionPrintChecks = 0;
 const demoCards = ['#demo-c1', '#demo-c2'];
 const demoSummaryNames = {
   '#demo-c1': 'What can this response show? Compare two fractions.',
   '#demo-c2': 'What can this response show? Decode a printed word.',
 };
 const normalizeText = text => text.replace(/\s+/g, ' ').trim();
+
+async function verifyContributionChoices(page) {
+  const choices = page.locator('.contribute-choice');
+  assert.equal(await choices.count(), 3, 'Offer three clear starting choices.');
+  const expected = [new URL('activity-studio/index.html', origin).href,
+    'https://github.com/Jstn-1g/open-education-proposal/issues/new?template=proposal-question.md',
+    'https://github.com/Jstn-1g/open-education-proposal/issues/new?template=accessibility-barrier.md'];
+  for (let index = 0; index < expected.length; index++) {
+    const link = choices.nth(index).locator('a.button');
+    assert(await link.isVisible(), 'First actions must not require a disclosure.');
+    assert.equal(new URL(await link.getAttribute('href'), origin).href, expected[index]);
+    assert((await link.boundingBox()).height >= 44, 'Contribution actions retain touch-sized targets.');
+  }
+  assert.match(await page.locator('.contribute-welcome').innerText(), /Adult participation only/);
+  assert.match(await page.locator('.contribute-context').innerText(), /posting needs a GitHub account/);
+  const tasks = page.locator('.contribute-task');
+  assert.equal(await tasks.count(), 3);
+  for (let index = 0; index < 3; index++) {
+    const task = tasks.nth(index);
+    const details = task.locator('details.contribute-criteria');
+    assert.equal(await details.getAttribute('name'), null, 'Task criteria open independently.');
+    assert(!(await details.evaluate(element => element.open)), 'Detailed criteria start collapsed.');
+    assert(!(await task.locator('.contribute-criteria-print').isVisible()), 'No duplicate screen copy.');
+    assert(await task.locator(`a[href="https://github.com/Jstn-1g/open-education-proposal/issues/${index + 1}"]`).isVisible(), 'Existing issue routes remain visible.');
+    const summary = details.locator('summary');
+    assert((await summary.boundingBox()).height >= 44, 'Disclosure targets remain usable.');
+    await tabTo(page, summary, `Contribution task ${index + 1}`);
+    await verifyKeyboardFocus(summary, `Contribution task ${index + 1}`, false);
+    await page.keyboard.press(index % 2 ? 'Space' : 'Enter');
+    assert(await details.evaluate(element => element.open));
+    assert(await task.locator('.contribute-criteria-copy').isVisible());
+    assert(await summary.evaluate(element => element === document.activeElement), 'Disclosure keeps keyboard focus.');
+    assert(!(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)), 'Expanded task criteria must not overflow.');
+    contributionDisclosureChecks++;
+  }
+  assert.equal(await page.locator('.contribute-criteria[open]').count(), 3, 'Opening a task must not hide other open criteria.');
+}
 
 async function verifyDraftDownload(page, context, link, keyboard = false) {
   const downloadURL = new URL('help-and-access-draft.md', origin).href;
@@ -52,7 +91,7 @@ async function tabTo(page, target, label) {
   assert.fail(`${label}: not reachable by Tab`);
 }
 
-async function verifyKeyboardFocus(target, label) {
+async function verifyKeyboardFocus(target, label, isDemo = true) {
   const focus = await target.evaluate(element => ({
     active: element === document.activeElement,
     visible: element.matches(':focus-visible'),
@@ -61,7 +100,7 @@ async function verifyKeyboardFocus(target, label) {
   }));
   assert(focus.active && focus.visible && focus.width >= 2 && focus.style !== 'none',
     `${label}: keyboard focus is missing or has no visible outline`);
-  demoKeyboardFocusChecks++;
+  if (isDemo) demoKeyboardFocusChecks++;
 }
 
 async function verifyDisclosureState(page, session, cardSelector, expanded) {
@@ -110,6 +149,11 @@ try {
       assert.equal(metrics.h1, 1);
       assert.equal(metrics.scripts, 0);
       assert.equal(metrics.controls, 0);
+      if (slug === 'contribute') {
+        await verifyContributionChoices(page);
+        if (artifacts) await page.screenshot({ path: path.join(artifacts, `contribute-expanded-${width}.png`), fullPage: true });
+        await page.goto(new URL(`${slug}.html`, origin).href);
+      }
       if (slug === 'discussion') {
         assert.equal(await page.locator('#demo').count(), 1, 'Discussion page must retain both guided cases');
         await page.locator('#demo').scrollIntoViewIfNeeded();
@@ -201,6 +245,7 @@ try {
     await page.addStyleTag({ content: 'html { font-size: 200% !important; } * { line-height: 1.5 !important; letter-spacing: .12em !important; word-spacing: .16em !important; } p { margin-bottom: 2em !important; }' });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
     assert(!overflow, `${slug}: overflow at 200% text and spacing overrides`);
+    if (slug === 'contribute') await verifyContributionChoices(page);
     if (slug === 'discussion') {
       for (const cardSelector of demoCards) {
         const summary = page.locator(`${cardSelector} summary`);
@@ -224,6 +269,17 @@ try {
     assert(await printPage.locator('h1').isVisible(), `${slug}: print heading hidden`);
     assert(!(await printPage.locator('nav').isVisible()), `${slug}: print navigation visible`);
     assert(!(await printPage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)), `${slug}: print overflow`);
+    if (slug === 'contribute') {
+      for (const task of await printPage.locator('.contribute-task').all()) {
+        assert(!(await task.locator('.contribute-criteria').isVisible()), 'Native criteria must not duplicate printed criteria.');
+        assert(await task.locator('.contribute-criteria-print').isVisible(), 'Criteria print even when never opened.');
+        const text = elements => elements.map(element => element.textContent.trim().replace(/\s+/g, ' '));
+        assert.deepEqual(await task.locator('.contribute-criteria-copy li, .contribute-criteria-copy p').evaluateAll(text),
+          await task.locator('.contribute-criteria-print li, .contribute-criteria-print p').evaluateAll(text), 'Printed task criteria must match the screen content.');
+        contributionPrintChecks++;
+      }
+      if (artifacts) await printPage.screenshot({ path: path.join(artifacts, 'contribute-print.png'), fullPage: true });
+    }
     if (slug === 'discussion') {
       for (const cardSelector of demoCards) {
         assert(!(await printPage.locator(`${cardSelector} details`).isVisible()),
@@ -265,7 +321,7 @@ try {
     if (artifacts && slug === 'standard') await printPage.screenshot({ path: path.join(artifacts, 'standard-print.png'), fullPage: true });
   }
   await printContext.close();
-  console.log(JSON.stringify({ result: 'PASS', viewportRouteChecks: reports.length, textSpacingForcedColorChecks: routes.length, printMediaChecks: routes.length, accessibilityTreeChecks, downloadChecks, demoCaseChecks, demoPrintChecks, demoKeyboardFocusChecks, clientJavaScript: false, reports }, null, 2));
+  console.log(JSON.stringify({ result: 'PASS', viewportRouteChecks: reports.length, textSpacingForcedColorChecks: routes.length, printMediaChecks: routes.length, accessibilityTreeChecks, downloadChecks, demoCaseChecks, demoPrintChecks, demoKeyboardFocusChecks, contributionDisclosureChecks, contributionPrintChecks, clientJavaScript: false, reports }, null, 2));
 } finally {
   await browser.close();
 }
