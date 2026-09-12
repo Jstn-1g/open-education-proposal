@@ -1,6 +1,7 @@
 import { period, compareSetup } from './model.mjs';
 import { amount, add, split, name, compare } from './bridge.mjs';
 import { createWorld } from './scene.mjs';
+import { createBuilder } from './builder.mjs';
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
 const params=new URLSearchParams(location.search);
@@ -19,6 +20,7 @@ if(showcase){
 let blocks = [4], selected = 0, history = [], target = 4, matched = false;
 let fractionContext = !showcase;
 let bridgeContext = !showcase;
+let builder = null;
 const targets = [4, 6, 2, 8];
 let frame = 0, elapsed = 0, lastFrame = null, hasRun = false, running = false;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -33,7 +35,7 @@ function remember() { history.push({ blocks:[...blocks], selected }); if(history
 function clearMatch() { matched=false; }
 function syncWorld(time=elapsed) {
   if(!world || simple || document.hidden)return;
-  if(showcase && activeAge==='8' && !bridgeContext){world.pause();return;}
+  if(showcase && activeAge==='8'){world.pause();return;}
   world.set(activeAge==='8' ? {mode:'bridge',blocks:[...blocks],selected,target,matched} :
     {mode:'clockwork',length:length(),mass:mass(),time,hasRun}, $(activeAge==='8'?'#fraction-scene':'#clockwork-scene'));
 }
@@ -155,6 +157,7 @@ $('#puzzle-help').addEventListener('click',()=>{
   announce('One way: '+blocks.length+(blocks.length===1?' quarter reaches ':' quarters reach ')+name(target)+'. Try splitting one quarter.','A way to explore.');
 });
 async function enableWorld() {
+  if(showcase && activeAge==='8')return;
   if(world){syncWorld();return;}
   if(loadingWorld || simple)return;
   loadingWorld=true;
@@ -165,6 +168,7 @@ async function enableWorld() {
     $('#graphics-status').textContent=simple?'Simple view. Same activities and current setup.':'Illustrated view ready. All actions also work with the buttons.';
   } catch {
     simple=true;document.body.classList.add('simple-view');
+    builder?.setSimple(true);
     updatePlaygroundLink();
     $('#graphics-toggle').setAttribute('aria-pressed','true');
     $('#graphics-status').className='graphics-notice';
@@ -173,6 +177,7 @@ async function enableWorld() {
 }
 function setSimple(value) {
   simple=value;document.body.classList.toggle('simple-view',simple);
+  builder?.setSimple(simple);
   $('#graphics-toggle').setAttribute('aria-pressed',String(simple));
   $('#graphics-status').textContent=simple?'Simple view. Same activities and current setup.':'Illustrated view.';
   updatePlaygroundLink();
@@ -280,8 +285,10 @@ function chooseAge(age, updateHash = true) {
   $('#age8').hidden = older; $('#age14').hidden = !older;
   $('#choose-8').setAttribute('aria-pressed', String(!older)); $('#choose-14').setAttribute('aria-pressed', String(older));
   stopMotion();
+  builder?.cancelDrag();
   updatePlaygroundLink();
   syncWorld();
+  if(!simple) enableWorld();
   if (updateHash) window.history.replaceState(null, '', older ? '#age14' : '#age8');
 }
 function updatePlaygroundLink(){
@@ -295,7 +302,14 @@ window.addEventListener('hashchange', () => {
 $('.research-link').addEventListener('click', () => { $('#research').open = true; });
 if(showcase) announce('','');
 renderFraction(); updateSetup();
-$('#fraction-controls').disabled = false; $('#pendulum-controls').disabled = false; $('#loading-note').hidden = true;
+if(showcase){
+  document.body.classList.remove('fraction-opening','fraction-gentle','fraction-divided');
+  $('#fraction-controls').hidden=true;
+  $('#age8 .connection').hidden=true;
+  $('#bridge-builder').hidden=false;
+  builder=createBuilder($('#bridge-builder'),$('#bridge-mission'),simple);
+}
+$('#fraction-controls').disabled = showcase; $('#pendulum-controls').disabled = false; $('#loading-note').hidden = true;
 $('#choose-8').disabled = false; $('#choose-14').disabled = false; $('#graphics-toggle').disabled=false;
 setSimple(simple);
 chooseAge(location.hash === '#age14' ? '14' : '8', false);

@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 import path from 'node:path';
-const {chromium}=await import(pathToFileURL(process.env.PLAYWRIGHT_MODULE||process.env.PLAYWRIGHT_MODULE_PATH).href);
+const playwrightModule=process.env.PLAYWRIGHT_MODULE||process.env.PLAYWRIGHT_MODULE_PATH;
+const {chromium}=await import(playwrightModule?pathToFileURL(playwrightModule).href:'playwright');
 const base=process.argv[2]||'http://127.0.0.1:8773/open-education-proposal/';
 assert(['127.0.0.1','localhost'].includes(new URL(base).hostname),'Local review only.');
 const labBase=base+'learning-lab/';
@@ -10,7 +11,7 @@ const out=pathToFileURL(path.resolve(process.argv[3]||'.qa-learning-lab')+path.s
 await mkdir(out,{recursive:true});
 const report={started:new Date().toISOString(),checks:[],sourceHashes:{}};
 report.sourceHashes=(await (await fetch(base+'manifest.json')).json()).files;
-const browser=await chromium.launch({channel:process.env.PLAYWRIGHT_CHANNEL||'msedge',headless:true});
+const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL?{channel:process.env.PLAYWRIGHT_CHANNEL}:{})});
 const expanded=':root{font-size:200%!important}*{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}p{margin-block-end:2em!important}';
 async function fit(page){
   await page.waitForFunction(()=>{
@@ -22,15 +23,17 @@ async function fit(page){
     assert.deepEqual(await frame.locator('button,select,output').evaluateAll(els=>els.filter(e=>e.checkVisibility({checkVisibilityCSS:true})&&e.scrollWidth>e.clientWidth+2).map(e=>e.id)),[],'Visible controls must contain their labels');
   }
 }
-async function revealBridge(demo){
-  await demo.locator('#show-fraction-context').click();
-  assert.deepEqual(await demo.locator('#pieces button').evaluateAll(nodes=>nodes.flatMap(e=>{
-    const range=document.createRange();range.selectNodeContents(e.querySelector('span'));
-    const text=range.getBoundingClientRect(),piece=e.getBoundingClientRect();
-    return text.left<piece.left || text.right>piece.right || text.top<piece.top || text.bottom>piece.bottom ? [e.textContent] : [];
-  })),[],'Fraction labels stay inside their pieces when the whole is shown');
-  await demo.locator('#show-bridge').click();
-  await demo.locator('#fraction-scene canvas[data-mode="bridge"],body.simple-view').first().waitFor();
+async function buildWhole(demo){
+  for(const button of await demo.locator('#builder-tray button').all()) if(await button.isEnabled()) await button.click();
+  assert.equal(await demo.locator('#bridge-builder').getAttribute('data-amount'),'8');
+  assert.ok(await demo.locator('#builder-next').isVisible());
+}
+async function focused(locator){
+  await locator.evaluate(e=>new Promise((resolve,reject)=>{
+    const deadline=performance.now()+2000;
+    const check=()=>document.activeElement===e?resolve():performance.now()>deadline?reject(new Error('Focus did not reach '+e.id)):requestAnimationFrame(check);
+    check();
+  }));
 }
 try{
   for(const width of [390,1365]){
@@ -77,15 +80,20 @@ try{
     await page.goto(base+'index.html');const demo=page.frameLocator('#learning-demo');
     await demo.locator('#loading-note').waitFor({state:'hidden'});
     assert.ok(await demo.locator('body').evaluate(e=>e.classList.contains('showcase')));
-    assert.equal(await demo.locator('.discovery-panel button:visible').count(),1,'Only one initial activity action: split the piece');
+    assert.equal(await demo.locator('#builder-tray button:visible').count(),2,'Two pieces are immediately available to place');
     assert.ok(await demo.locator('[data-add="4"]').isHidden());assert.ok(await demo.locator('#remove-piece').isHidden());assert.ok(await demo.locator('#puzzle').isHidden());
-    await demo.locator('#split-piece').click();assert.equal(await demo.locator('#pieces button').count(),2);
-    await revealBridge(demo);
-    await demo.locator('#check-fraction').click();assert.match(await demo.locator('#fraction-status').textContent(),/ends match/);
-    await demo.locator('#fraction-undo').click();assert.equal(await demo.locator('#pieces button').count(),1);
-    await demo.locator('#split-piece').click();await revealBridge(demo);
-    await demo.locator('#puzzle-help').click();assert.match(await demo.locator('#fraction-status').textContent(),/2 quarters/);
-    await demo.locator('#fraction-reset').click();await fit(page);
+    await demo.locator('#builder-tray button').first().click();
+    assert.equal(await demo.locator('#builder-placed span').count(),1);
+    assert.equal(await demo.locator('#bridge-builder').getAttribute('data-amount'),'4');
+    assert.ok(await demo.locator('#builder-next').isHidden());
+    await buildWhole(demo);
+    assert.match(await demo.locator('#builder-status').textContent(),/Two halves make one whole/);
+    await demo.locator('#builder-undo').click();assert.equal(await demo.locator('#builder-placed span').count(),1);
+    assert.ok(await demo.locator('#builder-next').isHidden());
+    await buildWhole(demo);await demo.locator('#builder-next').click();
+    assert.equal(await demo.locator('#builder-tray button:visible').count(),4);
+    await buildWhole(demo);assert.match(await demo.locator('#builder-status').textContent(),/Four quarters/);
+    await demo.locator('#builder-reset').click();await fit(page);
     await demo.locator('#choose-14').click();assert.ok(await demo.locator('#length').isHidden());
     for(const mass of ['100','200','400']){
       await demo.locator('input[name=mass][value="'+mass+'"]').check();await demo.locator('#run-model').click();
@@ -122,11 +130,10 @@ try{
     const page=await ctx.newPage();await page.goto(base+'index.html#demo');
     const demo=page.frameLocator('#learning-demo');await demo.locator('#loading-note').waitFor({state:'hidden'});
     await fit(page);
-    const distance=await demo.locator('#split-piece').evaluate(e=>e.getBoundingClientRect().top-document.querySelector('#pieces').getBoundingClientRect().bottom);
-    assert.ok(distance<75,'Split is immediately next to the placed pieces on mobile');
-    await demo.locator('#split-piece').tap();assert.equal(await demo.locator('#pieces button').count(),2);
-    await revealBridge(demo);
-    await demo.locator('#check-fraction').tap();assert.match(await demo.locator('#fraction-status').textContent(),/ends match/);
+    const distance=await demo.locator('#builder-tray').evaluate(e=>e.getBoundingClientRect().top-document.querySelector('.builder-scene').getBoundingClientRect().bottom);
+    assert.ok(distance<40,'The piece tray follows the scene immediately');
+    await demo.locator('#builder-tray button').first().tap();assert.equal(await demo.locator('#builder-placed span').count(),1);
+    await demo.locator('#builder-tray button').last().tap();assert.match(await demo.locator('#builder-status').textContent(),/Two halves make one whole/);
     await demo.locator('#choose-14').tap();
     assert.ok(await demo.locator('#motion-controls').isHidden(),'Motion tools appear only when a comparison exists');
     assert.equal(await demo.locator('#comparison-announcement').textContent(),'');
@@ -164,29 +171,29 @@ try{
   const feedbackContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
   const feedbackPage=await feedbackContext.newPage();await feedbackPage.goto(base+'index.html');
   const guide=feedbackPage.frameLocator('#learning-demo');await guide.locator('#loading-note').waitFor({state:'hidden'});
-  assert.equal(await guide.locator('#bridge-mission').innerText(),'Split this piece in two.');
-  assert.equal(await guide.locator('#split-action-label').innerText(),'Split in two');
+  assert.equal(await guide.locator('#bridge-mission').innerText(),'Help the fox cross.');
   assert.ok(await guide.locator('#check-fraction').isHidden());
   assert.ok(await guide.locator('#fraction-scene').isHidden());
-  assert.doesNotMatch(await guide.locator('#age8').innerText(),/1\/2|1\/4|flag|number line|Built so far/,'No symbols or measuring tasks before the first action');
-  const original=await guide.locator('#pieces button').boundingBox();
-  await guide.locator('#split-piece').click();
-  assert.equal(await guide.locator('#bridge-mission').innerText(),'Two equal pieces.');
-  const halves=await guide.locator('#pieces button').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().width));
-  assert.equal(halves.length,2);assert.ok(Math.abs(halves[0]-halves[1])<1);
-  assert.ok(Math.abs(halves[0]+halves[1]-original.width)<1,'Splitting does not add or remove visible amount');
-  assert.ok(await guide.locator('#show-fraction-context').evaluate(e=>document.activeElement===e));
-  await guide.locator('#show-fraction-context').click();
-  assert.equal(await guide.locator('#bridge-mission').innerText(),'Two quarters make one half.');
-  assert.equal(await guide.locator('#fraction-feedback-title').innerText(),'1/4 + 1/4 = 1/2');
-  const quarters=await guide.locator('#pieces button').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().width));
-  assert.ok(quarters.every((width,index)=>Math.abs(width-halves[index])<1),'Showing the whole adds context without shrinking the pieces');
-  assert.ok(await guide.locator('#whole-label').isVisible());
-  assert.ok(await guide.locator('#fraction-scene').isHidden(),'The whole is introduced separately from the bridge');
-  await guide.locator('#show-bridge').click();
-  assert.equal(await guide.locator('#split-action-label').textContent(),'Split 1/4');
-  await guide.locator('#fraction-undo').click();assert.equal(await guide.locator('#split-action-label').textContent(),'Split in two');
-  assert.ok(await guide.locator('#fraction-scene').isHidden());
+  assert.doesNotMatch(await guide.locator('#age8').innerText(),/1\/2|1\/4|flag|number line|Built so far/,'Build first, before symbols or measuring tasks');
+  const wholeWidth=(await guide.locator('#builder-bridge').boundingBox()).width;
+  const halfWidths=await guide.locator('#builder-tray button').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().width));
+  assert.ok(halfWidths.every(width=>Math.abs(width*2-wholeWidth)<1),'Each available half really spans half the bridge');
+  await guide.locator('#builder-tray button').first().focus();await feedbackPage.keyboard.press('Enter');
+  assert.equal(await guide.locator('#builder-feedback-title').innerText(),'Halfway across.');
+  await focused(guide.locator('#builder-tray button').last());
+  await feedbackPage.keyboard.press('Space');
+  await focused(guide.locator('#builder-bridge'));
+  assert.equal(await guide.locator('#builder-feedback-copy').innerText(),'1/2 + 1/2 = 1 whole');
+  assert.ok(Math.abs((await guide.locator('#builder-placed span').first().boundingBox()).width-halfWidths[0])<1,'A placed piece retains its size');
+  await guide.locator('#builder-next').click();
+  assert.ok(Math.abs((await guide.locator('#builder-bridge').boundingBox()).width-wholeWidth)<1,'Rebuilding with quarters keeps the same whole');
+  const quarterWidths=await guide.locator('#builder-tray button').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().width));
+  assert.ok(quarterWidths.every(width=>Math.abs(width*4-wholeWidth)<1));
+  await buildWhole(guide);await guide.locator('#builder-undo').click();
+  assert.equal(await guide.locator('#bridge-builder').getAttribute('data-amount'),'6');
+  assert.ok(await guide.locator('#builder-next').isHidden(),'Undo immediately cancels completion');
+  await guide.locator('#builder-reset').click();
+  assert.equal(await guide.locator('#bridge-builder').getAttribute('data-amount'),'0');
   await guide.locator('#choose-14').click();await guide.locator('input[name=mass][value="100"]').check();
   assert.doesNotMatch(await guide.locator('#lab-feedback-copy').textContent(),/length/,'Focused guidance must not suggest hidden length controls');
   await guide.locator('input[name=mass][value="400"]').check();
@@ -203,14 +210,15 @@ try{
   await guide.locator('#run-model').click();assert.match(await guide.locator('#prediction-readback').textContent(),/You predicted: the same time/);
   await guide.locator('#lab-reset').click();assert.ok(await guide.locator('#prediction-readback').isHidden());
   assert.equal(await guide.locator('#lab-feedback-title').textContent(),'Your setup: B is 200 g.');
-  await feedbackContext.close();report.checks.push('One-action opening, exact equal split, separate whole/bridge reveals and reset; nearby prediction feedback and stale-result clearing');
+  await feedbackContext.close();report.checks.push('Direct native building, exact piece scale, fixed whole, optional quarters and recovery; nearby prediction feedback and stale-result clearing');
   const fallback=await browser.newContext({reducedMotion:'reduce'});
   await fallback.route('**/phaser-3.90.0.min.js',r=>r.abort());
   const fp=await fallback.newPage();await fp.goto(base+'index.html');const fd=fp.frameLocator('#learning-demo');
-  await fd.locator('body.simple-view').waitFor();await fd.locator('#split-piece').click();
-  assert.equal(await fd.locator('#pieces button').count(),2);
-  assert.equal(await fd.locator('#full-playground').getAttribute('href'),'index.html?view=simple#age8');
-  await fd.locator('#choose-14').click();await fd.locator('#run-model').click();assert.equal(await fd.locator('#period-b').textContent(),'2.01 s');
+  await fd.locator('#loading-note').waitFor({state:'hidden'});await buildWhole(fd);
+  await fd.locator('#choose-14').click();await fd.locator('body.simple-view').waitFor();
+  await fd.locator('#run-model').click();assert.equal(await fd.locator('#period-b').textContent(),'2.01 s');
+  await fd.locator('#choose-8').click();assert.equal(await fd.locator('#full-playground').getAttribute('href'),'index.html?view=simple#age8');
+  await fd.locator('#builder-reset').click();await buildWhole(fd);
   await fallback.close();report.checks.push('Focused graphics failure retains both activities and Simple-view handoff');
   const nojs=await browser.newContext({javaScriptEnabled:false});const np=await nojs.newPage();await np.goto(base+'index.html');
   assert.ok(await np.locator('main>section noscript a').first().isVisible());

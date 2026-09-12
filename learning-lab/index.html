@@ -32,6 +32,23 @@
     <p id="loading-note" class="notice">Interactive controls need JavaScript. The explanations and research notes remain available below.</p>
     <section id="age8" class="activity" aria-labelledby="bridge-mission">
       <div class="activity-heading"><h2 id="bridge-mission" tabindex="-1">Make 1/2 another way.</h2></div>
+      <div id="bridge-builder" hidden>
+        <p id="builder-instruction">Tap a piece to place it in the gap.</p>
+        <div class="builder-scene">
+          <img class="builder-backdrop" alt="" hidden>
+          <div class="builder-fox" aria-hidden="true"><span class="fox-icon">🦊</span><span class="fox-name">Fox</span></div>
+          <div id="builder-bridge" role="img" tabindex="-1" aria-label="An empty bridge gap. The fox is waiting on the left.">
+            <div id="builder-placed" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="builder-workspace">
+          <div id="builder-tray" role="group" aria-label="Pieces to build the bridge"></div>
+          <p id="builder-piece-note">Two equal pieces. Take either one.</p>
+          <div id="builder-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"><strong id="builder-feedback-title"></strong><p id="builder-feedback-copy"></p></div>
+          <button type="button" id="builder-next" class="primary" hidden>Build with smaller pieces</button>
+          <div class="builder-recovery"><button type="button" id="builder-undo" disabled>Undo</button><button type="button" id="builder-reset">Start again</button></div>
+        </div>
+      </div>
       <fieldset id="fraction-controls" disabled>
         <legend class="sr-only">Fraction playground</legend>
         <div class="game-layout">

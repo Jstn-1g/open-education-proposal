@@ -32,9 +32,16 @@ PRE_INTERACTIVE_OUTPUT_NAMES = PRE_DOWNLOAD_OUTPUT_NAMES | set(REVIEW_ASSETS)
 LAB_ASSETS = (
     "index.html", "app.mjs", "bridge.mjs", "model.mjs", "scene.mjs", "styles.css",
     "proposal-preview.mjs", "vendor/phaser-3.90.0.min.js", "vendor/PHASER-LICENSE.txt",
-    "art/fraction-canyon.png", "art/clockwork-room.png", "ASSETS.md",
+    "art/fraction-canyon.png", "art/clockwork-room.png", "ASSETS.md", "builder.mjs",
+    "art/bridge-setting.png",
 )
-OUTPUT_NAMES = PRE_INTERACTIVE_OUTPUT_NAMES | {"discussion.html"} | {"learning-lab/" + name for name in LAB_ASSETS}
+PRE_STUDIO_OUTPUT_NAMES = PRE_INTERACTIVE_OUTPUT_NAMES | {"discussion.html"} | {"learning-lab/" + name for name in LAB_ASSETS}
+PRE_BUILDER_OUTPUT_NAMES = PRE_STUDIO_OUTPUT_NAMES - {"learning-lab/builder.mjs", "learning-lab/art/bridge-setting.png"}
+STUDIO_ASSETS = (
+    "index.html", "edit.html", "play.html", "library.mjs", "studio.mjs", "recipe.mjs",
+    "examples.mjs", "player.mjs", "play.mjs", "studio.css", "player.css",
+)
+OUTPUT_NAMES = PRE_STUDIO_OUTPUT_NAMES | {"activity-studio/" + name for name in STUDIO_ASSETS}
 VERSION = "0.1.0"
 RELEASE_FIELDS = {"status", "repository", "maintainer", "conduct_contact", "security_contact"}
 
@@ -172,7 +179,7 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
                 current = (set(previous) == {"version", "status", "base", "files"}
                            and previous["status"] in ("candidate", "ready")
                            and previous["version"] == output_version(previous["status"])
-                           and set(files) in (PRE_DOWNLOAD_OUTPUT_NAMES - {"manifest.json"}, PRE_INTERACTIVE_OUTPUT_NAMES - {"manifest.json"}, OUTPUT_NAMES - {"manifest.json"}))
+                           and set(files) in (PRE_DOWNLOAD_OUTPUT_NAMES - {"manifest.json"}, PRE_INTERACTIVE_OUTPUT_NAMES - {"manifest.json"}, PRE_BUILDER_OUTPUT_NAMES - {"manifest.json"}, PRE_STUDIO_OUTPUT_NAMES - {"manifest.json"}, OUTPUT_NAMES - {"manifest.json"}))
                 if not (legacy or current):
                     raise ValueError("Unrecognized build manifest.")
                 base_path(previous["base"])
@@ -189,14 +196,15 @@ def build(output: Path, base: str = "/") -> dict[str, str]:
     payload["robots.txt"] = b"User-agent: *\nAllow: /\n" if status == "ready" else b"User-agent: *\nDisallow: /\n"
     payload.update({destination: (ROOT / source).read_bytes() for destination, source in LICENSE_ASSETS.items()})
     payload.update({destination: (ROOT / source).read_bytes() for destination, source in REVIEW_ASSETS.items()})
-    for name in LAB_ASSETS:
-        source = ROOT / "learning-lab" / name
-        ordinary_path(source)
-        data = source.read_bytes()
-        if name == "index.html":
-            robots = "index, follow" if status == "ready" else "noindex, nofollow, noarchive"
-            data = data.decode("utf-8").replace("{{base}}", base).replace("{{robots}}", robots).encode("utf-8")
-        payload["learning-lab/" + name] = data
+    for directory, names in (("learning-lab", LAB_ASSETS), ("activity-studio", STUDIO_ASSETS)):
+        for name in names:
+            source = ROOT / directory / name
+            ordinary_path(source)
+            data = source.read_bytes()
+            if name.endswith(".html"):
+                robots = "index, follow" if status == "ready" else "noindex, nofollow, noarchive"
+                data = data.decode("utf-8").replace("{{base}}", base).replace("{{robots}}", robots).encode("utf-8")
+            payload[directory + "/" + name] = data
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in sorted(payload.items())}
     payload["manifest.json"] = (json.dumps({"version": output_version(status), "status": status, "base": base, "files": manifest}, indent=2) + "\n").encode("utf-8")
     output.mkdir(parents=True, exist_ok=True)
@@ -217,7 +225,8 @@ def main() -> None:
         manifest = build(args.output, args.base)
     except (ValueError, OSError) as error:
         parser.exit(1, f"Build failed: {error}\n")
-    print(f"Built {len(PAGES)} pages; {len(manifest)} hashed public assets. Local files only; nothing was published.")
+    page_count = sum(name.endswith(".html") for name in manifest)
+    print(f"Built {page_count} HTML pages; {len(manifest)} hashed public assets. Local files only; nothing was published.")
 
 
 if __name__ == "__main__":

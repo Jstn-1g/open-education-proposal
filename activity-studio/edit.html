@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="{{robots}}">
+  <meta name="description" content="Remix a Fraction Bridge activity without writing code. Preview, download and share an open activity recipe.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Activity Studio · Open Education</title>
+  <link rel="stylesheet" href="studio.css"><link rel="stylesheet" href="player.css">
+  <script type="module" src="studio.mjs"></script>
+</head>
+<body class="studio-page">
+  <a class="skip-link" href="#main">Skip to the studio</a>
+  <header class="workspace-header"><a class="brand" href="{{base}}index.html">Open Education<span>Make learning together.</span></a><nav class="workspace-nav" aria-label="Main navigation"><a href="index.html">Library</a><a href="edit.html" aria-current="page">Activity Studio</a><a href="{{base}}contribute.html">Contribute</a></nav></header>
+  <main id="main" class="workspace-main" tabindex="-1">
+    <section class="page-intro compact"><p class="eyebrow">Activity Studio · Early preview for adult authors</p><h1>Your idea. A new way to learn.</h1><p>Remix a bridge activity. Try it. Share the starting point.</p><p id="draft-review-status" class="draft-review-status">Unreviewed activity draft · Checks confirm the file format and a possible solution—not the quality of a lesson.</p></section>
+    <div class="draft-toolbar">
+      <div class="file-actions">
+        <label class="button button-secondary file-button">Open a file<input id="import-recipe" type="file" accept=".json,application/json" aria-label="Open an activity recipe file" disabled></label>
+        <details class="new-activity"><summary>Start from another example</summary><label for="start-template">Starting activity</label><select id="start-template" disabled><option value="first-crossing">A first crossing</option><option value="another-way">Another way across</option></select><button id="new-draft" type="button" class="button button-secondary" disabled>Use this example</button></details>
+      </div>
+      <span id="draft-status" class="muted">Your draft stays on this device. Download to keep it.</span>
+    </div>
+    <p id="studio-status" class="notice" role="status" aria-live="polite" hidden></p>
+    <noscript><p class="notice">Editing and playing require JavaScript. This studio changes a trusted Fraction Bridge template; it does not run uploaded code. Drafts are not saved automatically or published. <a href="index.html">Return to the library</a>.</p></noscript>
+    <div class="studio-layout">
+      <section class="editor-panel card" aria-labelledby="editor-heading">
+        <div class="panel-heading"><span class="step-number" aria-hidden="true">1</span><h2 id="editor-heading">Make it yours</h2></div>
+        <fieldset id="studio-form" disabled><legend class="visually-hidden">Activity details and challenges</legend>
+          <label for="activity-title">Activity title</label><input id="activity-title" maxlength="80" autocomplete="off">
+          <details class="editor-details"><summary>Learning goal &amp; credits</summary>
+            <label for="activity-author">Your name or group <small>Public credit; a pen name is fine.</small></label><input id="activity-author" maxlength="80" autocomplete="off">
+            <label for="activity-summary">Short description</label><textarea id="activity-summary" rows="2" maxlength="240"></textarea>
+            <label for="activity-goal">What should someone notice or understand?</label><textarea id="activity-goal" rows="2" maxlength="240"></textarea>
+            <label for="activity-prerequisites">What should they already know? <small>Optional</small></label><textarea id="activity-prerequisites" rows="2" maxlength="240"></textarea>
+            <p class="field-note">Activities use <a href="{{base}}content-license.txt">CC BY 4.0</a>. Share only text you have the right to license. Don’t include student details, private information or confidential materials.</p>
+            <p class="field-note"><strong>Inherited credit</strong><span id="activity-attribution"></span></p>
+            <details class="editor-details"><summary>Consolidate a long credit trail</summary><label for="activity-credit">Credit carried with the download <small>Keep the original authors, source links and license. If you change this field, include the previous author yourself.</small></label><textarea id="activity-credit" rows="4" maxlength="600"></textarea><p class="field-note">The original credit remains above for comparison. Editing this field does not verify rights or replace required attribution.</p></details>
+          </details>
+          <div class="challenge-heading"><h3 id="editing-step">One challenge at a time</h3><span id="step-count" class="muted"></span></div>
+          <div id="step-list" class="step-list" role="group" aria-label="Choose a challenge to edit"></div>
+          <label for="step-prompt">What should the player do?</label><textarea id="step-prompt" rows="2" maxlength="180"></textarea>
+          <fieldset class="piece-config"><legend>Pieces in the tray</legend><p class="field-note">A challenge finishes when the pieces fill exactly one whole bridge. Extra pieces can stay in the tray.</p><div class="piece-counts"><label for="piece-halves"><span class="sample-piece half" aria-hidden="true"></span>Halves<input id="piece-halves" type="number" min="0" max="12" step="1" inputmode="numeric"></label><label for="piece-quarters"><span class="sample-piece quarter" aria-hidden="true"></span>Quarters<input id="piece-quarters" type="number" min="0" max="12" step="1" inputmode="numeric"></label><label for="piece-eighths"><span class="sample-piece eighth" aria-hidden="true"></span>Eighths<input id="piece-eighths" type="number" min="0" max="12" step="1" inputmode="numeric"></label></div></fieldset>
+          <div id="tray-review-note" class="tray-review-note" hidden><p role="status">Pieces changed. Check that the instruction above and the hint still match.</p><button id="review-step-hint" type="button" class="text-button">Review the hint</button></div>
+          <details class="editor-details"><summary>Add a gentle hint</summary><label for="step-hint">Hint <small>Optional; shown only when requested.</small></label><textarea id="step-hint" rows="2" maxlength="240"></textarea></details>
+          <div class="step-actions"><button id="add-step" type="button" class="button button-secondary">Add a challenge</button><button id="remove-step" type="button" class="text-button">Remove this challenge</button></div>
+          <button id="preview-update" type="button" class="button button-primary wide">Preview this challenge</button>
+          <button id="preview-all" type="button" class="text-button wide">Try from the beginning</button>
+        </fieldset>
+      </section>
+      <section class="preview-panel" aria-labelledby="preview-heading"><div class="panel-heading preview-heading"><span class="step-number" aria-hidden="true">2</span><h2 id="preview-heading">Try your activity</h2><label class="simple-control"><input id="studio-simple" type="checkbox" disabled> Simple view</label></div><p id="preview-status" class="muted" role="status">Your preview will appear here.</p><button id="edit-current-step" type="button" class="text-button preview-return" disabled>Back to editing</button><div id="studio-preview"></div><p class="field-note">Edits won’t interrupt play. “Preview this challenge” starts at the challenge you’re editing; “Try from the beginning” runs the full activity.</p></section>
+    </div>
+    <section class="save-panel card" aria-labelledby="save-heading"><div><div class="panel-heading"><span class="step-number" aria-hidden="true">3</span><h2 id="save-heading">Keep it. Share a starting point.</h2></div><p>A small activity file holds your words and challenges—not student data. Reopen it here or in the player. It needs this compatible player; it isn’t a standalone game.</p><p class="field-note">No automatic saving. After downloading, check that you have the file. We keep the unsaved-work warning until you confirm. Nothing is uploaded or published here.</p></div><div><button id="download-recipe" type="button" class="button button-primary wide" disabled>Download activity file</button><button id="confirm-saved" type="button" class="button button-secondary wide" hidden>I have the saved file</button><a class="button button-secondary wide" href="#share-draft">How to contribute this draft</a></div></section>
+    <details id="share-draft" class="share-draft">
+      <summary>Share a draft with the community</summary>
+      <p>First try every challenge and check the learning goal. Download your file, then propose it for review. Submitting is a separate action on GitHub; it currently needs a GitHub account.</p>
+      <ol><li>Copy the recipe below or open your downloaded JSON file as text.</li><li>Open an activity proposal and paste the recipe in its requested section.</li><li>Explain what you changed and what still needs review. A maintainer decides whether it joins the library.</li></ol>
+      <div class="card-actions"><button id="copy-recipe" type="button" class="button button-secondary" disabled>Copy current recipe</button><a class="button button-secondary" href="https://github.com/Jstn-1g/open-education-proposal/issues/new?template=activity-proposal.md">Open an activity proposal ↗</a></div>
+      <p class="field-note">If GitHub has no activity template, use a blank issue with the same information. No guaranteed acceptance or response time.</p>
+      <label for="recipe-json">Activity file text <small>Preview, copy or download to include your latest edits. If checks fail, this text still describes the earlier valid version. A valid file is not an approved lesson.</small></label>
+      <textarea id="recipe-json" rows="10" readonly spellcheck="false"></textarea>
+    </details>
+  </main>
+  <footer class="workspace-footer"><span>Early authoring tools. Human judgment still matters.</span><a href="{{base}}open-source.html#licenses">Licenses &amp; attribution</a></footer>
+</body>
+</html>

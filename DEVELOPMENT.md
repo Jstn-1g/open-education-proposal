@@ -50,6 +50,12 @@ The builder reads the release state from `release.json`. Candidate builds use an
 
 ## Interactive demonstrator
 
-The homepage template is content/index.html; learning-lab/ holds the full playground, shared styles, modules and exact vendored assets. The builder uses an explicit nested file list and preserves unrecognized or locally modified output. Keep the homepage and playground CSP in their templates; local server headers are not deployed to GitHub Pages. Only these two routes allow project scripts. Other reading pages stay script-free.
+The homepage template is content/index.html; learning-lab/ holds the full playground, shared styles, modules and exact vendored assets. The builder uses an explicit nested file list and preserves unrecognized or locally modified output. Keep the homepage, playground and three Activity Studio routes' CSP in their templates; local server headers are not deployed to GitHub Pages. Only these five routes allow project scripts. Other reading pages stay script-free.
 
 Interactive checks use tests/learning-lab-browser.mjs with the same optional Playwright installation, a base URL and evidence directory. The focused and full experiences, Simple and no-JavaScript paths, project-prefix navigation, native keyboard controls, graphics failure, reduced motion and text enlargement need fresh browser evidence. Node can run the pure calculations with node --test tests/bridge.test.mjs tests/model.test.mjs. The standard Python CI checks build/link/policy boundaries; it does not itself run browser tests or establish physical-device performance.
+
+## Activity Studio
+
+`activity-studio/` contains the library, editor, validated recipe format and shared player. Read [the authoring guide](docs/ACTIVITY-STUDIO.md) before changing its trust boundaries. Add new payloads to both the static build and reviewed-source export inventories. Activity JSON is data, never executable code or proof of review.
+
+Run the Node suites with `node --test tests/bridge.test.mjs tests/model.test.mjs tests/activity-recipe.test.mjs`. Run `node tests/activity-studio-browser.mjs http://127.0.0.1:8775/ PATH-TO-PRIVATE-EVIDENCE` against an actual build. The optional Playwright module/channel settings above apply. The dedicated interactive workflow runs these checks with pinned Playwright 1.62.1; its results still need inspection and do not replace real-device or educator review.
