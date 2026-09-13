@@ -736,6 +736,46 @@ try {
     return { tabFocus, headingFocus, selectedEntry: entry.step, laterStep: 2, replay: 0 };
   });
 
+  for (const simple of [false, true]) {
+    for (const viewport of [{ width: 390, height: 844 }, { width: 1365, height: 844 }, { width: 844, height: 390 }, { width: 390, height: 844, large: true }]) {
+      await group(`Preview handoff shows the activity start ${viewport.width}x${viewport.height}${viewport.large ? ' enlarged text' : ''}${simple ? ' Simple' : ''}`, 'edit.html', { ...viewport, simple }, async ({ page }) => {
+        await readyPlayer(page, '#studio-preview');
+        const positions = [];
+        for (const action of ['#preview-update', '#preview-all']) {
+          // Reach the button normally. Do not repair focus or scrolling after activation.
+          await page.locator('#step-prompt').fill('Fill the bridge with two halves.');
+          if (action === '#preview-update') {
+            await tabTo(page, page.locator(action)); await page.keyboard.press('Enter');
+          } else await page.locator(action).click();
+          await settle(page);
+          const position = await page.evaluate(() => {
+            const player = document.querySelector('#studio-preview .activity-player');
+            const heading = player.querySelector('.player-heading');
+            const firstPiece = player.querySelector('[data-testid="player-piece"]');
+            return { top: player.getBoundingClientRect().top, heading: heading.getBoundingClientRect().toJSON(),
+              firstPiece: firstPiece.getBoundingClientRect().toJSON(), height: innerHeight,
+              focused: document.activeElement === heading };
+          });
+          assert(position.focused, 'Preview keeps the instruction as the keyboard reading start.');
+          assert(position.top >= 8 && position.top <= 24,
+            `Preview should start near the top, not below leftover editor content: ${JSON.stringify(position)}`);
+          if (!viewport.large && viewport.height >= 568) {
+            assert(position.firstPiece.bottom <= position.height - 8,
+              'The first action fits on an ordinary portrait/desktop preview without another scroll.');
+          }
+          if (action === '#preview-update') await screenshot(page,
+            `preview-handoff-${viewport.width}x${viewport.height}${viewport.large ? '-large' : ''}${simple ? '-simple' : ''}`);
+          positions.push(position);
+          await page.locator('#edit-current-step').click();
+          assert(await page.locator('#step-prompt').evaluate(element => element === document.activeElement));
+        }
+        // Enlarged text and short screens can scroll naturally; do not shrink content to force it to fit.
+        await layout(page, 'Preview handoff');
+        return { positions };
+      });
+    }
+  }
+
   await group('Player startStep bounds are checked before replacing DOM', 'play.html', { width: 390, simple: true }, async ({ page }) => {
     await readyPlayer(page, '#play-mount');
     const result = await page.evaluate(async () => {
@@ -756,6 +796,41 @@ try {
     assert(result.cases.every(item => item.error === 'RangeError' && item.unchanged), JSON.stringify(result));
     assert.equal(result.entry, '1');
     return result;
+  });
+
+  await group('Only the latest copy request may change feedback or focus', 'edit.html', { width: 390, simple: true, denyClipboard: true }, async ({ page }) => {
+    await readyPlayer(page, '#studio-preview');
+    await page.locator('a[href="#share-draft"]').click();
+    await page.evaluate(() => {
+      window.__pendingCopies = [];
+      Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
+        writeText: text => new Promise((resolve, reject) => window.__pendingCopies.push({ text, resolve, reject })),
+      } });
+    });
+    const copy = page.locator('#copy-recipe');
+    for (const newestSucceeds of [true, false]) {
+      const offset = await page.evaluate(() => window.__pendingCopies.length);
+      await copy.click(); await copy.click();
+      assert.equal(await page.evaluate(() => window.__pendingCopies.length), offset + 2);
+      await page.evaluate(({ index, succeeds }) => {
+        const pending = window.__pendingCopies[index];
+        if (succeeds) pending.resolve(); else pending.reject(new Error('Synthetic clipboard denial.'));
+      }, { index: offset + 1, succeeds: newestSucceeds });
+      await settle(page);
+      const newest = await page.locator('#studio-status').innerText();
+      assert.match(newest, newestSucceeds ? /Recipe copied/ : /Automatic copying is unavailable/);
+      const focused = await page.evaluate(() => document.activeElement.id);
+      await page.evaluate(({ index, succeeds }) => {
+        const pending = window.__pendingCopies[index];
+        if (succeeds) pending.resolve(); else pending.reject(new Error('Older synthetic clipboard denial.'));
+      }, { index: offset, succeeds: !newestSucceeds });
+      await settle(page);
+      assert.equal(await page.locator('#studio-status').innerText(), newest, 'An older result cannot overwrite the latest request.');
+      assert.equal(await page.evaluate(() => document.activeElement.id), focused, 'An older denial cannot steal focus.');
+    }
+    assert.equal(await page.evaluate(() => new Set(window.__pendingCopies.map(item => item.text)).size), 1,
+      'This test covers repeated requests for the same draft, not only newer edit revisions.');
+    return { newestSuccessThenOlderDenial: true, newestDenialThenOlderSuccess: true, hostClipboardWritten: false };
   });
 
   await group('Contribution disclosure and denied clipboard never expose stale copy as current', 'edit.html', { width: 390, simple: true, denyClipboard: true }, async ({ page }) => {
