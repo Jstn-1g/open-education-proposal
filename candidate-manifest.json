@@ -125,12 +125,12 @@
       "sha256": "76f7086ee048521072021dfa59d0d9e789d5cce24f4525f3d52f719c18e96a3d"
     },
     "activity-studio/studio.css": {
-      "bytes": 12636,
-      "sha256": "d942971f1ae7a8d144bc7a1114c832ff1931436c6dd1f8e04c69be0631b66a99"
+      "bytes": 12692,
+      "sha256": "7ec6e0c106249518877adcde2be0832438b7df16abb58d8e9d264bf8460cccb3"
     },
     "activity-studio/studio.mjs": {
-      "bytes": 14950,
-      "sha256": "29fd71c0696a0360a658fd6990c4e19964f33f315a17a42bc74ce5920d56a2f3"
+      "bytes": 15374,
+      "sha256": "ca66aa88db9470714ce59e8ddc010695eef0c1c4f88394e76404dd0131e3cf7f"
     },
     "build.py": {
       "bytes": 12611,
@@ -277,8 +277,8 @@
       "sha256": "7725bfa64f4855b13b2b24f78250bafc608c519ec112e00a9fe594649fa260d1"
     },
     "tests/activity-studio-browser.mjs": {
-      "bytes": 67910,
-      "sha256": "4ec034dddf734271b07266e19314d4971924877d52342bf6e6a54a8eddfdd4f8"
+      "bytes": 72890,
+      "sha256": "2141951ae78c49f2cd068319974c989f08f18b4d02d1c27b5457fed81e0f6f68"
     },
     "tests/bridge.test.mjs": {
       "bytes": 1854,

@@ -5,7 +5,7 @@ import { mountPlayer } from './player.mjs';
 const $ = selector => document.querySelector(selector);
 const fields = {title:'#activity-title',author:'#activity-author',summary:'#activity-summary',goal:'#activity-goal',prerequisites:'#activity-prerequisites'};
 let draft = null, currentStep = 0, player = null, dirty = false, sourceAuthor = '', sourceTitle = '', sourceAttribution = '', fileRevision = 0, creditEdited = false;
-let editRevision = 0, downloadRevision = null, invalidField = null;
+let editRevision = 0, downloadRevision = null, invalidField = null, copyRequestRevision = 0;
 const changedTrays = new Set();
 const query = new URLSearchParams(location.search);
 const forcedColors = matchMedia('(forced-colors: active)');
@@ -120,7 +120,9 @@ function preview(recipe, startStep = 0, moveFocus = false) {
   $('#recipe-json').value = serializeRecipe(recipe);
   $('#preview-status').textContent = 'Preview up to date · Starting with challenge ' + (startStep + 1) + ' of ' + recipe.steps.length + '.';
   if (moveFocus) {
-    const heading = $('#studio-preview .player-heading'); heading.tabIndex = -1; heading.focus();
+    const heading = $('#studio-preview .player-heading'); heading.tabIndex = -1; heading.focus({preventScroll:true});
+    // Focus alone can leave the instruction at the bottom and the pieces offscreen.
+    heading.closest('.activity-player').scrollIntoView({block:'start', behavior:'instant'});
   }
 }
 function loadRecipe(recipe, imported = false) {
@@ -153,11 +155,17 @@ $('#remove-step').addEventListener('click', () => {
   draft.steps.splice(currentStep,1); currentStep = Math.min(currentStep,draft.steps.length - 1); renderStep(); changed(); $('#step-prompt').focus();
 });
 $('#preview-update').addEventListener('click', () => {
-  try { preview(readDraft(), currentStep, true); clearFieldError(); status('Preview updated. Try each challenge before sharing.'); }
+  try {
+    const recipe = readDraft(); clearFieldError(); status('Preview updated. Try each challenge before sharing.');
+    preview(recipe, currentStep, true);
+  }
   catch (error) { validationError(error); }
 });
 $('#preview-all').addEventListener('click', () => {
-  try { preview(readDraft(), 0, true); clearFieldError(); status('Full activity ready. Try every challenge before sharing.'); }
+  try {
+    const recipe = readDraft(); clearFieldError(); status('Full activity ready. Try every challenge before sharing.');
+    preview(recipe, 0, true);
+  }
   catch (error) { validationError(error); }
 });
 $('#edit-current-step').addEventListener('click', () => $('#step-prompt').focus());
@@ -208,6 +216,7 @@ $('#confirm-saved').addEventListener('click', () => {
   status('Saved copy confirmed. Further edits will need a new download.');
 });
 $('#copy-recipe').addEventListener('click', async () => {
+  const requestRevision = ++copyRequestRevision;
   let json;
   try { json = serializeRecipe(readDraft()); }
   catch (error) { validationError(error); return; }
@@ -216,9 +225,9 @@ $('#copy-recipe').addEventListener('click', async () => {
   try {
     if (!navigator.clipboard?.writeText) throw new Error('Select the recipe text below and copy it, or download the activity file.');
     await navigator.clipboard.writeText(json);
-    if (copyRevision === editRevision) status('Recipe copied. Paste it into your activity proposal; nothing was submitted.');
+    if (requestRevision === copyRequestRevision && copyRevision === editRevision) status('Recipe copied. Paste it into your activity proposal; nothing was submitted.');
   } catch {
-    if (copyRevision !== editRevision) return;
+    if (requestRevision !== copyRequestRevision || copyRevision !== editRevision) return;
     status('Automatic copying is unavailable. Your current validated recipe is selected below; copy it manually or download the file. Nothing was submitted.', true);
     $('#share-draft').open = true; $('#recipe-json').focus(); $('#recipe-json').select();
   }
